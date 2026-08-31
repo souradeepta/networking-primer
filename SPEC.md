@@ -58,6 +58,7 @@ SSH, and safe change management. Chapters may combine adjacent topics only if
 the acceptance checks remain satisfied.
 
 The validator must check chapter count, required headings, approximate prose
-minimums, Q&A counts, Mermaid presence, and local-link integrity. All claims
+minimums, Q&A counts, Mermaid presence, and local-link integrity. Central claims
 that depend on protocol standards or vendor behavior must be represented in a
-fact/inference ledger with primary references.
+fact/inference ledger with primary references; recommendations must be labeled
+as engineering inferences.

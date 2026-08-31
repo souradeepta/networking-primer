@@ -17,7 +17,7 @@ def is_local(target: str) -> bool:
 def main() -> None:
     """Check local Markdown destinations relative to their source file."""
     failures: list[str] = []
-    for source in [Path("README.md"), *Path("docs").glob("*.md")]:
+    for source in [Path("README.md"), *Path("docs").glob("*.md"), *Path("book").glob("*.md")]:
         for target in LINK.findall(source.read_text(encoding="utf-8")):
             target = target.split("#", maxsplit=1)[0].strip("<>")
             if target and is_local(target) and not (source.parent / target).is_file():

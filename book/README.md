@@ -31,3 +31,6 @@ documentation or local addresses unless an authorized lab target is supplied.
 
 The original `docs/` files remain the quick-start edition; these chapters are
 the elaborated treatment.
+
+See the [book fact and inference ledger](FACT-INFERENCE-LEDGER.md) for the
+chapter-level evidence map.
