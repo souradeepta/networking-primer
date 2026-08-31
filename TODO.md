@@ -2,4 +2,5 @@
 
 - [x] Define the initial curriculum and acceptance checks.
 - [x] Write the primer and examples.
-- [ ] Validate and publish the initial GitHub repository.
+- [x] Validate and create the local Git repository.
+- [ ] Create and push the GitHub remote (deferred by user).
