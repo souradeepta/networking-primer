@@ -36,7 +36,89 @@ AWS Regions, Availability Zones, Route 53, and service-specific global or region
 
 Compare providers on failure detection, traffic steering, backend scope, state replication, identity availability, data residency, capacity, and cost. The product with the most global networking is not automatically the product with the safest recovery semantics.
 
-## D. Worked scenario: two-region checkout
+## D. AWS setup and use
+
+Use two existing fictional regional endpoints and a Route 53 hosted zone owned by a disposable lab account. This example creates a health check and a weighted DNS record so the learner can observe traffic steering; it does **not** implement database promotion or fencing. Prerequisites are `AWS_PROFILE`, `AWS_REGION`, `HOSTED_ZONE_ID`, two stable endpoint names, permission to create Route 53 health checks and change records, and an independently tested application recovery procedure. Review [Route 53 health checks](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks.html) and [routing policy](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html). DNS changes can affect clients and health checks can incur cost; never point a real production name at the lab.
+
+```bash
+export AWS_PROFILE="AWS_PROFILE"
+export AWS_REGION="AWS_REGION"
+export HOSTED_ZONE_ID="HOSTED_ZONE_ID"
+export PRIMARY_NAME="primary.northstar.example.test"
+export SECONDARY_NAME="secondary.northstar.example.test"
+export HEALTH_PATH="/readyz?mode=read-only"
+
+# Read-only preflight: confirm the zone and both endpoints are the intended lab objects.
+aws route53 get-hosted-zone --profile "$AWS_PROFILE" \
+  --id "$HOSTED_ZONE_ID" --query '{Name:HostedZone.Name,Private:HostedZone.Config.PrivateZone}'
+dig +short "$PRIMARY_NAME"
+dig +short "$SECONDARY_NAME"
+
+# Mutating: create a lab health check against the primary endpoint.
+aws route53 create-health-check --profile "$AWS_PROFILE" \
+  --caller-reference "northstar-lab-HEALTHCHECK_ID" \
+  --health-check-config "Type=HTTPS,ResourcePath=$HEALTH_PATH,FullyQualifiedDomainName=$PRIMARY_NAME,Port=443,RequestInterval=10,FailureThreshold=3"
+```
+
+Create a weighted record only after confirming the record name and hosted zone. The JSON below is educational; use a separate lab zone and replace `HEALTH_CHECK_ID` with the response value. A real recovery record needs careful TTL, resolver-cache, existing-connection, and client-retry analysis.
+
+```bash
+cat > /tmp/northstar-weighted-record.json <<'JSON'
+{
+  "Comment": "Lab-only weighted recovery record",
+  "Changes": [{"Action": "UPSERT", "ResourceRecordSet": {
+    "Name": "api.northstar.example.test.", "Type": "CNAME", "SetIdentifier": "primary",
+    "Weight": 100, "TTL": 30, "HealthCheckId": "HEALTH_CHECK_ID",
+    "ResourceRecords": [{"Value": "primary.northstar.example.test."}]
+  }}]
+}
+JSON
+aws route53 change-resource-record-sets --profile "$AWS_PROFILE" \
+  --hosted-zone-id "$HOSTED_ZONE_ID" --change-batch file:///tmp/northstar-weighted-record.json
+aws route53 get-change --profile "$AWS_PROFILE" --id "CHANGE_ID"
+dig api.northstar.example.test CNAME +noall +answer
+```
+
+Expected evidence is a Route 53 change reaching `INSYNC`, a health-check status that matches the endpoint’s read-only readiness, and DNS answers observed from controlled resolvers. This is only steering evidence: before failover, separately fence writes in the primary, verify replication lag, promote the secondary, and test downstream dependencies. For rollback, restore the previous record after the primary is proven safe and healthy, then remove the lab record, health check, and hosted zone artifacts. **AWS troubleshooting follow-up:** “The health check is healthy, but checkout writes are unsafe in the secondary.” Ask how readiness separates reads from writes, where fencing is enforced, and whether the DNS result is being mistaken for database ownership. See [Route 53 health-check status](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-how-dns-routing.html).
+
+## E. GCP setup and use
+
+Use a disposable Cloud DNS managed zone and two fictional regional endpoints. This example creates a low-TTL record for controlled steering and demonstrates that DNS is not a substitute for data promotion. The learner needs `PROJECT_ID`, permission to administer a lab managed zone, two endpoint names, and an application-level readiness endpoint. Review [Cloud DNS managed zones](https://cloud.google.com/dns/docs/zones) and [Cloud DNS record management](https://cloud.google.com/dns/docs/records). DNS changes are stateful, propagation is cache-dependent, and Cloud DNS or endpoint resources may incur cost.
+
+```bash
+export PROJECT_ID="PROJECT_ID"
+export DNS_ZONE="northstar-lab-zone"
+export DNS_SUFFIX="northstar.example.test."
+export PRIMARY_NAME="primary.northstar.example.test."
+export SECONDARY_NAME="secondary.northstar.example.test."
+gcloud config set project "$PROJECT_ID"
+
+# Read-only preflight: inspect the lab zone and current records.
+gcloud dns managed-zones describe "$DNS_ZONE" --project "$PROJECT_ID"
+gcloud dns record-sets list --zone "$DNS_ZONE" --project "$PROJECT_ID" \
+  --format='table(name,type,ttl,rrdatas)'
+
+# Mutating: create a lab zone only if it does not already exist.
+gcloud dns managed-zones create "$DNS_ZONE" --dns-name="$DNS_SUFFIX" \
+  --description="Northstar disposable failover lab" --project "$PROJECT_ID"
+gcloud dns record-sets transaction start --zone "$DNS_ZONE" --project "$PROJECT_ID"
+gcloud dns record-sets transaction add "$PRIMARY_NAME" --name="api.$DNS_SUFFIX" \
+  --ttl=30 --type=CNAME --zone="$DNS_ZONE" --project="$PROJECT_ID"
+gcloud dns record-sets transaction execute --zone "$DNS_ZONE" --project "$PROJECT_ID"
+```
+
+Verify the authoritative result and then query from the same client classes used in the scenario. Cloud DNS record changes do not fence the old writer or guarantee that existing TCP connections move. Expected evidence is the record in the intended project/zone, the endpoint readiness response, and an application record proving which region accepted a request. To perform a safe failover, first fence the old writer, verify replication and secondary capacity, then change the record or global traffic control. Roll back by restoring the former record only after ownership is safe; delete the lab record and zone after the exercise. **GCP troubleshooting follow-up:** “The record changed, but clients still use the old region.” Ask about recursive caches, TTL versus actual cache behavior, long-lived connections, resolver path, and whether the secondary was promoted before steering. A successful `gcloud dns` transaction proves control-plane acceptance, not client convergence.
+
+```bash
+gcloud dns record-sets list --zone "$DNS_ZONE" --project "$PROJECT_ID" \
+  --name="api.$DNS_SUFFIX" --format='yaml'
+dig @CLOUD_DNS_NAMESERVER api.northstar.example.test A +noall +answer
+gcloud dns record-sets transaction start --zone "$DNS_ZONE" --project "$PROJECT_ID"
+# Add an explicit rollback record in the lab transaction, then execute after review.
+gcloud dns record-sets transaction abort --zone "$DNS_ZONE" --project "$PROJECT_ID"
+```
+
+## F. Worked scenario: two-region checkout
 
 Fictional checkout traffic is 6,000 requests per second, with 20% writes and 80% reads. Region A and Region B each normally serve 3,000 requests per second. A regional loss requires Region B to receive 6,000 requests per second. Add 10% retry amplification: `6,000 * 1.10 = 6,600` requests per second. If Region B is sized for only 5,500, the design must shed, queue, or prioritize traffic; calling it “highly available” without that policy is incomplete.
 
@@ -66,7 +148,7 @@ stateDiagram-v2
     FailbackReview --> ServingA: Controlled failback
 ```
 
-## E. Failure, evidence, and falsifiers
+## G. Failure, evidence, and falsifiers
 
 | Hypothesis | Evidence | Falsifier |
 |---|---|---|
@@ -76,19 +158,19 @@ stateDiagram-v2
 | Survivor has capacity | Per-region saturation, queueing, retries, error budget | Capacity remains below tested failover limits under load. |
 | Recovery is customer-complete | User journey and write/read probes | Only health checks pass while checkout or reconciliation fails. |
 
-## F. Exercises
+## H. Exercises
 
-### F1. Timed whiteboard: safe regional loss
+### H1. Timed whiteboard: safe regional loss
 
 In 35 minutes, design a two-region checkout service with 10-minute RTO and five-second RPO. Draw traffic steering, state replication, fencing, identity, DNS, queues, capacity, and customer communication. Then introduce stale DNS and an unavailable identity provider. A strong answer degrades safely, names what cannot fail over, and assigns an owner to every transition.
 
-### F2. Tabletop and evidence-led failover
+### H2. Tabletop and evidence-led failover
 
 At 09:00, region A reports high errors, but health checks are mixed and replication lag is eight seconds. Walk through the first 15 minutes. Define evidence for detection, when to stop writes, what customer modes are safe, and which signal authorizes traffic movement. Include a rollback or abort gate if fencing cannot be proven. Do not promote merely because a dashboard is red.
 
-## G. Interview questions and direct answers
+## I. Interview questions and direct answers
 
-### G1. SDE2 questions
+### I1. Mechanism-focused questions
 
 1. **What is the difference between RTO and RPO?**
 
@@ -106,7 +188,7 @@ At 09:00, region A reports high errors, but health checks are mixed and replicat
 
    **Answer:** Model total demand after loss, retries, cache misses, recovery jobs, and priority shedding. Compare it with tested compute, connections, addresses, bandwidth, quotas, dependencies, and state capacity. Normal utilization is not a failover capacity test.
 
-### G2. Staff-level questions
+### I2. Leadership and trade-off questions
 
 5. **How would you get teams to treat disaster recovery as an engineering system?**
 
@@ -116,33 +198,33 @@ At 09:00, region A reports high errors, but health checks are mixed and replicat
 
    **Answer:** Active-passive can reduce write conflicts and simplify ownership when state cannot safely be multi-writer. It may cost more idle capacity and increase promotion time. Choose based on state semantics, RTO/RPO, failure evidence, and operational ability to test—not on a generic availability preference.
 
-## H. Advanced design review: failover safety, capacity, and customer modes
+## J. Advanced design review: failover safety, capacity, and customer modes
 
-### H1. Turn failover into an ordered state machine
+### J1. Turn failover into an ordered state machine
 
 A regional recovery design should distinguish at least these states: normal service, suspected degradation, confirmed loss, writes fenced, secondary promoted, traffic shifted, recovery validated, and failback ready. Each transition needs an authority, evidence, timeout, and abort condition. “Health check red” may move the service from normal to suspected degradation; it should not by itself authorize promotion. This framing exposes unsafe gaps such as a secondary accepting writes before the primary is fenced or DNS moving before capacity is ready.
 
 Write the RTO budget as a sum: detection, diagnosis or quorum decision, fencing, promotion, warm-up, traffic steering, client reconnection, and verification. If the target is 15 minutes and you reserve 3 minutes for uncertainty and communication, the remaining phases might be allocated 2 + 2 + 3 + 2 + 3 minutes, but those numbers are **Inference** for an interview scenario. The important follow-up is whether each phase has been measured in a game day. A control-plane API returning success is not evidence that data-plane traffic, credentials, queues, and dependencies are ready.
 
-### H2. Calculate survivor demand and RPO honestly
+### J2. Calculate survivor demand and RPO honestly
 
 Suppose each region normally serves 3,000 requests per second, traffic is split evenly, and a region loss sends all 6,000 requests to the survivor. With 10% retry amplification and 15% cache-miss or recovery overhead, demand is approximately `6,000 * 1.10 * 1.15 = 7,590 requests per second`. If tested survivor capacity is 7,000, the design needs priority shedding, a pre-warmed capacity increase, or a lower recovery promise. Do not hide the gap behind “autoscaling”; scaling latency and quota availability are part of the RTO.
 
 RPO is not just replication lag. Include acknowledged writes not yet durable in the survivor, in-flight payment calls, queued messages, and client retries. If the required RPO is 30 seconds but observed replication lag reaches 45 seconds, the design is out of contract before a failure occurs. Promotion then requires a business decision: pause writes, accept bounded data loss, or restore from a more recent durable source. Idempotency keys and reconciliation may reduce duplicate effects, but they do not magically recover missing data.
 
-### H3. Fencing, traffic steering, and provider boundaries
+### J3. Fencing, traffic steering, and provider boundaries
 
 Fencing must be authoritative. A failed health check, lost route, or operator timeout does not prove the old writer stopped. Use a lease, quorum, revoked credential, disabled endpoint, or storage-level writer ownership mechanism whose success and failure semantics are observable. Record the fencing acknowledgement and test the case where the old region is partitioned but still able to serve some clients. If evidence is ambiguous, the safe mode is to stop writes or serve explicitly degraded reads.
 
 AWS and GCP provide multiple regional, global, DNS, and load-balancing mechanisms, but product scope and health semantics differ. **Vendor terminology** identifies the mechanism; **Inference** determines whether it meets this service’s RTO/RPO and state-ownership contract. Verify propagation, health-check source, connection behavior, quotas, address scope, and billing in the selected provider and region. A global front door can successfully redirect packets to a secondary that is still stale, under-sized, or unauthorized.
 
-### H4. Ownership, rollback, and failback
+### J4. Ownership, rollback, and failback
 
 The application or data owner decides whether writes may stop and what data loss is acceptable. The platform/network owner controls steering, endpoint, DNS, and capacity transitions. The database or storage owner controls promotion and fencing. Incident leadership coordinates evidence, customer communication, and the decision record. These roles must be identified before the incident; otherwise the person with access becomes the de facto authority.
 
 Rollback after promotion is a new failover, not a simple undo. First establish the authoritative writer, reconcile or discard divergent writes, re-establish replication, and prove the original region is safe. Keep traffic on the survivor until the former primary is fenced against stale sessions and its capacity is validated. Define a failback gate that includes data consistency, replication direction, client cache behavior, and a measured observation period. A rapid oscillation between regions can be worse than a long controlled degradation.
 
-### H5. Follow-up interview questions and substantive answers
+### J5. Follow-up interview questions and substantive answers
 
 1. **The secondary is healthy and has fresh replicas, but fencing the primary cannot be confirmed. What do you do?**
 
@@ -156,9 +238,13 @@ Rollback after promotion is a new failover, not a simple undo. First establish t
 
    **Answer:** Show that state semantics, conflict resolution, capacity, latency, and operational testing support multi-writer behavior. Active-active may reduce steering time and use capacity efficiently, but it increases consistency and debugging complexity. Active-passive may be safer for a single writer with clear fencing, even if idle capacity costs more. The choice follows measured RTO/RPO and ownership ability, not a generic “active-active is more available” claim.
 
-## I. References and evidence labels
+## K. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS disaster recovery guidance](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html).
+- **Fact / Vendor terminology:** [AWS Route 53 health checks](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks.html).
+- **Fact / Vendor terminology:** [AWS Route 53 routing policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html).
+- **Fact / Vendor terminology:** [Google Cloud DNS zones](https://cloud.google.com/dns/docs/zones).
+- **Fact / Vendor terminology:** [Google Cloud DNS record management](https://cloud.google.com/dns/docs/records).
 - **Fact / Vendor terminology:** [Amazon Route 53 routing policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html).
 - **Fact / Vendor terminology:** [Google Cloud architecture framework: reliability](https://cloud.google.com/architecture/framework/reliability).
 - **Fact / Vendor terminology:** [Google Cloud global load balancing](https://cloud.google.com/load-balancing/docs/).

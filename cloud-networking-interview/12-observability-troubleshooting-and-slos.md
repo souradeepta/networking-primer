@@ -36,7 +36,88 @@ AWS CloudWatch, VPC Flow Logs, Elastic Load Balancing logs, and X-Ray are **Vend
 
 **Inference:** a “no record” result is weak evidence until you verify that logging was enabled, the interval has arrived, the query uses the translated address or correct resource, and the source is within the telemetry’s coverage. Interviewers value that caveat because it prevents false closure.
 
-## D. Worked scenario and SLO calculation
+## D. AWS setup and use
+
+Use an existing lab VPC and an existing CloudWatch log group. This example shows how to verify VPC Flow Logs, inspect an ALB’s access-log setting, and query recent records without enabling broad telemetry blindly. The learner needs `AWS_PROFILE`, `AWS_REGION`, permission to describe EC2 and ELBv2 resources, and CloudWatch Logs read access. Enabling flow or access logs requires additional permissions and may incur ingestion, storage, and analysis charges. Review [VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html), [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Analyzing起Logs.html), and the service’s current logging documentation.
+
+```bash
+export AWS_PROFILE="AWS_PROFILE"
+export AWS_REGION="AWS_REGION"
+export AWS_VPC_ID="vpc-EXAMPLE"
+export AWS_ALB_ARN="arn:aws:elasticloadbalancing:AWS_REGION:AWS_ACCOUNT_ID:loadbalancer/app/northstar/EXAMPLE"
+export AWS_LOG_GROUP="/aws/networking/northstar-lab"
+
+# Read-only coverage checks: identify active flow logs and ALB attributes.
+aws ec2 describe-flow-logs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filter Name=resource-id,Values="$AWS_VPC_ID" \
+  --query 'FlowLogs[].{Id:FlowLogId,Status:FlowLogStatus,Destination:LogDestination,Traffic:TrafficType}'
+aws elbv2 describe-load-balancer-attributes --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --load-balancer-arn "$AWS_ALB_ARN"
+aws logs describe-log-groups --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --log-group-name-prefix "$AWS_LOG_GROUP"
+```
+
+If the lab owner has approved the cost and retention, create a flow log using a pre-created IAM role and log group. Do not copy this into a production account without reviewing the data classification and retention policy:
+
+```bash
+# Mutating and potentially billable: use only a lab VPC and approved role.
+aws ec2 create-flow-logs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --resource-type VPC --resource-ids "$AWS_VPC_ID" --traffic-type ALL \
+  --log-destination-type cloud-watch-logs --log-group-name "$AWS_LOG_GROUP" \
+  --deliver-logs-permission-arn "FLOW_LOG_ROLE_ARN"
+
+# Query accepted/rejected network records after the delivery interval.
+aws logs start-query --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --log-group-name "$AWS_LOG_GROUP" --start-time START_EPOCH --end-time END_EPOCH \
+  --query-string 'fields @timestamp,srcAddr,dstAddr,dstPort,action | filter dstPort = 443 | stats count() by action,srcAddr,dstAddr'
+```
+
+The query returns a query ID; retrieve it with `aws logs get-query-results`. Expected evidence is a log-delivery status of `ACTIVE`, records whose five-tuple and timestamps match the incident, and a second signal such as ALB access logs, target logs, or a trace. A flow record cannot prove an HTTP response. Cleanup is to stop the test query, remove the lab flow log, and apply the approved log-group retention/deletion policy; preserve incident evidence before retention cleanup. **AWS troubleshooting follow-up:** “No rejected flow records exist, so the firewall is innocent—agree?” Ask whether flow logs covered the correct VPC/ENI, whether the record interval arrived, whether the failure occurred at TLS or HTTP, and whether NAT or proxy translation changed the tuple. See [VPC Flow Logs record examples](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-records.html).
+
+## E. GCP setup and use
+
+Use an existing VPC subnet and a dedicated lab log bucket or project log view. GCP VPC Flow Logs are enabled at subnet scope in many configurations, while load-balancer and application logs are controlled by the selected product. The learner needs `PROJECT_ID`, `REGION`, `SUBNET_NAME`, and Logging Viewer permissions; enabling logs or changing sampling/metadata can increase cost and data exposure. Review [GCP VPC Flow Logs](https://cloud.google.com/vpc/docs/flow-logs), [Cloud Logging queries](https://cloud.google.com/logging/docs/view/logs-explorer-interface), and the selected load balancer’s logging guide.
+
+```bash
+export PROJECT_ID="PROJECT_ID"
+export REGION="REGION"
+export SUBNET_NAME="northstar-subnet"
+export GCP_BACKEND="northstar-http-backend"
+gcloud config set project "$PROJECT_ID"
+
+# Read-only baseline: inspect subnet logging and backend logging state.
+gcloud compute networks subnets describe "$SUBNET_NAME" --region "$REGION" \
+  --project "$PROJECT_ID" --format='yaml(name,ipCidrRange,enableFlowLogs,logConfig,network)'
+gcloud compute backend-services describe "$GCP_BACKEND" --global \
+  --project "$PROJECT_ID" --format='yaml(name,logConfig,healthChecks,protocol)'
+gcloud logging read \
+  'resource.type="gce_subnetwork" AND logName:"vpc_flows"' \
+  --project "$PROJECT_ID" --limit 10 \
+  --format='table(timestamp,resource.labels.subnetwork_name,jsonPayload.connection.src_ip,jsonPayload.connection.dest_port)'
+```
+
+For a disposable lab subnet, enable flow logs with a bounded sampling setting and metadata choice. The exact flags are provider- and release-dependent, so check `gcloud compute networks subnets update --help` first:
+
+```bash
+# Mutating and potentially billable; use only the named lab subnet.
+gcloud compute networks subnets update "$SUBNET_NAME" --region "$REGION" \
+  --enable-flow-logs --logging-flow-sampling=0.5 \
+  --logging-metadata=INCLUDE_ALL_METADATA --project "$PROJECT_ID"
+
+# Search a narrow time window and resource, then correlate with LB/application logs.
+gcloud logging read \
+  'resource.type="gce_subnetwork" AND resource.labels.subnetwork_name="northstar-subnet"' \
+  --project "$PROJECT_ID" --freshness=15m --limit 50 \
+  --format='table(timestamp,jsonPayload.connection.src_ip,jsonPayload.connection.dest_ip,jsonPayload.bytes_sent)'
+gcloud logging read \
+  'resource.type="http_load_balancer" AND httpRequest.status>=500' \
+  --project "$PROJECT_ID" --freshness=15m --limit 20 \
+  --format='table(timestamp,httpRequest.requestUrl,httpRequest.status,httpRequest.latency)'
+```
+
+Expected evidence is a subnet with flow logging enabled, records that cover the correct interface and time, and a load-balancer record or trace that explains whether the failure was before or after HTTP handling. Sampling means absence is not proof of absence. For rollback, disable flow logs on the lab subnet, restore the previous sampling/metadata configuration, and retain only the approved incident artifacts. **GCP troubleshooting follow-up:** “VPC Flow Logs show bytes, but users see 503.” Ask which load-balancer backend generated the 503, whether flow records are sampled, whether health checks and backend logs agree, and whether the query is filtering the correct global/regional resource. A byte count does not prove a successful application response.
+
+## F. Worked scenario and SLO calculation
 
 Fictional `search.example.test` serves 2,000,000 requests in a seven-day window. Its availability SLO counts a request as good only when the client receives a valid response within 800 ms. The service recorded 18,000 failures and 42,000 slow responses. If each event is mutually exclusive, bad events are 60,000 and the observed availability is `(2,000,000 - 60,000) / 2,000,000 = 97%`. A 99.9% target permits 2,000 bad events, so the budget is exceeded by 58,000 events. If failures and slow responses overlap, use request IDs to deduplicate rather than add them.
 
@@ -74,7 +155,7 @@ sequenceDiagram
     O-->>O: Correlate timestamps and IDs
 ```
 
-## E. Failure, evidence, and falsifiers
+## G. Failure, evidence, and falsifiers
 
 | Hypothesis | Evidence | Falsifier |
 |---|---|---|
@@ -86,19 +167,19 @@ sequenceDiagram
 
 The falsifier is part of the hypothesis, not an afterthought. If no test could change your mind, you have a narrative rather than a diagnosis.
 
-## F. Exercises
+## H. Exercises
 
-### F1. Timed whiteboard: evidence architecture
+### H1. Timed whiteboard: evidence architecture
 
 In 25 minutes, design observability for a private API crossing a cloud load balancer, service mesh proxy, and database. Mark where request IDs are created and propagated, where source addresses change, which signals are sampled, and who owns each dashboard. Follow up by asking how you detect a dropped SYN, a rejected policy decision, a slow dependency, and a missing log export. A strong answer states the blind spot at every layer.
 
-### F2. Evidence-led incident review
+### H2. Evidence-led incident review
 
 A regional latency SLO burned 30% of its monthly budget in 12 minutes. Construct a timeline from resolver logs, flow records, load-balancer access records, backend traces, and deployment events. Rank three hypotheses and define one falsifier for each. Finish with a change gate: pause rollout, preserve evidence, communicate impact, and resume only when the metric returns to a defined range for a defined window.
 
-## G. Interview questions and direct answers
+## I. Interview questions and direct answers
 
-### G1. SDE2 questions
+### I1. Mechanism-focused questions
 
 1. **What does an accepted flow record prove?**
 
@@ -116,7 +197,7 @@ A regional latency SLO burned 30% of its monthly budget in 12 minutes. Construct
 
    **Answer:** It names a boundary, predicts observable evidence, and includes a falsifier. For example, “zone B backend saturation caused the p95 increase” predicts zone-specific queueing and backend latency; balanced saturation would weaken that hypothesis.
 
-### G2. Staff-level questions
+### I2. Leadership and trade-off questions
 
 5. **How would you standardize network observability across teams?**
 
@@ -126,33 +207,33 @@ A regional latency SLO burned 30% of its monthly budget in 12 minutes. Construct
 
    **Answer:** Start from decisions and SLOs, then collect the minimum fields and resolution needed to make them. Use tiered retention, sampling that preserves rare failures, aggregation for high-cardinality dimensions, and access controls. Review cost against diagnostic value and test that sampling still preserves the failure classes that matter.
 
-## H. Advanced design review: evidence quality, SLO math, and diagnostic ownership
+## J. Advanced design review: evidence quality, SLO math, and diagnostic ownership
 
-### H1. Turn symptoms into measurable hypotheses
+### J1. Turn symptoms into measurable hypotheses
 
 The first Staff-level move in a networking incident is to define the affected operation and cohort. “The network is slow” should become something such as: `checkout.create` p95 from North America increased from 320 ms to 780 ms between 10:05 and 10:17 UTC, with 3% 504s, while read traffic stayed within its baseline. This statement identifies a service-level indicator, percentile, window, geography, and comparison. It also leaves room for several hypotheses: DNS latency, edge queueing, backend saturation, dependency delay, retransmission, or a rollout.
 
 Build a hypothesis-evidence-falsifier table before changing a control. For “zone C is overloaded,” predict zone-specific queueing, connection count, backend latency, and retries. Balanced zone metrics falsify or weaken it. For “DNS caused the incident,” compare resolver timing and answers for affected clients with a control population; a stable answer and low lookup latency weaken the claim. For “policy dropped return traffic,” inspect both directions and a controlled flow; an accepted flow with a complete application response falsifies that specific path hypothesis.
 
-### H2. Calculate error budgets and measurement limits
+### J2. Calculate error budgets and measurement limits
 
 For a 99.95% monthly availability SLO in a 30-day month, the nominal error budget is `30 * 24 * 60 * 0.0005 = 21.6` minutes. If a regional latency event consumes 30% of the monthly budget, it represents about 6.48 minutes of equivalent budget, but only if the SLO defines latency failures as eligible bad events and the burn-rate window is comparable. Do not silently convert request errors, latency violations, and user impact into the same unit.
 
 Percentiles are also contracts. A p99 over a small cohort may be unstable; an average can hide a severe tail; a sampled flow log may omit the very packet loss under investigation. State sample rate, aggregation key, clock source, and missing-data treatment. If telemetry delivery is delayed by two minutes, a live dashboard cannot establish a minute-by-minute causal sequence without correction. **Inference:** an observation is useful only relative to its coverage, delay, and semantic boundary.
 
-### H3. Design an evidence architecture with cost and privacy boundaries
+### J3. Design an evidence architecture with cost and privacy boundaries
 
 Every signal should have an owner, retention class, access policy, cardinality budget, and documented query purpose. Flow records can answer whether a source-destination tuple was observed, but may omit payload, TLS outcome, or application status. Load-balancer logs can identify listener and backend decisions, but may not show client-side DNS or a downstream timeout. Traces can connect spans across services, but sampling may exclude rare failures and network devices may not propagate the trace context.
 
 Use stable correlation fields where privacy permits: request ID, trace ID, deployment revision, zone, and a hashed or bounded tenant dimension. Avoid logging credentials, full payloads, or unbounded user identifiers. A Staff design explains how to diagnose without exposing sensitive data and how retention supports incident review. Cost is part of the design: retain high-resolution data briefly for diagnosis, aggregate longer-lived trends, and sample in a way that preserves rare error classes rather than only the common success path.
 
-### H4. Ownership, rollback, and evidence preservation
+### J4. Ownership, rollback, and evidence preservation
 
 The service owner is accountable for the user SLO and application semantics. The network or platform owner is accountable for route, policy, load-balancer, DNS, and telemetry contracts. Security and privacy owners define allowable fields and access. During an incident, the incident commander owns sequencing and communication, not every technical decision. Record who can declare a rollback, who can pause a rollout, and who can approve a temporary evidence change.
 
 Rollback can destroy evidence: replacing a proxy version may remove the failing logs, and changing a route may eliminate the comparison path. First preserve relevant dashboards, configuration versions, timestamps, and representative request IDs. Then reduce blast radius with a canary, traffic split, or feature gate. Define stop conditions such as a second consecutive window above the error budget burn threshold, unexplained loss of trace coverage, or a new cohort showing materially worse p99. Restoration is not complete until telemetry confirms the original failure mode is gone and the causal explanation is recorded.
 
-### H5. Follow-up interview questions and substantive answers
+### J5. Follow-up interview questions and substantive answers
 
 1. **Flow logs show accepted connections, but users report TLS failures. What does the evidence prove?**
 
@@ -166,10 +247,13 @@ Rollback can destroy evidence: replacing a proxy version may remove the failing 
 
    **Answer:** It measures an outcome that service teams recognize, defines eligibility and exclusions, identifies the platform boundary, and has an owner for remediation. “Load balancer up” is weaker than successful, correctly routed requests within latency and availability objectives. A platform may publish component indicators, but it should connect them to customer journeys and show which team can act when the budget burns.
 
-## I. References and evidence labels
+## K. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html).
 - **Fact / Vendor terminology:** [AWS Elastic Load Balancing access logs](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html).
+- **Fact / Vendor terminology:** [AWS CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Analyzing-Log-Data.html).
+- **Fact / Vendor terminology:** [Google Cloud VPC Flow Logs](https://cloud.google.com/vpc/docs/flow-logs).
+- **Fact / Vendor terminology:** [Google Cloud load-balancer logging](https://cloud.google.com/load-balancing/docs/logging).
 - **Fact / Vendor terminology:** [Google Cloud VPC Flow Logs](https://cloud.google.com/vpc/docs/flow-logs).
 - **Fact / Vendor terminology:** [Google Cloud Load Balancing logging and monitoring](https://cloud.google.com/load-balancing/docs/logging-monitoring).
 - **Inference method:** [Observability and troubleshooting](../book/12-observability-and-troubleshooting.md).

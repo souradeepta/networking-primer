@@ -124,7 +124,7 @@ A consumer’s private DNS name resolves to a private address, but requests time
 
    **Answer:** Compare the required reachability graph, service count, protocol diversity, ownership, isolation, route scale, failure domains, cost, and policy complexity. Transit can reduce endpoint sprawl but centralizes blast radius. Private endpoints reduce route exposure but add lifecycle and quota management. Make the decision reversible where practical and document the boundary.
 
-### Staff follow-up
+### Leadership follow-up
 
 Ask: “A business unit wants every consumer connected to the producer network for convenience.” A Staff answer should challenge the requirement, offer a service contract, quantify blast radius and operational cost, define exceptions for genuine network-level needs, and establish an exit path. It should include the customer experience of onboarding and revocation, not only packet reachability.
 
@@ -168,6 +168,161 @@ Blast radius depends on whether the endpoint, service attachment, DNS zone, back
 
 **Answer:** Stop new onboarding or narrow producer acceptance, preserve existing consumers until the replacement is proven, shift a canary through the previous endpoint or versioned name, and verify health, identity, and traffic. Then revoke or delete in dependency order. The rollback must account for cached DNS, open connections, consumer retries, and any credentials or data exposed during the bad version.
 
+## J. AWS setup and use
+
+AWS PrivateLink separates a producer’s service from a consumer’s VPC. The producer publishes an approved Network Load Balancer through an endpoint service; the consumer creates an interface VPC endpoint in selected subnets. Read the [AWS PrivateLink concepts](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html) and [interface endpoint access guide](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html) before attempting this flow. **Cost and state warning:** endpoint services, interface endpoints, load balancers, cross-AZ traffic, and data processing may incur charges. These commands mutate cloud state; use two sandbox accounts or clearly separated test VPCs and never publish a production NLB by accident.
+
+### J.1 Prerequisites and producer setup
+
+The producer needs permission to describe an existing NLB and create or modify an endpoint service. `NLB_ARN` must identify a test NLB whose listener and target group are already approved. The consumer needs permission to create, describe, and delete interface endpoints and security groups. Keep producer and consumer account IDs explicit; do not use a broad `*` principal.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export PRODUCER_VPC_ID=PRODUCER_VPC_ID
+export CONSUMER_VPC_ID=CONSUMER_VPC_ID
+export NLB_ARN=NLB_ARN
+export CONSUMER_SUBNET_ID=CONSUMER_SUBNET_ID
+export CONSUMER_SECURITY_GROUP_ID=CONSUMER_SECURITY_GROUP_ID
+export CONSUMER_ACCOUNT_ID=CONSUMER_ACCOUNT_ID
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws elbv2 describe-load-balancers --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --load-balancer-arns "$NLB_ARN" \
+  --query 'LoadBalancers[0].{Arn:LoadBalancerArn,Type:Type,State:State.Code,Vpc:VpcId,Scheme:Scheme}'
+
+aws ec2 create-vpc-endpoint-service-configuration \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --network-load-balancer-arns "$NLB_ARN" \
+  --acceptance-required \
+  --tag-specifications 'ResourceType=vpc-endpoint-service,Tags=[{Key=Name,Value=interview-private-service}]'
+```
+
+Save the returned `ServiceId` as `VPC_ENDPOINT_SERVICE_ID`. The producer should then allow only the intended consumer account and inspect the service state:
+
+```bash
+export VPC_ENDPOINT_SERVICE_ID=VPC_ENDPOINT_SERVICE_ID
+aws ec2 modify-vpc-endpoint-service-permissions \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --service-id "$VPC_ENDPOINT_SERVICE_ID" \
+  --add-allowed-principals "arn:aws:iam::$CONSUMER_ACCOUNT_ID:root"
+aws ec2 describe-vpc-endpoint-service-configurations \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --service-ids "$VPC_ENDPOINT_SERVICE_ID" \
+  --query 'ServiceConfigurations[0].{Service:ServiceId,State:State,Acceptance:AcceptanceRequired,NetworkLoadBalancers:NetworkLoadBalancerArns,Allowed:AllowedPrincipals}'
+```
+
+### J.2 Consumer setup, use, and verification
+
+From the consumer context, create an interface endpoint in a test subnet. The endpoint security group must allow the consumer’s test client to reach the service listener port; it is not a substitute for producer-side target health or service authorization.
+
+```bash
+export SERVICE_NAME=com.amazonaws.vpce.$AWS_REGION.vpce-svc-VPC_ENDPOINT_SERVICE_SUFFIX
+
+aws ec2 create-vpc-endpoint --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-id "$CONSUMER_VPC_ID" --vpc-endpoint-type Interface \
+  --service-name "$SERVICE_NAME" --subnet-ids "$CONSUMER_SUBNET_ID" \
+  --security-group-ids "$CONSUMER_SECURITY_GROUP_ID" \
+  --private-dns-enabled false \
+  --tag-specifications 'ResourceType=vpc-endpoint,Tags=[{Key=Name,Value=interview-consumer-endpoint}]'
+export VPC_ENDPOINT_ID=VPC_ENDPOINT_ID
+
+aws ec2 describe-vpc-endpoints --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-endpoint-ids "$VPC_ENDPOINT_ID" \
+  --query 'VpcEndpoints[0].{Id:VpcEndpointId,State:State,Service:ServiceName,Vpc:VpcId,Subnets:SubnetIds,ENIs:NetworkInterfaceIds,Dns:DnsEntries}'
+aws ec2 describe-vpc-endpoint-connections --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=service-id,Values=$VPC_ENDPOINT_SERVICE_ID"
+```
+
+The producer accepts the pending connection before a consumer test is expected to work. Use the endpoint-specific DNS name or a deliberately configured private name, then test the actual service protocol from an approved consumer workload. Expected evidence is an `Available` endpoint, an accepted endpoint connection, healthy NLB targets, endpoint ENIs in the intended subnet, a permitted security-group path, and a matching producer request log. A resolved endpoint name alone proves neither acceptance nor target health.
+
+### J.3 Cleanup, rollback, and AWS troubleshooting follow-up
+
+```bash
+aws ec2 delete-vpc-endpoints --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-endpoint-ids "$VPC_ENDPOINT_ID"
+aws ec2 delete-vpc-endpoint-service-configurations \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --service-ids "$VPC_ENDPOINT_SERVICE_ID"
+```
+
+Before deletion, reject or remove consumer connections and confirm no test client depends on the endpoint. A production rollback usually starts by stopping new acceptance or shifting a versioned service name, then removes the endpoint service only after consumers migrate. **Question:** the AWS interface endpoint is `Available`, but calls fail. **Answer:** I check the endpoint connection acceptance, endpoint ENI security group, consumer route and DNS choice, NLB listener and target health, producer-side authorization, and whether the source address seen by the producer changed. PrivateLink availability is control-plane evidence, not proof of an accepted application request.
+
+## K. GCP setup and use
+
+Google Cloud Private Service Connect (PSC) uses a producer service attachment and a consumer endpoint forwarding rule. See [Private Service Connect](https://cloud.google.com/vpc/docs/private-service-connect) and the [service-attachment CLI reference](https://cloud.google.com/sdk/gcloud/reference/compute/service-attachments/create). **Cost and state warning:** PSC endpoints, producer load balancers, forwarding rules, and cross-region traffic may incur charges. Use a sandbox project or isolated networks; the producer and consumer commands may require different IAM principals and projects.
+
+### K.1 Producer setup and verification
+
+The producer must have a regional internal forwarding rule backed by an approved internal load balancer. `PRODUCER_FORWARDING_RULE` and `REGION` are placeholders, not commands to discover or expose a production service.
+
+```bash
+export PRODUCER_PROJECT_ID=PRODUCER_PROJECT_ID
+export CONSUMER_PROJECT_ID=CONSUMER_PROJECT_ID
+export REGION=REGION
+export PRODUCER_FORWARDING_RULE=PRODUCER_FORWARDING_RULE
+export SERVICE_ATTACHMENT_NAME=interview-service-attachment
+export CONSUMER_PROJECT_NUMBER=CONSUMER_PROJECT_NUMBER
+
+gcloud auth list
+gcloud config set project "$PRODUCER_PROJECT_ID"
+gcloud compute forwarding-rules describe "$PRODUCER_FORWARDING_RULE" \
+  --project="$PRODUCER_PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,IPAddress,IPProtocol,loadBalancingScheme,network,subnetwork,target)'
+gcloud compute service-attachments create "$SERVICE_ATTACHMENT_NAME" \
+  --project="$PRODUCER_PROJECT_ID" --region="$REGION" \
+  --producer-forwarding-rule="$PRODUCER_FORWARDING_RULE" \
+  --connection-preference=ACCEPT_MANUAL \
+  --consumer-accept-list="$CONSUMER_PROJECT_NUMBER=1" \
+  --nat-subnets=PRODUCER_NAT_SUBNET_NAME
+```
+
+Save the service attachment URI as `SERVICE_ATTACHMENT_URI`. The exact consumer acceptance and NAT-subnet requirements depend on the PSC service type; verify them for the selected load balancer. The producer should inspect the attachment before onboarding a consumer:
+
+```bash
+gcloud compute service-attachments describe "$SERVICE_ATTACHMENT_NAME" \
+  --project="$PRODUCER_PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,connectionPreference,consumerAcceptLists,connectedEndpoints,natSubnets,producerForwardingRule)'
+```
+
+### K.2 Consumer setup, use, and verification
+
+The consumer reserves an address in its VPC and creates a regional forwarding rule targeting the service attachment. The endpoint address is private to the consumer network; DNS still needs to map an application name to it.
+
+```bash
+export NETWORK_NAME=CONSUMER_NETWORK_NAME
+export SUBNET_NAME=CONSUMER_SUBNET_NAME
+export PSC_ADDRESS_NAME=interview-psc-address
+export PSC_ENDPOINT_NAME=interview-psc-endpoint
+export SERVICE_ATTACHMENT_URI=SERVICE_ATTACHMENT_URI
+
+gcloud config set project "$CONSUMER_PROJECT_ID"
+gcloud compute addresses create "$PSC_ADDRESS_NAME" --project="$CONSUMER_PROJECT_ID" \
+  --region="$REGION" --subnet="$SUBNET_NAME" --purpose=PRIVATE_SERVICE_CONNECT
+gcloud compute forwarding-rules create "$PSC_ENDPOINT_NAME" \
+  --project="$CONSUMER_PROJECT_ID" --region="$REGION" \
+  --network="$NETWORK_NAME" --address="$PSC_ADDRESS_NAME" \
+  --target-service-attachment="$SERVICE_ATTACHMENT_URI"
+gcloud compute forwarding-rules describe "$PSC_ENDPOINT_NAME" \
+  --project="$CONSUMER_PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,IPAddress,network,subnetwork,pscConnectionId,pscConnectionStatus,target)'
+```
+
+Expected evidence is an accepted PSC connection, a usable endpoint IP, a matching consumer route and firewall decision, producer target health, and a successful protocol request from the intended consumer. Verify source identity and DNS separately; PSC is service-oriented and does not automatically grant access to the producer’s entire VPC.
+
+### K.3 Cleanup, rollback, and GCP troubleshooting follow-up
+
+```bash
+gcloud compute forwarding-rules delete "$PSC_ENDPOINT_NAME" \
+  --project="$CONSUMER_PROJECT_ID" --region="$REGION"
+gcloud compute addresses delete "$PSC_ADDRESS_NAME" \
+  --project="$CONSUMER_PROJECT_ID" --region="$REGION"
+gcloud compute service-attachments delete "$SERVICE_ATTACHMENT_NAME" \
+  --project="$PRODUCER_PROJECT_ID" --region="$REGION"
+```
+
+Delete only after confirming that no consumer uses the endpoint. For rollback, change the consumer’s versioned DNS record or route to a known-good endpoint, then remove the PSC objects after connection draining. **Question:** the GCP PSC endpoint has an IP but the request is rejected. **Answer:** I inspect `pscConnectionStatus`, producer accept lists, service-attachment NAT subnet capacity, endpoint and producer firewall rules, forwarding-rule target and region, DNS, and load-balancer target health. An allocated private IP is not evidence that the producer accepted or served the connection.
+
 ## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS PrivateLink concepts](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html).
@@ -175,5 +330,6 @@ Blast radius depends on whether the endpoint, service attachment, DNS zone, back
 - **Fact / Vendor terminology:** [Google Cloud Private Service Connect](https://cloud.google.com/vpc/docs/private-service-connect).
 - **Inference method:** [Cloud networking primitives](../book/topics/37-cloud-networking-primitives.md).
 - **Inference method:** [Addressing, subnetting, and routing](../book/02-addressing-subnetting-routing.md).
+- **Provider setup:** [AWS PrivateLink concepts](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html) and [Google Cloud Private Service Connect](https://cloud.google.com/vpc/docs/private-service-connect).
 
 Provider concepts are labeled **Fact** or **Vendor terminology**; design conclusions are **Inference**. Verify endpoint type, source visibility, acceptance, DNS, regional scope, supported protocols, quotas, and pricing in current official documentation for the selected account, project, region, and release.

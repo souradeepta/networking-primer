@@ -65,15 +65,81 @@ sequenceDiagram
     C-->>I: Revised design and trade-off
 ```
 
-## D. Mock loop one: private multi-tenant platform
+## D. AWS setup and use
 
-### C1. Interview prompt and expected framing
+The following is a deliberately small interview lab, not a production recipe. It demonstrates how to turn the portable design into AWS operations: select a named profile and Region, create a tagged VPC, inspect the resulting route and policy state, and explain which additional resources would be needed for a real service. The commands are illustrative and may create billable resources; use an account dedicated to learning and a budget alert.
+
+**Prerequisites:** AWS CLI v2, an authenticated role with narrowly scoped EC2 read/create permissions, a chosen Region, and permission to create and later delete a VPC. Prefer SSO or short-lived role credentials. Do not paste access keys into a document or shell history.
+
+```bash
+export AWS_PROFILE=training
+export AWS_REGION=us-west-2
+export AWS_PAGER=""
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-regions --profile "$AWS_PROFILE" --region "$AWS_REGION" --query 'Regions[?RegionName==`us-west-2`].RegionName'
+aws ec2 create-vpc --cidr-block 10.40.0.0/16 \
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=interview-lab}]' \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION"
+```
+
+Capture the returned VPC ID as `VPC_ID`; do not infer it from a name. In a real lab, continue by creating one subnet, associating a route table, and applying a security group whose inbound rule allows only the test listener from a known source. For a private-service design, discuss an interface endpoint or endpoint service after confirming the producer/consumer contract, endpoint policy, private DNS, Region support, and acceptance workflow. For a Kubernetes design, map the same reasoning to EKS, its subnet and security-group requirements, cluster identity, and pod egress path rather than blindly copying a VPC diagram.
+
+```bash
+aws ec2 describe-vpcs --vpc-ids "$VPC_ID" --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --query 'Vpcs[0].{VpcId:VpcId,Cidr:CidrBlock,State:State,Tags:Tags}'
+aws ec2 describe-route-tables --filters "Name=vpc-id,Values=$VPC_ID" \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION"
+aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$VPC_ID" \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION"
+```
+
+The evidence for an interview answer is the resource ID, route-table association, effective security-group rule, and service-specific health or access log—not merely a successful create call. A provider-specific follow-up is: “The endpoint exists, but the application still fails. Which AWS evidence separates DNS, route, security-group, endpoint-policy, and IAM failure?” A strong answer names one observation and falsifier for each boundary. Cleanup must be dependency-aware: remove test endpoints, instances, gateways, and subnets before deleting the VPC, and verify the account has no remaining lab resources.
+
+## E. GCP setup and use
+
+The same interview lab can be expressed with Google Cloud CLI. The important distinction is that the project is a billing and quota boundary while a VPC network can be global and its subnets regional. Use a named `gcloud` configuration, explicit project and region flags, and a disposable project where possible.
+
+**Prerequisites:** Google Cloud CLI, an authenticated user or impersonated service account, a selected project with billing enabled, Compute Network Admin or narrower equivalent permissions, and APIs enabled only when needed.
+
+```bash
+export CLOUDSDK_CONFIG=./.gcloud-interview-lab
+export PROJECT_ID=training-project-placeholder
+export REGION=us-west1
+gcloud config configurations create interview-lab
+gcloud config set project "$PROJECT_ID"
+gcloud config set compute/region "$REGION"
+gcloud config list
+gcloud services enable compute.googleapis.com --project "$PROJECT_ID"
+gcloud compute networks create interview-lab --subnet-mode=custom --project "$PROJECT_ID"
+gcloud compute networks subnets create app-west \
+  --network=interview-lab --region="$REGION" --range=10.50.0.0/20 \
+  --project="$PROJECT_ID"
+```
+
+Verify the global network and regional subnet separately. For a private service, explain whether the design calls for Private Service Connect, peering, or a routed hybrid connection; then verify the producer attachment, consumer endpoint, DNS name, firewall policy, and API authorization independently. For a GKE answer, map the cluster, subnet, secondary ranges, firewall policy, workload identity, and load-balancer controller as separate state owners.
+
+```bash
+gcloud compute networks describe interview-lab --project "$PROJECT_ID"
+gcloud compute networks subnets describe app-west --region "$REGION" --project "$PROJECT_ID"
+gcloud compute routes list --filter="network:interview-lab" --project "$PROJECT_ID"
+gcloud compute firewall-rules list --filter="network:interview-lab" --project "$PROJECT_ID"
+```
+
+The provider-specific follow-up is: “The GCP resource is healthy, but a client in another subnet cannot connect. What do you verify about route scope, firewall target/source, DNS visibility, service attachment or endpoint state, and IAM?” Cleanup is part of the design: delete test endpoints and dependent resources, then the subnet and custom network, or delete the disposable project after confirming no shared resources remain. Treat project deletion as destructive and require an explicit human checkpoint.
+
+## F. Provider-command translation exercise
+
+Take the private multi-tenant prompt below and write a two-column mapping: portable mechanism, AWS command or resource, GCP command or resource, expected evidence, and rollback. The goal is not command memorization. Explain why an AWS VPC/subnet association and a GCP global VPC/regional subnet are different control-plane objects, then state which claims must be checked in current documentation. Score yourself on clarity of prerequisites, least privilege, mutation warning, verification, cleanup, and the ability to name a falsifier.
+
+## G. Mock loop one: private multi-tenant platform
+
+### G1. Interview prompt and expected framing
 
 You are designing a private platform for 40 internal teams. Each team runs services in Kubernetes and must call shared billing and secrets APIs. Teams must not reach one another by default. The platform will be offered on AWS first and may later support GCP. Ask about tenant isolation, service publication, DNS, identity, egress, audit, quotas, and whether shared services need consumer source identity.
 
 A strong opening says that “private” describes exposure, not authorization. Draw team namespaces and cloud network boundaries. Use a stable internal name for each shared service, a service-oriented private publishing mechanism or controlled internal entry point, default-deny network policy, workload federation, and per-team authorization at the API. Keep DNS ownership explicit. If shared services need tenant identity, preserve a signed application identity; do not rely on a source address that may be translated or proxied.
 
-### C2. Design path and trade-offs
+### G2. Design path and trade-offs
 
 The request path is workload -> cluster DNS -> private endpoint or internal load balancer -> shared-service listener -> policy -> backend -> dependency. The return path must be traced separately. A network connection can be available while IAM or application authorization denies the request. A broad peering mesh may seem simple at 40 teams but grows the route, policy, and blast-radius surface. A hub or service-publication pattern centralizes controls but introduces platform dependency and quotas.
 
@@ -81,7 +147,7 @@ Use a team address plan with non-overlapping growth blocks. If each team needs 2
 
 For AWS, mention VPC, EKS integration, internal load-balancing, private service publication, IAM role federation, and flow/access logs as **Vendor terminology**. For GCP, mention VPC, GKE integration, private service publication or internal load balancing, Workload Identity Federation, and flow/access logs as **Vendor terminology**. Keep the comparison on scope, source identity, DNS, approval, quota, and observability. Do not say AWS PrivateLink and GCP Private Service Connect have identical endpoint or billing behavior.
 
-### C3. Interviewer follow-ups and wrong paths
+### G3. Interviewer follow-ups and wrong paths
 
 - **Follow-up:** “A team says its policy is default deny, but it can reach another team.” Ask how policy enforcement is verified, whether labels are mutable, and whether the traffic bypasses the cluster through a cloud entry point.
 - **Follow-up:** “The shared API sees every client from one address.” Ask whether a proxy or NAT translated the source and what authenticated identity the API should use instead.
@@ -90,13 +156,13 @@ For AWS, mention VPC, EKS integration, internal load-balancing, private service 
 - **Wrong path:** Calling a security group or cloud firewall a tenant authorization system. It controls packet reachability, not the entire application decision.
 - **Wrong path:** Solving overlapping CIDRs with hidden NAT and never documenting identity, return paths, or removal criteria.
 
-### C4. Scoring notes
+### G4. Scoring notes
 
 SDE2 performance is strong when the candidate traces one request, identifies the policy and identity gates, and explains a test. Staff performance requires a platform contract, exception process, quota model, ownership, cost allocation, and migration path. Deduct for unqualified provider equivalence or for assuming private reachability means safe access.
 
-## E. Mock loop two: regional checkout recovery
+## H. Mock loop two: regional checkout recovery
 
-### D1. Interview prompt and expected framing
+### H1. Interview prompt and expected framing
 
 An online checkout service runs in two regions. The business requires 99.95% monthly availability, an RTO of 15 minutes, and an RPO of 30 seconds for committed orders. Region A reports elevated errors, but health checks are mixed. Ask whether reads and writes are separate, how replication works, how sessions and payment calls behave, what capacity is available in region B, and how an operator proves fencing.
 
@@ -104,7 +170,7 @@ State that traffic steering, state promotion, and customer readiness are separat
 
 Suppose each region normally serves 3,000 requests per second and loss of A sends all 6,000 to B. Add 10% retry amplification: `6,000 * 1.10 = 6,600`. If B can safely serve only 5,500, state the prioritization or reject the design. Count detection, decision, fencing, promotion, warm-up, steering, and client reconnection inside 15 minutes. If observed replication lag is 45 seconds, the RPO requirement is already violated and promotion requires a business decision or data-loss response.
 
-### D2. Interviewer follow-ups and wrong paths
+### H2. Interviewer follow-ups and wrong paths
 
 - **Follow-up:** “DNS has a 30-second TTL.” Ask about recursive caches, existing connections, client retry behavior, and whether B is actually ready.
 - **Follow-up:** “The health check in A is red.” Ask what it checks, whether it can distinguish read and write safety, and which independent evidence confirms regional loss.
@@ -113,13 +179,13 @@ Suppose each region normally serves 3,000 requests per second and loss of A send
 - **Wrong path:** Promoting B before proving A cannot accept writes.
 - **Wrong path:** Sizing B for normal traffic and ignoring retries, cache misses, replication work, or priority shedding.
 
-### D3. Scoring notes
+### H3. Scoring notes
 
 SDE2 candidates should define RTO/RPO and trace a safe failover sequence. Staff candidates should add game days, evidence ownership, customer communications, legal or residency constraints, error-budget decisions, capacity financing, and a failback plan. Deduct for conflating regional network reachability with service availability.
 
-## F. Mock loop three: hybrid Kubernetes migration
+## I. Mock loop three: hybrid Kubernetes migration
 
-### E1. Interview prompt and expected framing
+### I1. Interview prompt and expected framing
 
 `Northstar` has an on-premises F5 edge and a Kubernetes service using `10.20.0.0/16`. The target cloud network uses the same range. The team wants to migrate without changing the public DNS name and asks for a weekend cutover. Ask about dependency inventory, clients with long-lived connections, certificates, identity, source preservation, traffic symmetry, target CNI, quota, observability, rollback, and who can approve a stop.
 
@@ -127,7 +193,7 @@ Begin with discovery and an overlap-free target such as `10.80.0.0/16`, then sel
 
 Estimate risk from traffic rather than server count. If the service handles 800 requests per second and 5% of requests create long-lived connections, inspect connection age and drain time before cutover. If 40% of clients use connection pools with a 10-minute maximum age, a short DNS TTL will not move those connections immediately. Set a drain and observation window based on measured behavior.
 
-### E2. Interviewer follow-ups and wrong paths
+### I2. Interviewer follow-ups and wrong paths
 
 - **Follow-up:** “The canary has equal success but more latency.” Ask about proxy location, cross-region transfer, MTU, DNS cohort, dependency placement, and payload size.
 - **Follow-up:** “The new path works only when a broad firewall rule is enabled.” Require a minimal rule and evidence that health checks, identity, and return traffic are covered.
@@ -136,11 +202,11 @@ Estimate risk from traffic rather than server count. If the service handles 800 
 - **Wrong path:** Removing the old network immediately after DNS changes.
 - **Wrong path:** Ignoring cloud IP allocation because compute capacity is available.
 
-### E3. Scoring notes
+### I3. Scoring notes
 
 SDE2 performance includes a phased plan, overlap handling, canary, evidence, and rollback. Staff performance adds stakeholder alignment, migration economics, platform standardization, temporary-complexity retirement, and a decision record that makes residual risk visible.
 
-## G. Self-scoring and practice loop
+## J. Self-scoring and practice loop
 
 Score each dimension from 0 to 3: 0 means absent, 1 means named without evidence, 2 means coherent and testable, and 3 means anticipates trade-offs and ownership.
 
@@ -157,9 +223,9 @@ Score each dimension from 0 to 3: 0 means absent, 1 means named without evidence
 
 An SDE2 target is at least 16 of 24 with no zero in request path, failure safety, or evidence. A Staff target is at least 20 of 24, with a 3 in ownership and at least one explicit trade-off. After each loop, write one missed assumption, one missing signal, and one sentence that could be shorter. Repeat the same scenario after 48 hours, then change the provider, traffic shape, or failure domain.
 
-## H. Interview questions and direct answers
+## K. Interview questions and direct answers
 
-### G1. SDE2 questions
+### K1. Interview questions
 
 1. **What should your first five minutes of a cloud design answer contain?**
 
@@ -177,7 +243,7 @@ An SDE2 target is at least 16 of 24 with no zero in request path, failure safety
 
    **Answer:** Calculate survivor demand, including retries, cache misses, and recovery work, then compare it with tested capacity and quotas. Also calculate the RTO phase budget and replication lag against RPO. The exact numbers are less important than visible assumptions.
 
-### G2. Staff-level questions
+### K2. Interview questions
 
 5. **What differentiates a Staff cloud-networking answer from a senior implementation answer?**
 
@@ -195,9 +261,9 @@ An SDE2 target is at least 16 of 24 with no zero in request path, failure safety
 
    **Answer:** Say it is provider-dependent, name the resource and scope, and explain how you would verify it in current documentation or quota tooling. Continue with symbolic variables and headroom calculations. Honest uncertainty with a verification plan is stronger than a confident stale number.
 
-## I. Fourth integrated mock loop: global API edge with identity and telemetry split
+## L. Fourth integrated mock loop: global API edge with identity and telemetry split
 
-### I1. Interview prompt and expected opening
+### L1. Interview prompt and expected opening
 
 An organization runs a multi-tenant API on AWS today and plans to add a GCP region. Customers use HTTPS, the API calls a private fraud service, and a small subset of tenants requires data residency. The current platform has one global hostname, a shared edge, workload federation, private service publication, per-tenant rate limits, and centralized telemetry. During a release, 1% of requests return 401, p99 latency doubles for European tenants, and cost rises sharply because traffic appears to cross regions. The interviewer asks whether the edge, identity, routing, or observability design is at fault.
 
@@ -205,7 +271,7 @@ Do not accept “multi-cloud active-active” as a requirement without clarifyin
 
 Your opening should establish four separate paths: customer DNS and edge entry; edge-to-API routing; API-to-fraud private connectivity; and workload-to-provider identity. Draw the return path for each. Then state assumptions: 4,000 requests per second globally, 60% from Europe, 5% retries during the incident, 20-minute token lifetime, and 30% of fraud calls crossing the region boundary in the current design. Mark these as **Inference** from the prompt rather than facts.
 
-### I2. Design path, calculations, and trade-offs
+### L2. Design path, calculations, and trade-offs
 
 The baseline should prefer tenant-aware regional affinity with an explicit escape path, not indiscriminate global balancing. If Europe normally receives 2,400 requests per second and 5% retries are added, the incident demand is about `2,400 * 1.05 = 2,520 requests/second`. If one European region is lost and the alternate region is tested for 2,800 requests per second, the capacity margin is only 280 requests per second, or about 10%. That margin may disappear with cache misses, fraud-service calls, and connection re-establishment. State what traffic would be shed first: low-priority reads, expensive fraud checks, or new writes.
 
@@ -213,13 +279,13 @@ For p99 latency, decompose the increase into DNS, edge queue, TLS, API queue, fr
 
 The 401 cohort requires a different evidence path. Compare token issuer, audience, subject, expiry, clock skew, edge-to-backend forwarding, and provider audit principal. A load balancer or proxy can preserve a connection while altering headers or source address. If the API sees a valid customer token but the fraud service sees a workload token with the wrong audience, the network is reachable and the authorization boundary is wrong. The remedy is not a wider firewall rule.
 
-### I3. Provider comparison and behavior boundaries
+### L3. Provider comparison and behavior boundaries
 
 Map only the mechanisms needed by the prompt. **Vendor terminology:** AWS and GCP each offer global or regional traffic-entry products, workload identity mechanisms, private service publication, flow/load-balancer logs, and quota systems. **Fact:** the selected product documentation defines its own scope, health semantics, identity fields, limits, and pricing. **Inference:** a portable platform contract should expose tenant placement, source identity, health, telemetry, quota, and rollback semantics without claiming that similarly named services behave identically.
 
 For AWS, ask which edge, regional load balancer, VPC, private endpoint, and workload identity mode are selected. For GCP, ask which global or regional load-balancing path, VPC, private service publication, and GKE identity mode are selected. Compare health-check source, regionality, DNS behavior, source translation, service-provider approval, token subject, log coverage, and quota scope. If a provider detail is unknown, state the exact verification question instead of inventing a limit or promising feature parity.
 
-### I4. Interviewer follow-ups, falsifiers, and wrong paths
+### L4. Interviewer follow-ups, falsifiers, and wrong paths
 
 - **Follow-up:** “The 401s disappear when traffic is pinned to AWS.” Ask whether the GCP path uses a different token issuer, audience, clock source, header policy, or application configuration. A falsifier for a GCP network hypothesis is a provider audit record showing the intended principal arrived and was denied by policy.
 - **Follow-up:** “The European region is healthy, so why not send all traffic there?” Ask about residency, tested survivor capacity, fraud-service locality, state ownership, and existing connections. Health is insufficient if the region cannot safely own the tenant’s data or withstand retry-amplified demand.
@@ -229,19 +295,19 @@ For AWS, ask which edge, regional load balancer, VPC, private endpoint, and work
 - **Wrong path:** Treating a shared customer JWT as sufficient workload authorization for the fraud service.
 - **Wrong path:** Turning up telemetry sampling globally during an incident without a cardinality, privacy, or cost bound.
 
-### I5. Scoring example and recovery sequence
+### L5. Scoring example and recovery sequence
 
 An SDE2 answer should identify the four paths, separate 401 from latency, perform one survivor calculation, and propose an evidence sequence. A strong Staff answer additionally proposes a tenant placement contract, a cross-cloud identity contract, cost attribution, quota and capacity gates, and a staged rollback. Score the answer higher when it says what each owner can change safely and what evidence authorizes the next change.
 
 A credible recovery sequence is: freeze the release; preserve representative request IDs and configuration versions; segment 401 and p99 cohorts; validate identity claims and audit principals; reduce cross-region fraud calls or route only an eligible tenant cohort; enforce priority shedding if survivor margin is insufficient; and keep a control cohort on the previous path. Restore traffic only after identity success, customer latency, fraud-service locality, and cost return to defined ranges for two observation windows. If the evidence contradicts the leading hypothesis, say so and reopen the decision tree.
 
-## J. Interviewer calibration: distinguishing competent, strong, and Staff answers
+## M. Interviewer calibration: distinguishing competent, strong, and Staff answers
 
-### J1. Use observable behaviors rather than confidence
+### M1. Use observable behaviors rather than confidence
 
 Interviewers should score the candidate’s reasoning artifacts, not fluency or product familiarity. A competent answer names a plausible architecture. A strong answer states assumptions, traces request and return paths, calculates a pressure point, and proposes evidence. A Staff answer makes the design repeatable across teams by naming interfaces, ownership, guardrails, exceptions, cost, migration, and learning mechanisms. A candidate who says “I would verify the current limit” should receive credit when they identify the resource, scope, evidence source, and design consequence.
 
-### J2. Calibration rubric with examples
+### M2. Calibration rubric with examples
 
 | Dimension | Competent signal | Strong signal | Staff signal |
 |---|---|---|---|
@@ -254,7 +320,7 @@ Interviewers should score the candidate’s reasoning artifacts, not fluency or 
 
 For a worked scoring example, consider a candidate who proposes a global load balancer, active-active writes, default-deny policy, and autoscaling. If they cannot explain writer fencing, survivor capacity, token audience, or how the load balancer health check differs from customer success, score the architecture knowledge as partial despite confident delivery. If they pause, identify those gaps, and replace the proposal with a staged, testable design, score the recovery behavior separately and reward the correction.
 
-### J3. Follow-up dialogue for calibration
+### M3. Follow-up dialogue for calibration
 
 **Interviewer:** “The target region is healthy, but replication lag is 45 seconds and the RPO is 30 seconds. Shift writes?”
 
@@ -270,11 +336,11 @@ For a worked scoring example, consider a candidate who proposes a global load ba
 
 **Staff candidate:** “I would first identify whether the failure is reachability, authorization, or identity. If an exception is necessary, it is a time-bound experiment with an owner, audit evidence, a negative test, and a removal gate. I would explain the customer impact of waiting versus the security and blast-radius cost of widening access, and I would offer a smaller cohort or alternate path. Recovery speed does not justify making an unmeasured trust boundary permanent.”
 
-### J4. Candidate self-review prompts
+### M4. Candidate self-review prompts
 
 After each mock, write down: the assumption you failed to state, the limit you treated as infinite, the owner you left ambiguous, the evidence that would falsify your favorite hypothesis, and the sentence where you overclaimed provider equivalence. Repeat the scenario with one changed variable—provider, region, identity mode, traffic skew, or state model. The goal is not to memorize this answer. It is to demonstrate a stable method when the interviewer changes the facts.
 
-## K. References and evidence labels
+## N. References and evidence labels
 
 - **Inference method:** [Networking interview bank](../docs/networking-interview-bank.md).
 - **Inference method:** [Interview whiteboard drills](../docs/interview-whiteboard-drills.md).

@@ -103,35 +103,35 @@ Take 25 minutes. A cluster rollout fails only in one zone with an “address una
 
 ## J. Interview questions and direct answers
 
-### J.1 SDE2: How do you size a subnet?
+### J.1 How do you size a subnet?
 
 **Answer:** Identify every address consumer, calculate normal and failure demand, add growth and migration reserve, partition by placement and ownership, then validate provider reservations and limits. I would show the assumptions and alarms, not present a single prefix as universally correct.
 
-### J.2 SDE2: Why can free addresses still fail allocation?
+### J.2 Why can free addresses still fail allocation?
 
 **Answer:** Capacity may be scoped by zone, interface type, quota, contiguous-prefix requirement, endpoint type, or control-plane state. Aggregate free space does not prove that the requested object can be placed in the required scope. Break usage down by consumer and placement.
 
-### J.3 SDE2: What is the difference between a service IP and an interface IP?
+### J.3 What is the difference between a service IP and an interface IP?
 
 **Answer:** An interface IP is usually attached to a network interface and participates in forwarding. A service IP may be virtual, implemented by a load balancer or proxy, and mapped to changing backends. Its routing, source preservation, health, and logging behavior must be verified rather than inferred from the address format.
 
-### J.4 SDE2: How does overlap hurt hybrid connectivity?
+### J.4 How does overlap hurt hybrid connectivity?
 
 **Answer:** A router cannot safely distinguish two identical destinations without policy or translation. Longest-prefix selection cannot resolve equal overlapping prefixes. Resolve overlap before connecting, use a carefully bounded translation or proxy design when unavoidable, and document the identity and return-path implications.
 
-### J.5 Staff: How would you govern IP allocation across many teams?
+### J.5 How would you govern IP allocation across many teams?
 
 **Answer:** Establish an IPAM source of truth with delegated pools, purpose and owner metadata, approval rules for connected domains, automated overlap checks, and exhaustion SLOs. Review actual allocation against declared demand. Treat address space as a platform product with migration reserve and a deprecation process.
 
-### J.6 Staff: When would you prefer separate workload ranges?
+### J.6 When would you prefer separate workload ranges?
 
 **Answer:** Separate ranges are useful when workload density, routing, ownership, or scaling differs from node interfaces. They can reduce pressure on node subnets and make policy clearer, but add route, observability, and expansion dependencies. I would choose them only after confirming CNI behavior and failure evidence.
 
-### J.7 Staff: Is IPv6 an answer to every address problem?
+### J.7 Is IPv6 an answer to every address problem?
 
 **Answer:** No. It addresses scarcity and can simplify endpoint identity, but applications, firewalls, DNS, egress, observability, dependencies, and staff expertise must support it. A dual-stack migration needs explicit coverage and rollback, not a claim that a larger address space removes operational complexity.
 
-### J.8 SDE2: What would you monitor?
+### J.8 What would you monitor?
 
 **Answer:** Monitor allocated and free addresses by subnet, zone, range, and consumer; pending allocation failures; growth rate; overlap findings; route changes; and quota headroom. Alert before exhaustion and attach an owner and action to each alert so it is not merely a dashboard metric.
 
@@ -175,9 +175,136 @@ Address changes have a wide blast radius because they affect routing, firewall a
 
 **Answer:** Run old and new paths in parallel where supported, keep stable service names, migrate by dependency or shard, validate return routes and policy, and delay deallocation until caches, connections, certificates, and partners converge. Roll back traffic selection first; remove addresses later. The rollback criterion should be observable error and dependency evidence, not elapsed time alone.
 
+## M. AWS setup and use
+
+This exercise creates two non-overlapping AWS subnets in one VPC and uses provider output to reason about placement and address headroom. Review [AWS subnet creation](https://docs.aws.amazon.com/vpc/latest/userguide/create-subnets.html) first. **Cost and state warning:** subnet creation is stateful even when the subnet itself has no hourly charge; attached interfaces, NAT, load balancers, and instances can incur charges. Use an existing sandbox `VPC_ID` or create a disposable VPC, and never use a production CIDR without an approved IPAM allocation.
+
+### M.1 Prerequisites and address plan
+
+The learner needs permission to describe VPCs and subnets and, for the optional creation flow, to create, tag, and delete subnets. The example reserves one subnet for application interfaces and one for a future private endpoint. The ranges are documentation-only and must be checked against all peered, transit, VPN, and on-premises prefixes.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_ID=VPC_ID
+export AZ_A=AWS_AVAILABILITY_ZONE_A
+export AZ_B=AWS_AVAILABILITY_ZONE_B
+export APP_SUBNET_CIDR=10.246.10.0/24
+export ENDPOINT_SUBNET_CIDR=10.246.20.0/24
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-vpcs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-ids "$VPC_ID" --query 'Vpcs[0].{VpcId:VpcId,Cidr:CidrBlock}'
+aws ec2 describe-subnets --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=vpc-id,Values=$VPC_ID" \
+  --query 'Subnets[].{Id:SubnetId,Az:AvailabilityZone,Cidr:CidrBlock,Available:AvailableIpAddressCount}'
+```
+
+### M.2 Create and use the subnets
+
+```bash
+APP_SUBNET_ID=$(aws ec2 create-subnet \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" --vpc-id "$VPC_ID" \
+  --cidr-block "$APP_SUBNET_CIDR" --availability-zone "$AZ_A" \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=interview-app-subnet}]' \
+  --query 'Subnet.SubnetId' --output text)
+
+ENDPOINT_SUBNET_ID=$(aws ec2 create-subnet \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" --vpc-id "$VPC_ID" \
+  --cidr-block "$ENDPOINT_SUBNET_CIDR" --availability-zone "$AZ_B" \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=interview-endpoint-subnet}]' \
+  --query 'Subnet.SubnetId' --output text)
+
+aws ec2 describe-subnets --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --subnet-ids "$APP_SUBNET_ID" "$ENDPOINT_SUBNET_ID" \
+  --query 'Subnets[].{Id:SubnetId,Az:AvailabilityZone,Cidr:CidrBlock,Available:AvailableIpAddressCount}'
+```
+
+The `AvailableIpAddressCount` value is a provider-reported observation for the specific subnet, not a universal formula. Use it with workload-specific interface consumption, zonal placement, and reserved growth. To use the endpoint subnet, associate it with the intended route table and endpoint only after checking that the route and security policy match the service contract; do not assume a new subnet inherits the desired custom route table.
+
+### M.3 Cleanup and rollback
+
+```bash
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=association.subnet-id,Values=$APP_SUBNET_ID,$ENDPOINT_SUBNET_ID"
+aws ec2 delete-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" --subnet-id "$APP_SUBNET_ID"
+aws ec2 delete-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" --subnet-id "$ENDPOINT_SUBNET_ID"
+```
+
+The delete commands work only when no ENI, endpoint, load balancer, or other resource remains. During a real renumbering, rollback by switching a stable name or route to the old subnet and retaining the old range until interfaces, DNS caches, certificates, and partner allowlists converge.
+
+### M.4 AWS troubleshooting follow-up
+
+**Question:** The subnet reports free IPs, but a new endpoint or workload cannot be placed. What is your next evidence request?
+
+**Answer:** I check the target AZ, subnet-specific free count, prefix size, interface type, service quota, route-table association, and the exact provider error. Aggregate VPC capacity can conceal a zonal or resource-type limit. I compare a small control allocation in the same subnet and inspect pending interfaces before expanding the CIDR.
+
+## N. GCP setup and use
+
+Google Cloud uses regional subnets and supports secondary ranges for workloads such as VPC-native GKE. Read [Google Cloud subnet creation](https://cloud.google.com/vpc/docs/create-modify-vpc-networks) and [alias IP ranges](https://cloud.google.com/vpc/docs/alias-ip) for the exact feature mode. **Cost and state warning:** these commands mutate `PROJECT_ID`; later VMs, load balancers, NAT, and logging may incur charges. Secondary-range expansion can be difficult to reverse, so use a disposable network or an approved IPAM plan.
+
+### N.1 Prerequisites and create a regional range
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export REGION=REGION
+export NETWORK_NAME=NETWORK_NAME
+export SUBNET_NAME=SUBNET_NAME
+export SUBNET_CIDR=10.247.10.0/24
+export POD_RANGE=10.248.0.0/16
+export SERVICE_RANGE=10.249.0.0/20
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud compute networks subnets describe "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,network,region,ipCidrRange,secondaryIpRanges)'
+
+gcloud compute networks subnets create "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" --network="$NETWORK_NAME" \
+  --range="$SUBNET_CIDR" --enable-private-ip-google-access \
+  --secondary-range="pods=$POD_RANGE,services=$SERVICE_RANGE"
+```
+
+The final command is a create operation and will fail safely if the subnet already exists; inspect the error rather than choosing a different CIDR at random. Secondary ranges are distinct address pools and must not overlap any reachable network. A GKE cluster or other consumer must explicitly use the named ranges; merely creating them does not allocate pod or service addresses.
+
+### N.2 Verify capacity and use the ranges
+
+```bash
+gcloud compute networks subnets describe "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,ipCidrRange,secondaryIpRanges,privateIpGoogleAccess)'
+gcloud compute networks subnets list --project="$PROJECT_ID" \
+  --filter="network:$NETWORK_NAME" \
+  --format='table(name,region,ipCidrRange,secondaryIpRanges[].rangeName)'
+gcloud compute addresses list --project="$PROJECT_ID" \
+  --filter="region:$REGION" --format='table(name,address,status,subnetwork)'
+```
+
+Expected evidence is the primary range, both named secondary ranges, the intended region, and no overlap in the surrounding inventory. A capacity answer should state whether pressure is in primary VM interfaces, a secondary pod range, a service range, or a quota. If a test cluster is later created, select the existing subnet and explicitly map its secondary ranges; record the cluster version and IP allocation mode.
+
+### N.3 Cleanup and rollback
+
+```bash
+gcloud compute networks subnets describe "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,secondaryIpRanges)'
+gcloud compute networks subnets delete "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION"
+```
+
+Deletion requires all dependent interfaces and clusters to be removed, and it may destroy the address plan for every consumer. For a production change, prefer adding a new range and migrating canaries; rollback traffic to the old range before deallocating the new one.
+
+### N.4 GCP troubleshooting follow-up
+
+**Question:** A GKE deployment reports IP exhaustion while the primary subnet looks healthy. Which GCP-specific scopes do you inspect?
+
+**Answer:** I inspect the subnet’s primary and secondary ranges, the cluster’s selected range names, the affected region and node placement, current allocation, and relevant project or service quotas. I verify effective state with `gcloud compute networks subnets describe` and the cluster’s network configuration. A healthy primary range does not falsify exhaustion in a secondary pod range.
+
 ## L. References and evidence labels
 
 - **Fact:** [AWS subnets](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html) and [Google Cloud subnets](https://cloud.google.com/vpc/docs/subnets).
 - **Vendor terminology:** [Amazon VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html) and [GKE VPC-native clusters](https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips).
 - **Inference:** Capacity formulas and reserve guidance are engineering estimates; confirm exact usable addresses and quotas in the selected service documentation.
 - [Portable subnetting](../book/02-addressing-subnetting-routing.md), [Kubernetes ingress](../book/15-cloud-networking-and-kubernetes-ingress.md), and [capacity/SLO engineering](../book/topics/16-capacity-performance-and-slo-engineering.md) provide related material.
+- **Provider setup:** [AWS create subnets](https://docs.aws.amazon.com/vpc/latest/userguide/create-subnets.html) and [Google Cloud create or modify VPC networks](https://cloud.google.com/vpc/docs/create-modify-vpc-networks).

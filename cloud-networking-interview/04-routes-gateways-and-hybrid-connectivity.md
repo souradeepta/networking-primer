@@ -97,35 +97,35 @@ Take 25 minutes. Build a command-agnostic evidence plan: resolved address, route
 
 ## J. Interview questions and direct answers
 
-### J.1 SDE2: Why inspect the reverse route?
+### J.1 Why inspect the reverse route?
 
 **Answer:** Responses have their own destination and can select a different path. Missing advertisements, asymmetric policy, NAT, or an inspection device can permit the request while dropping the response. A complete diagnosis traces both directions using the actual post-translation addresses.
 
-### J.2 SDE2: What does longest-prefix match do?
+### J.2 What does longest-prefix match do?
 
 **Answer:** It selects the most specific matching destination prefix among available routes. It does not prove that the next hop is healthy or permitted. If two routes have the same specificity, provider-specific priority and state may decide, so verify the relevant selection rules.
 
-### J.3 SDE2: Is a VPN tunnel being up enough?
+### J.3 Is a VPN tunnel being up enough?
 
 **Answer:** No. It proves a control or negotiation state, not end-to-end application success. Verify prefixes, route installation, MTU, policy, tunnel counters, and a real protocol exchange. A tunnel can be healthy while the wrong network is advertised or a return route is absent.
 
-### J.4 SDE2: Peering or transit for two networks?
+### J.4 Peering or transit for two networks?
 
 **Answer:** For two stable networks with a narrow relationship, peering may be simpler. For many networks or centralized route and inspection policy, transit may be more manageable. I would compare transitivity, limits, cost, ownership, route propagation, and failure blast radius.
 
-### J.5 Staff: How do you design hybrid connectivity for failure?
+### J.5 How do you design hybrid connectivity for failure?
 
 **Answer:** Use independent paths and devices where justified, explicit prefix filters, tested convergence, application timeouts that tolerate failover, and evidence for tunnel, route, and service state. Avoid declaring success based on redundant circuits alone. Exercise failure and include rollback and ownership for both cloud and data-center teams.
 
-### J.6 Staff: How do you protect a shared route controller?
+### J.6 How do you protect a shared route controller?
 
 **Answer:** Separate desired intent from learned state, review prefix changes, constrain advertisements, apply maximum-prefix and loop protections, alert on unexpected route deltas, and keep a tested last-known-good configuration. Changes need an owner and a bounded blast radius; a central controller deserves stricter change policy because its reach is broad.
 
-### J.7 Staff: How should a design handle overlapping CIDRs?
+### J.7 How should a design handle overlapping CIDRs?
 
 **Answer:** Prefer renumbering because it preserves transparent identity and simpler evidence. If impossible, isolate the overlap behind a proxy or carefully bounded translation, document which identity is visible on each side, and test return paths and logs. Do not connect overlapping domains and hope route priority resolves it.
 
-### J.8 SDE2: What evidence distinguishes route failure from firewall failure?
+### J.8 What evidence distinguishes route failure from firewall failure?
 
 **Answer:** A route lookup and packet/flow observation establish whether forwarding is attempted. A policy decision or counter shows whether a packet was evaluated and rejected. If no packet reaches the policy boundary, investigate an earlier route or interface issue; if it reaches and is denied, the policy hypothesis gains support.
 
@@ -169,9 +169,136 @@ Route changes can affect every prefix behind a shared attachment. Before rollout
 
 **Answer:** It is a liability when route convergence is faster than application or data readiness, when both paths share a hidden failure, or when oscillation causes repeated connection loss. I would gate failover on path health and service readiness, add hold-down or dampening where appropriate, and measure recovery against the RTO rather than celebrating route convergence alone.
 
+## M. AWS setup and use
+
+This lab shows how to inspect AWS route-table associations and, when a reviewed attachment already exists, add one narrow route toward a fictional hybrid prefix. It uses the [AWS route-table model](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-route-tables.html). **Cost and state warning:** route changes can redirect real traffic immediately; Transit Gateway, Site-to-Site VPN, and Direct Connect resources can incur charges. Use a sandbox or a non-production route table. Never substitute a real customer prefix for the example range.
+
+### M.1 Prerequisites and inspect before changing
+
+The learner needs read permission for VPC route tables and, for the optional route change, permission to create and delete routes. `TRANSIT_GATEWAY_ID` must identify an approved attachment in the same Region. If there is no approved gateway, run only the read-only commands.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_ID=VPC_ID
+export ROUTE_TABLE_ID=ROUTE_TABLE_ID
+export SUBNET_ID=SUBNET_ID
+export TRANSIT_GATEWAY_ID=TRANSIT_GATEWAY_ID
+export HYBRID_PREFIX=10.250.0.0/16
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-ids "$ROUTE_TABLE_ID" \
+  --query 'RouteTables[0].{Id:RouteTableId,Vpc:VpcId,Associations:Associations,Routes:Routes}'
+aws ec2 describe-subnets --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --subnet-ids "$SUBNET_ID" --query 'Subnets[0].{Id:SubnetId,Vpc:VpcId,Az:AvailabilityZone}'
+aws ec2 search-transit-gateway-routes --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --transit-gateway-route-table-id TRANSIT_GATEWAY_ROUTE_TABLE_ID \
+  --filters "Name=type,Values=static,propagated"
+```
+
+The route table output is effective intent for the subnet association, not proof of a working tunnel. Confirm that `ROUTE_TABLE_ID` is associated with `SUBNET_ID`, that the destination is not overlapped by a more-specific route, and that the return path is advertised. The Transit Gateway lookup requires a real route-table ID; if it is unavailable, omit that command.
+
+### M.2 Add, use, and verify one narrow route
+
+```bash
+aws ec2 create-route --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-id "$ROUTE_TABLE_ID" \
+  --destination-cidr-block "$HYBRID_PREFIX" \
+  --transit-gateway-id "$TRANSIT_GATEWAY_ID"
+
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-ids "$ROUTE_TABLE_ID" \
+  --query 'RouteTables[0].Routes[?DestinationCidrBlock==`10.250.0.0/16`].{Destination:DestinationCidrBlock,Target:TransitGatewayId,State:State,Type:Type}'
+aws ec2 describe-vpn-connections --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --query 'VpnConnections[].{Id:VpnConnectionId,State:State,Options:Options}'
+```
+
+Use the route only with a test source and destination that both owners approve. Expected evidence is an `active` route, an available attachment, tunnel or BGP state where applicable, and a successful bidirectional protocol test. A route with `blackhole` state, a missing return advertisement, or a successful control-plane call with no SYN-ACK means the path is not usable. Prefer [VPC Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/getting-started.html) or flow evidence where the selected endpoints support it.
+
+### M.3 Roll back safely
+
+```bash
+aws ec2 delete-route --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-id "$ROUTE_TABLE_ID" \
+  --destination-cidr-block "$HYBRID_PREFIX"
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-ids "$ROUTE_TABLE_ID" \
+  --query 'RouteTables[0].Routes'
+```
+
+Delete the route only after confirming that the previous path remains valid and that no test is still using it. In a real rollout, capture the previous route table, advertise a canary prefix first, monitor both directions, and account for established connections that may not move when the route changes.
+
+### M.4 AWS troubleshooting follow-up
+
+**Question:** The VPN tunnel is `UP`, but the private API times out. What is your AWS-specific sequence?
+
+**Answer:** I verify the subnet association and exact longest-prefix route, then inspect Transit Gateway or VPN route propagation, customer-gateway advertisements, security groups, NACLs, MTU, and flow logs. I test the reverse path separately. “Tunnel up” proves a control or negotiation state, not that the application prefix is installed, permitted, and returning through the same attachment.
+
+## N. GCP setup and use
+
+Google Cloud routes are VPC-level resources and can use a VPN tunnel or other next hop. See [Google Cloud routes](https://cloud.google.com/vpc/docs/routes), [Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), and [Connectivity Tests](https://cloud.google.com/network-intelligence-center/docs/connectivity-tests/concepts/overview). **Cost and state warning:** a custom route changes forwarding for matching traffic, while HA VPN, Cloud Router, and Interconnect can incur charges. Use a test network and a reserved fictional prefix.
+
+### N.1 Prerequisites and inspect effective routes
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export REGION=REGION
+export NETWORK_NAME=NETWORK_NAME
+export VPN_TUNNEL_NAME=VPN_TUNNEL_NAME
+export ROUTE_NAME=interview-hybrid-route
+export HYBRID_PREFIX=10.251.0.0/16
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud compute routes list --project="$PROJECT_ID" \
+  --filter="network:$NETWORK_NAME" \
+  --format='table(name,destRange,nextHopGateway,nextHopVpnTunnel,nextHopInstance,priority,routeType)'
+gcloud compute vpn-tunnels describe "$VPN_TUNNEL_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,status,peerIp,router)'
+```
+
+The route list shows VPC routing intent and the tunnel status shows one control-plane dependency. Inspect Cloud Router learned or advertised routes when dynamic routing is used. Confirm that `HYBRID_PREFIX` is not already claimed by a peering, subnet, or on-premises route before adding a static route.
+
+### N.2 Add, use, and verify one narrow route
+
+```bash
+gcloud compute routes create "$ROUTE_NAME" --project="$PROJECT_ID" \
+  --network="$NETWORK_NAME" --destination-range="$HYBRID_PREFIX" \
+  --next-hop-vpn-tunnel="$VPN_TUNNEL_NAME" \
+  --next-hop-vpn-tunnel-region="$REGION" --priority=900
+
+gcloud compute routes describe "$ROUTE_NAME" --project="$PROJECT_ID" \
+  --format='yaml(name,network,destRange,nextHopVpnTunnel,priority,routeType)'
+gcloud network-management connectivity-tests create interview-hybrid-test \
+  --project="$PROJECT_ID" --source-ip-address=10.252.1.10 \
+  --destination-ip-address=10.251.1.10 --destination-network="$NETWORK_NAME" \
+  --destination-port=443 --protocol=TCP --round-trip
+```
+
+The Connectivity Test source and destination are fictional placeholders unless you replace them with approved endpoint identities. Its result is configuration-analysis evidence, not a substitute for a real application transaction. Expected evidence is the intended route, the tunnel as next hop, no more-specific competing route, firewall allowance, and a valid return path.
+
+### N.3 Roll back safely
+
+```bash
+gcloud compute routes delete "$ROUTE_NAME" --project="$PROJECT_ID"
+gcloud compute routes list --project="$PROJECT_ID" \
+  --filter="network:$NETWORK_NAME AND destRange=$HYBRID_PREFIX"
+```
+
+Before deletion, confirm the previous route or dynamic advertisement is healthy. For production, stage a narrow prefix and retain the old path until application and tunnel evidence agree; route deletion does not close existing sessions or repair data-plane state.
+
+### N.4 GCP troubleshooting follow-up
+
+**Question:** Connectivity Tests says the path is blocked even though the Cloud VPN tunnel is established. What do you inspect?
+
+**Answer:** I inspect the exact source and destination network, effective route and priority, tunnel region, Cloud Router advertisements, ingress and egress firewall rules, and the return path. I compare the test’s configuration result with flow logs and an application-level probe. A tunnel status is only one dependency; it does not prove that the selected prefix is learned, preferred, permitted, and reachable.
+
 ## L. References and evidence labels
 
 - **Fact:** [AWS route options](https://docs.aws.amazon.com/vpc/latest/userguide/route-table-options.html), [AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html), and [Google Cloud routes](https://cloud.google.com/vpc/docs/routes).
 - **Vendor terminology:** [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html), [Google Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), and [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview).
 - **Inference:** The route troubleshooting sequence extends [BGP and anycast](../book/16-bgp-anycast-and-multi-region.md) and [network observability](../book/12-observability-and-troubleshooting.md).
 - [NAT and conntrack](../book/topics/24-nat-conntrack-and-snat.md) covers translation and state once a route exists.
+- **Provider setup:** [AWS route tables](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-route-tables.html), [Google Cloud routes](https://cloud.google.com/vpc/docs/routes), and [Google Cloud Connectivity Tests](https://cloud.google.com/network-intelligence-center/docs/connectivity-tests/concepts/overview).

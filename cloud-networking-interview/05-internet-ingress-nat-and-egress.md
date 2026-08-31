@@ -123,7 +123,7 @@ Workers succeed for five minutes and then experience 12% timeouts. Build an orde
 
    **Answer:** Establish tenant boundaries, approved destinations, identity-to-network policy, address allocation, quota and cost ownership, logging, and failure isolation. Offer a paved path for ordinary HTTP/S calls while allowing exceptional protocols through review. Define per-tenant budgets and a region-loss plan; a shared NAT that silently couples every team is a platform blast-radius problem.
 
-### Staff follow-up
+### Leadership follow-up
 
 Ask: “The platform team proposes a single global egress pool because it is cheaper. What would you challenge?” A Staff answer should ask about data residency, partner allowlists, regional failure, port and throughput headroom, tenant isolation, attribution, incident ownership, and rollback. It should quantify the savings and compare them with the cost of correlated failure, not reject centralization reflexively.
 
@@ -167,6 +167,151 @@ A shared egress platform can create a large blast radius: one bad allowlist, add
 
 **Answer:** Keep source identities and partner allowlists compatible during a transition, stage by tenant or region, drain connections, monitor requests by egress identity, and retain the previous route and policy version. Define a rollback signal such as error budget burn plus confirmed partner rejection, not merely a dashboard alarm. Remove temporary addresses only after delayed caches and long-lived connections are accounted for.
 
+## J. AWS setup and use
+
+This lab demonstrates the AWS public-subnet/private-subnet pattern: an Internet Gateway route for public ingress, a NAT Gateway route for private egress, and verification of the resulting route graph. Read [AWS’s CLI VPC tutorial](https://docs.aws.amazon.com/vpc/latest/userguide/create-a-vpc-with-private-subnets-and-nat-gateways-using-aws-cli.html) first. **Cost and state warning:** NAT Gateways and Elastic IP addresses can incur hourly and data-processing charges, and a route change can affect live workloads. Use a sandbox, a single test AZ, and tags that identify every object created here.
+
+### J.1 Prerequisites and inspect the existing VPC
+
+You need permissions for VPC, Elastic IP, NAT Gateway, route-table, and describe operations. For a read-only rehearsal, run only the describe commands. For creation, `PUBLIC_SUBNET_ID` must have a route to an Internet Gateway, and the private route table must be associated with the intended private subnet.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_ID=VPC_ID
+export PUBLIC_SUBNET_ID=PUBLIC_SUBNET_ID
+export PRIVATE_SUBNET_ID=PRIVATE_SUBNET_ID
+export PUBLIC_ROUTE_TABLE_ID=PUBLIC_ROUTE_TABLE_ID
+export PRIVATE_ROUTE_TABLE_ID=PRIVATE_ROUTE_TABLE_ID
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-ids "$PUBLIC_ROUTE_TABLE_ID" "$PRIVATE_ROUTE_TABLE_ID" \
+  --query 'RouteTables[].{Id:RouteTableId,Associations:Associations,Routes:Routes}'
+aws ec2 describe-internet-gateways --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=attachment.vpc-id,Values=$VPC_ID"
+```
+
+### J.2 Create a NAT egress path and use it
+
+If an Internet Gateway already exists, set `INTERNET_GATEWAY_ID` to its ID. Otherwise create and attach one. The following creates one NAT Gateway in a public subnet; a resilient design normally uses one per AZ and routes each private subnet locally.
+
+```bash
+export INTERNET_GATEWAY_ID=INTERNET_GATEWAY_ID
+
+aws ec2 allocate-address --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --domain vpc --tag-specifications \
+  'ResourceType=elastic-ip,Tags=[{Key=Name,Value=interview-nat-eip}]' \
+  --query '{AllocationId:AllocationId,PublicIp:PublicIp}'
+export EIP_ALLOCATION_ID=EIP_ALLOCATION_ID
+
+aws ec2 create-nat-gateway --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --subnet-id "$PUBLIC_SUBNET_ID" --allocation-id "$EIP_ALLOCATION_ID" \
+  --tag-specifications 'ResourceType=natgateway,Tags=[{Key=Name,Value=interview-nat}]' \
+  --query 'NatGateway.{Id:NatGatewayId,State:State}'
+export NAT_GATEWAY_ID=NAT_GATEWAY_ID
+
+aws ec2 wait nat-gateway-available --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --nat-gateway-ids "$NAT_GATEWAY_ID"
+aws ec2 create-route --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-id "$PRIVATE_ROUTE_TABLE_ID" --destination-cidr-block 0.0.0.0/0 \
+  --nat-gateway-id "$NAT_GATEWAY_ID"
+```
+
+Use the path only from an approved test instance in `PRIVATE_SUBNET_ID`. Test the real dependency, such as an HTTPS request to a provider endpoint, and record the source address observed by the destination. A NAT Gateway does not provide unsolicited inbound access to the private instance. Expected evidence is an available NAT Gateway, the private subnet association, the default route to that NAT Gateway, and a successful return flow.
+
+### J.3 Verify, clean up, and roll back
+
+```bash
+aws ec2 describe-nat-gateways --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --nat-gateway-ids "$NAT_GATEWAY_ID" \
+  --query 'NatGateways[0].{Id:NatGatewayId,State:State,Subnet:SubnetId,Vpc:VpcId,Addresses:NatGatewayAddresses}'
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-ids "$PRIVATE_ROUTE_TABLE_ID" \
+  --query 'RouteTables[0].Routes[?DestinationCidrBlock==`0.0.0.0/0`].{Target:NatGatewayId,State:State}'
+```
+
+For a lab rollback, delete the route, wait for the NAT Gateway to delete, and release the Elastic IP only when it is no longer associated. Do not execute the following until you have confirmed the identifiers and impact:
+
+```bash
+aws ec2 delete-route --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --route-table-id "$PRIVATE_ROUTE_TABLE_ID" --destination-cidr-block 0.0.0.0/0
+aws ec2 delete-nat-gateway --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --nat-gateway-id "$NAT_GATEWAY_ID"
+aws ec2 wait nat-gateway-deleted --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --nat-gateway-ids "$NAT_GATEWAY_ID"
+aws ec2 release-address --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --allocation-id "$EIP_ALLOCATION_ID"
+```
+
+In a live rollback, restore the previous egress target or proxy, retain compatible partner allowlists, and account for established mappings and connection retries. Removing a route can interrupt all private workloads using that table.
+
+### J.4 AWS troubleshooting follow-up
+
+**Question:** Private instances resolve names but new outbound HTTPS connections time out. What AWS evidence distinguishes NAT failure from policy failure?
+
+**Answer:** I inspect the private route-table association and default route, NAT state and subnet placement, public-subnet route to the Internet Gateway, security-group egress, NACL return ports, NAT metrics and flow logs, and the destination’s observed source. A working DNS answer only proves name resolution. I compare existing versus new flows to test for port exhaustion or stale state before adding another NAT Gateway.
+
+## K. GCP setup and use
+
+Google Cloud Cloud NAT is configured on a Cloud Router for a regional VPC subnet. Review the [Cloud NAT overview](https://cloud.google.com/nat/docs/overview) and [gcloud router NAT reference](https://cloud.google.com/sdk/gcloud/reference/compute/routers/nats/create). **Cost and state warning:** Cloud NAT, external addresses, logging, and egress traffic can incur charges. The commands below change `PROJECT_ID`; use a test network and avoid enabling broad logging or all-subnet NAT in a shared project without approval.
+
+### K.1 Prerequisites and create regional NAT
+
+The network and subnet must already exist in `REGION`. The caller needs permission to create and modify Cloud Routers and Cloud NAT. Cloud NAT does not create a route by itself; the subnet still needs the normal VPC default route and firewall policy must permit egress.
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export REGION=REGION
+export NETWORK_NAME=NETWORK_NAME
+export SUBNET_NAME=SUBNET_NAME
+export ROUTER_NAME=interview-nat-router
+export NAT_NAME=interview-cloud-nat
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud compute networks subnets describe "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,network,region,ipCidrRange)'
+gcloud compute routers create "$ROUTER_NAME" --project="$PROJECT_ID" \
+  --region="$REGION" --network="$NETWORK_NAME" \
+  --description='Educational Cloud NAT control-plane example'
+gcloud compute routers nats create "$NAT_NAME" --project="$PROJECT_ID" \
+  --router="$ROUTER_NAME" --region="$REGION" \
+  --nat-custom-subnet-ip-ranges="$SUBNET_NAME" \
+  --enable-logging
+```
+
+The custom-subnet flag limits NAT to the named subnet. For a more realistic design, decide whether all primary ranges, selected secondary ranges, or explicit subnets need translation. Do not use `--nat-all-subnet-ip-ranges` as a convenience in a shared environment.
+
+### K.2 Verify, use, and clean up
+
+```bash
+gcloud compute routers nats describe "$NAT_NAME" --project="$PROJECT_ID" \
+  --router="$ROUTER_NAME" --region="$REGION" \
+  --format='yaml(name,natIpAllocateOption,sourceSubnetworkIpRangesToNat,logConfig,enableEndpointIndependentMapping)'
+gcloud compute routes list --project="$PROJECT_ID" \
+  --filter="network:$NETWORK_NAME AND destRange=0.0.0.0/0" \
+  --format='table(name,destRange,nextHopGateway,priority,routeType)'
+gcloud logging read \
+  'resource.type="nat_gateway" AND resource.labels.router_id="'"$ROUTER_NAME"'"' \
+  --project="$PROJECT_ID" --limit=5 --format='value(jsonPayload)'
+```
+
+From an approved ephemeral VM in `SUBNET_NAME`, make one HTTPS request and compare the destination’s observed source with the Cloud NAT configuration. Expected evidence is the NAT attached to the intended regional router and subnet, a usable default route, permitted egress, and a NAT log entry if logging is enabled. Remove resources in dependency order:
+
+```bash
+gcloud compute routers nats delete "$NAT_NAME" --project="$PROJECT_ID" \
+  --router="$ROUTER_NAME" --region="$REGION"
+gcloud compute routers delete "$ROUTER_NAME" --project="$PROJECT_ID" --region="$REGION"
+```
+
+### K.3 GCP troubleshooting follow-up
+
+**Question:** A VM has a private address and a default route, but Cloud NAT logs show no translation. What do you check?
+
+**Answer:** I verify the VM’s subnet and region match the Cloud Router, the NAT includes that subnet’s primary or selected secondary range, the egress firewall allows the flow, and the destination is actually external rather than reachable through a private route. I inspect NAT status, allocation mode, port pressure, and logs. A route to `0.0.0.0/0` alone does not prove that Cloud NAT selected the VM.
+
 ## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS NAT gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
@@ -174,5 +319,6 @@ A shared egress platform can create a large blast radius: one bad allowlist, add
 - **Fact / Vendor terminology:** [Google Cloud Cloud NAT overview](https://cloud.google.com/nat/docs/overview).
 - **Inference method:** [NAT, conntrack, and SNAT](../book/topics/24-nat-conntrack-and-snat.md).
 - **Inference method:** [Addressing, subnetting, and routing](../book/02-addressing-subnetting-routing.md).
+- **Provider setup:** [AWS VPC CLI NAT tutorial](https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc-with-private-subnets-and-nat-gateways-using-aws-cli.html) and [Google Cloud Cloud NAT](https://cloud.google.com/nat/docs/overview).
 
 Provider statements above are labeled **Fact** or **Vendor terminology** when they describe documented concepts. Design conclusions are **Inference**. Verify current limits, supported source types, regional scope, IPv6 behavior, and pricing in the provider documentation for the selected account, project, region, and release.

@@ -128,7 +128,7 @@ Only one zone reports connection resets from `checkout` to `payments`; the appli
 
    **Answer:** Inventory required dependencies before enforcement, start with observable reporting, add narrow allows, and stage by workload or zone. Preserve an audited break-glass path with automatic expiry. Default deny is a control objective; it becomes reliable only when DNS, identity, telemetry, updates, health checks, and rollback are included in the design.
 
-### Staff follow-up
+### Leadership follow-up
 
 Ask: “Security wants one central policy team to approve every network rule. What would you propose?” A Staff answer should separate global guardrails from local ownership, define a risk-based exception path, automate static and effective-policy checks, publish service contracts, and measure lead time and incident outcomes. Central review without clear interfaces can create shadow changes and emergency broad access.
 
@@ -172,6 +172,112 @@ Policy changes have a blast radius defined by target selection and shared hierar
 
 **Answer:** Stop or narrow the exposure first, preserve logs and effective policy, identify affected identities and data, and restore a known-good policy with verified convergence. Then rotate credentials or tokens if needed and assess data access separately. A network rollback limits future packets but cannot erase already observed data.
 
+## J. AWS setup and use
+
+This lab creates a security group with a narrow source rule and inspects the default network ACL. It intentionally does not associate a custom NACL with a live subnet. Read [AWS security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html) and [AWS network ACLs](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html) before changing an environment. **Cost and state warning:** policy mutations can interrupt live traffic even when the control-plane call is free. Use a sandbox, a test security group, and the reserved documentation ranges below; never copy an open rule into production.
+
+### J.1 Prerequisites and create a narrow security group
+
+The caller needs permission to describe and create security groups and authorize or revoke security-group rules. `SOURCE_SG_ID` represents an approved test client group; a security-group reference expresses a workload relationship more safely than an arbitrary broad CIDR.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_ID=VPC_ID
+export SOURCE_SG_ID=SOURCE_SG_ID
+export DESTINATION_SG_NAME=interview-api-sg
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+DESTINATION_SG_ID=$(aws ec2 create-security-group \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-name "$DESTINATION_SG_NAME" \
+  --description 'Educational API policy; source group only' --vpc-id "$VPC_ID" \
+  --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=interview-api-sg}]' \
+  --query 'GroupId' --output text)
+
+aws ec2 authorize-security-group-ingress \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-id "$DESTINATION_SG_ID" --protocol tcp --port 443 \
+  --source-group "$SOURCE_SG_ID"
+```
+
+The rule means “allow TCP 443 from interfaces in `SOURCE_SG_ID` to interfaces using `DESTINATION_SG_ID`,” subject to the actual AWS rule semantics and other controls. It does not attach to a subnet, does not authorize the operator’s IAM identity, and does not create a listener.
+
+### J.2 Verify state and compare the NACL layer
+
+```bash
+aws ec2 describe-security-groups --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-ids "$DESTINATION_SG_ID" \
+  --query 'SecurityGroups[0].{Id:GroupId,Vpc:VpcId,Ingress:IpPermissions,Egress:IpPermissionsEgress}'
+aws ec2 describe-network-acls --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=vpc-id,Values=$VPC_ID" \
+  --query 'NetworkAcls[].{Id:NetworkAclId,Associations:Associations,Entries:Entries}'
+```
+
+Expected evidence is the intended VPC, source-group reference, TCP/443 port, and an association between any test interface and the destination group. For a real request, inspect both stateful security-group decisions and the subnet’s stateless NACL entries, including ephemeral return ports. A listed “allow” is not proof that the rule targeted the actual interface or that another policy layer allowed the packet.
+
+### J.3 Cleanup, rollback, and AWS troubleshooting follow-up
+
+```bash
+aws ec2 revoke-security-group-ingress --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-id "$DESTINATION_SG_ID" --protocol tcp --port 443 \
+  --source-group "$SOURCE_SG_ID"
+aws ec2 delete-security-group --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-id "$DESTINATION_SG_ID"
+```
+
+Delete only after confirming no interface uses the group. For a live rollback, restore the reviewed prior rule set and verify effective state; do not blindly delete a group that may be shared. **Question:** the AWS security-group rule allows TCP 443, but the client sees a timeout. **Answer:** I check the actual ENI attachments, subnet route and NACL, return-path ephemeral ports, target listener, flow evidence, and whether the source was translated by a proxy or NAT. I also confirm that the rule’s VPC and source-group reference are the intended ones. The rule’s existence alone does not prove a match.
+
+## K. GCP setup and use
+
+Google Cloud VPC firewall rules are evaluated with provider-specific priority and targeting semantics. This lab creates a narrow ingress rule targeted by a network tag and then uses configuration analysis for a precise path. Consult [Google Cloud VPC firewall rules](https://cloud.google.com/firewall/docs/firewalls). **Cost and state warning:** firewall changes can immediately allow or deny traffic in `PROJECT_ID`; Connectivity Tests and firewall logging may have usage implications. Use a sandbox network and a test-only target tag.
+
+### K.1 Prerequisites and create a targeted rule
+
+The caller needs permission to create, describe, and delete firewall rules. `NETWORK_NAME` must be a custom VPC and `TARGET_TAG` must be attached only to an approved ephemeral test VM. The source range is intentionally limited to the fictional subnet range.
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export NETWORK_NAME=NETWORK_NAME
+export TARGET_TAG=interview-api
+export SOURCE_RANGE=10.253.1.0/24
+export FIREWALL_RULE=interview-api-allow-https
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud compute firewall-rules create "$FIREWALL_RULE" \
+  --project="$PROJECT_ID" --network="$NETWORK_NAME" \
+  --direction=INGRESS --priority=900 --action=ALLOW \
+  --rules=tcp:443 --source-ranges="$SOURCE_RANGE" \
+  --target-tags="$TARGET_TAG" \
+  --description='Educational rule; target only a fictional test VM'
+```
+
+The rule does nothing for a VM without `TARGET_TAG`, and it is only one layer in the decision. For a least-privilege alternative, target a service account when the organization’s policy model supports it and document why the chosen target is stable.
+
+### K.2 Verify effective state and use Connectivity Tests
+
+```bash
+gcloud compute firewall-rules describe "$FIREWALL_RULE" --project="$PROJECT_ID" \
+  --format='yaml(name,network,direction,priority,sourceRanges,allowed,targetTags,disabled)'
+gcloud compute instances describe TEST_VM_NAME --project="$PROJECT_ID" --zone=ZONE \
+  --format='yaml(name,networkInterfaces[].network,networkInterfaces[].subnetwork,tags.items,serviceAccounts[].email)'
+gcloud network-management connectivity-tests create interview-firewall-test \
+  --project="$PROJECT_ID" --source-instance="projects/$PROJECT_ID/zones/ZONE/instances/TEST_VM_NAME" \
+  --destination-instance="projects/$PROJECT_ID/zones/ZONE/instances/TEST_DESTINATION_VM_NAME" \
+  --destination-port=443 --protocol=TCP --round-trip
+```
+
+Replace the VM placeholders only with approved test endpoints. Expected evidence is a matching target tag or service account, the intended priority and source range, the correct network, and a Connectivity Test trace that names the decisive route or firewall rule. A rule listed by name does not prove it was selected; higher-priority or hierarchical policies may win.
+
+### K.3 Cleanup, rollback, and GCP troubleshooting follow-up
+
+```bash
+gcloud compute firewall-rules delete "$FIREWALL_RULE" --project="$PROJECT_ID"
+```
+
+For a live rollback, disable or replace the rule through the reviewed change process, confirm convergence, and preserve logs. **Question:** a GCP firewall rule is `ALLOW`, but Connectivity Tests reports a block. **Answer:** I inspect target tags or service-account targeting, rule priority and direction, hierarchical firewall policies, source identity after any proxy, the selected route, and the exact project/network. I compare the test trace with flow logs. An allow rule that does not target the endpoint is not an effective allow.
+
 ## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html).
@@ -179,5 +285,6 @@ Policy changes have a blast radius defined by target selection and shared hierar
 - **Fact / Vendor terminology:** [Google Cloud VPC firewall rules](https://cloud.google.com/firewall/docs/firewalls).
 - **Inference method:** [Firewalls, security groups, and NACLs](../book/topics/19-firewalls-security-groups-nacls.md).
 - **Inference method:** [Network security, WAF, and zero trust](../book/17-network-security-waf-zero-trust.md).
+- **Provider setup:** [AWS security-group rules](https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html) and [Google Cloud firewall rules](https://cloud.google.com/firewall/docs/firewalls).
 
 Provider behavior is labeled **Fact** or **Vendor terminology** when it describes documented concepts. Architectural recommendations are **Inference**. Confirm exact priority, state, targeting, logging, quota, and pricing behavior in current official documentation for the account, project, region, and release.

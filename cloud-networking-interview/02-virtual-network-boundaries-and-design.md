@@ -104,35 +104,35 @@ Take 25 minutes. A team wants to connect a legacy network to a shared cloud netw
 
 ## J. Interview questions and direct answers
 
-### J.1 SDE2: What is the difference between a subnet and a security boundary?
+### J.1 What is the difference between a subnet and a security boundary?
 
 **Answer:** A subnet is primarily an address and placement domain with route associations. It may participate in a security design, but its name does not establish authorization. Security comes from evaluated policy, identity, and service behavior, all of which must be tested at the required direction and protocol.
 
-### J.2 SDE2: When would you choose peering over transit?
+### J.2 When would you choose peering over transit?
 
 **Answer:** I would choose peering for a small, explicit, low-change relationship where route scope and ownership are easy to audit. Transit is more useful when many networks need centralized control, route policy, or shared inspection. I would verify transitivity, limits, cost, and failure behavior before committing.
 
-### J.3 SDE2: Does separate account or project mean isolated?
+### J.3 Does separate account or project mean isolated?
 
 **Answer:** No. It can provide administrative separation, but shared services, identity permissions, peering, transit, DNS, and organization policy may still create paths. Isolation is a claim supported by route, policy, identity, and evidence checks, not by the resource hierarchy alone.
 
-### J.4 SDE2: What belongs in a network boundary review?
+### J.4 What belongs in a network boundary review?
 
 **Answer:** Trust relationships, route propagation, packet enforcement, DNS visibility, service identity, ownership, quotas, cost, logging, and rollback belong in the review. I would show the allowed edges and the forbidden edges, then name the evidence that detects drift.
 
-### J.5 Staff: How do you prevent a shared network from becoming an unowned platform?
+### J.5 How do you prevent a shared network from becoming an unowned platform?
 
 **Answer:** Establish a product owner, service-level objectives, change review, policy-as-code ownership, chargeback, escalation paths, and tenant contracts. Define which objects are centrally managed and which are delegated. Measure drift, unauthorized reachability, incident time, and cost allocation; revisit the boundary when those signals degrade.
 
-### J.6 Staff: What makes a boundary a failure boundary?
+### J.6 What makes a boundary a failure boundary?
 
 **Answer:** A failure boundary limits the set of workloads affected by a bad change or dependency failure. I would test route and policy blast radius, control-plane coupling, shared gateway capacity, DNS dependencies, and recovery sequencing. If one change can affect every tenant, the design has a shared failure domain regardless of labels.
 
-### J.7 Staff: How would you migrate from a flat network safely?
+### J.7 How would you migrate from a flat network safely?
 
 **Answer:** Inventory flows and ownership, reserve non-overlapping address space, classify dependencies, introduce explicit service contracts, observe denied and allowed traffic, canary one tenant, and retain rollback until evidence is stable. I would not start by deleting routes because unknown dependencies are a predictable source of outage.
 
-### J.8 SDE2: How do you explain a provider mapping in an interview?
+### J.8 How do you explain a provider mapping in an interview?
 
 **Answer:** State the portable mechanism first, then say, “In AWS this may be represented by X; in GCP it may be represented by Y; I would verify scope and behavior for the selected service.” That demonstrates useful provider fluency without pretending product names imply identical semantics.
 
@@ -176,9 +176,138 @@ Before changing a shared boundary, enumerate affected tenants, prefixes, DNS vie
 
 **Answer:** Inventory observed dependencies, classify intended contracts, add observability and narrow policies in report-only or staged mode, migrate one boundary at a time, and keep a bounded rollback path. I would measure unexpected denies and permitted-but-unowned flows. Deleting broad routes before discovering dependencies is fast only until the first hidden dependency fails.
 
+## M. AWS setup and use
+
+The following lab creates two empty VPC boundaries and inspects them; it does not launch compute or connect the networks. This makes the administrative, routing, and security boundaries visible without creating a transit dependency. Read the [AWS VPC sharing documentation](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html) and [Transit Gateway overview](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html) before turning this into a shared-network design. **Cost and state warning:** VPC creation mutates the selected account. Peering, Transit Gateway, VPN, NAT, and cross-zone traffic can incur charges. Use a sandbox and explicit tags.
+
+### M.1 Prerequisites and create two boundaries
+
+You need an AWS profile with permission to create, tag, describe, and delete VPCs and subnets. Use non-overlapping ranges because a future peering or hybrid connection cannot safely route overlapping CIDRs without an explicit translation design.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_A_CIDR=10.242.0.0/16
+export VPC_B_CIDR=10.243.0.0/16
+export AZ_A=AWS_AVAILABILITY_ZONE_A
+export AZ_B=AWS_AVAILABILITY_ZONE_B
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+VPC_A_ID=$(aws ec2 create-vpc --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --cidr-block "$VPC_A_CIDR" \
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=boundary-lab-a}]' \
+  --query 'Vpc.VpcId' --output text)
+VPC_B_ID=$(aws ec2 create-vpc --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --cidr-block "$VPC_B_CIDR" \
+  --tag-specifications 'ResourceType=vpc,Tags=[{Key=Name,Value=boundary-lab-b}]' \
+  --query 'Vpc.VpcId' --output text)
+
+SUBNET_A_ID=$(aws ec2 create-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-id "$VPC_A_ID" --cidr-block 10.242.1.0/24 --availability-zone "$AZ_A" \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=boundary-lab-a-subnet}]' \
+  --query 'Subnet.SubnetId' --output text)
+SUBNET_B_ID=$(aws ec2 create-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-id "$VPC_B_ID" --cidr-block 10.243.1.0/24 --availability-zone "$AZ_B" \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=boundary-lab-b-subnet}]' \
+  --query 'Subnet.SubnetId' --output text)
+```
+
+### M.2 Use and verify the boundary claim
+
+```bash
+aws ec2 describe-vpcs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-ids "$VPC_A_ID" "$VPC_B_ID" \
+  --query 'Vpcs[].{VpcId:VpcId,Cidr:CidrBlock,State:State,Tags:Tags}'
+
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=vpc-id,Values=$VPC_A_ID,$VPC_B_ID" \
+  --query 'RouteTables[].{Id:RouteTableId,Vpc:VpcId,Routes:Routes,Associations:Associations}'
+
+aws ec2 describe-vpc-peering-connections --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters Name=status-code,Values=active,pending-acceptance
+```
+
+Expected evidence is two distinct VPC IDs, non-overlapping CIDRs, subnet associations to the intended VPCs, and no peering or transit attachment unless one was deliberately created. A VPC ID is an administrative boundary, not proof that data cannot cross it: inspect shared endpoints, IAM permissions, DNS forwarding, peering, transit, VPN, and provider-managed services. If you later add a peering route, add a narrow destination and test both directions; do not use a default route as a shortcut.
+
+### M.3 Cleanup and rollback
+
+```bash
+aws ec2 delete-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" --subnet-id "$SUBNET_A_ID"
+aws ec2 delete-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" --subnet-id "$SUBNET_B_ID"
+aws ec2 delete-vpc --profile "$AWS_PROFILE" --region "$AWS_REGION" --vpc-id "$VPC_A_ID"
+aws ec2 delete-vpc --profile "$AWS_PROFILE" --region "$AWS_REGION" --vpc-id "$VPC_B_ID"
+```
+
+Delete only after checking for interfaces, endpoints, route attachments, and test resources. For a real boundary migration, rollback means restoring the prior route and policy graph, not simply deleting the new VPC; preserve DNS and application ownership evidence.
+
+### M.4 AWS troubleshooting follow-up
+
+**Question:** Two VPCs have no visible peering, but a workload can call a service in the other environment. Is the boundary broken?
+
+**Answer:** I would first identify the actual destination address and service type, then inspect Transit Gateway or VPN attachments, shared VPC relationships, PrivateLink endpoints, public egress, DNS forwarding, and IAM. I would compare flow evidence with the intended path. Reachability through a published service may be an approved narrow edge, while a broad route or public path may violate the boundary contract.
+
 ## L. References and evidence labels
 
 - **Fact:** [AWS VPC sharing](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html) and [Google Cloud Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc).
 - **Vendor terminology:** [AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html) and [Google Cloud Network Connectivity Center](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/overview).
 - **Inference:** The boundary scorecard and blast-radius method extend the repository’s [zero-trust chapter](../book/17-network-security-waf-zero-trust.md) and [Staff design review pack](../docs/staff-design-review-pack.md).
 - [Routing and addressing](../book/02-addressing-subnetting-routing.md) and [firewall concepts](../book/topics/19-firewalls-security-groups-nacls.md) supply the portable mechanisms used here.
+- **Provider setup:** [AWS VPC sharing](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html) and [AWS Transit Gateway route tables](https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html).
+
+## N. GCP setup and use
+
+This lab creates two custom-mode Google Cloud VPC networks and one subnet in each, then proves that no VPC peering exists by default. See [Google Cloud VPC networks](https://cloud.google.com/vpc/docs/vpc) and [Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc). **Cost and state warning:** these commands mutate `PROJECT_ID`; later peering, VPN, Network Connectivity Center, external addresses, and traffic can incur charges. Use a disposable project and do not use production network names.
+
+### N.1 Prerequisites and create two boundaries
+
+The caller needs permissions to create, describe, and delete compute networks and subnets. In Google Cloud, a VPC network is global while its subnet is regional; do not infer that the region on a subnet makes the whole VPC regional.
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export REGION=REGION
+export NETWORK_A=boundary-lab-a
+export NETWORK_B=boundary-lab-b
+export SUBNET_A=boundary-lab-a-subnet
+export SUBNET_B=boundary-lab-b-subnet
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud compute networks create "$NETWORK_A" --subnet-mode=custom
+gcloud compute networks create "$NETWORK_B" --subnet-mode=custom
+gcloud compute networks subnets create "$SUBNET_A" --project="$PROJECT_ID" \
+  --region="$REGION" --network="$NETWORK_A" --range=10.244.1.0/24
+gcloud compute networks subnets create "$SUBNET_B" --project="$PROJECT_ID" \
+  --region="$REGION" --network="$NETWORK_B" --range=10.245.1.0/24
+```
+
+### N.2 Use and verify the boundary claim
+
+```bash
+gcloud compute networks describe "$NETWORK_A" --project="$PROJECT_ID" \
+  --format='yaml(name,autoCreateSubnetworks,routingConfig)'
+gcloud compute networks describe "$NETWORK_B" --project="$PROJECT_ID" \
+  --format='yaml(name,autoCreateSubnetworks,routingConfig)'
+gcloud compute networks subnets list --project="$PROJECT_ID" \
+  --filter="region:$REGION" --format='table(name,network,ipCidrRange,region)'
+gcloud compute networks peerings list --project="$PROJECT_ID" \
+  --network="$NETWORK_A"
+```
+
+Expected evidence is two network names, non-overlapping subnet ranges, and an empty peering list unless a connection was intentionally configured. Also inspect firewall rules, routes, Private Service Connect attachments, shared VPC host/service-project relationships, DNS policies, and public paths before claiming isolation. To add connectivity later, use a narrow, reviewed peering or service-publication design and verify the reverse path.
+
+### N.3 Cleanup and rollback
+
+```bash
+gcloud compute networks subnets delete "$SUBNET_A" --project="$PROJECT_ID" --region="$REGION"
+gcloud compute networks subnets delete "$SUBNET_B" --project="$PROJECT_ID" --region="$REGION"
+gcloud compute networks delete "$NETWORK_A" --project="$PROJECT_ID"
+gcloud compute networks delete "$NETWORK_B" --project="$PROJECT_ID"
+```
+
+Before deletion, check for VM interfaces, forwarding rules, routes, firewall dependencies, and service attachments. In a real shared-network change, restore the previous effective policy and routes first, then remove temporary objects after clients and DNS caches converge.
+
+### N.4 GCP troubleshooting follow-up
+
+**Question:** A subnet in `NETWORK_A` can reach `NETWORK_B`, although the peering list is empty. What do you investigate?
+
+**Answer:** I inspect the destination IP, effective routes, firewall rules, external IP or Cloud NAT path, Shared VPC relationships, Private Service Connect endpoints, VPN or Network Connectivity Center spokes, and DNS answers. I run a bounded Connectivity Test for the exact endpoints. The empty peering list only falsifies one cross-network mechanism; it does not prove that all other edges are absent.

@@ -129,7 +129,7 @@ An operator says the primary record was changed, but half of clients still conne
 
    **Answer:** Start with data ownership and write safety, then define readiness, fencing, health signals, answer policy, TTL, client behavior, RTO/RPO, and rollback. Route new clients only after the secondary is safe. Treat DNS steering as one step; it cannot make stale writes, open connections, or unreplicated state safe.
 
-### Staff follow-up
+### Leadership follow-up
 
 Ask: “Product wants a five-second DNS failover guarantee.” A Staff answer should challenge the guarantee’s scope, measure resolver and client behavior, discuss connection reuse and health decision latency, define what “failed over” means for reads and writes, and offer a testable SLO. It should also explain the cost and load impact of very low TTLs.
 
@@ -173,6 +173,131 @@ DNS changes have a broad blast radius because one record can redirect many clien
 
 **Answer:** Restore the prior record or routing policy, keep the old service healthy, identify clients that cached the new answer, and monitor both targets until caches and connections converge. If writes or credentials crossed the wrong boundary, involve application and security owners. DNS rollback limits future selection; it cannot reverse completed requests or erase cached data.
 
+## J. AWS setup and use
+
+This lab creates a Route 53 private hosted zone, associates it with an existing VPC, publishes one fictional A record, and verifies the authoritative record. Read [Route 53 private hosted zones](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html) first. **Cost and state warning:** hosted-zone queries and associated resources may incur charges; association and record changes mutate DNS seen by clients. Use a sandbox VPC and a `.test` name. Do not point a learning record at a production IP or reuse a production hosted-zone ID.
+
+### J.1 Prerequisites and create a private zone
+
+The caller needs permission to create, associate, list, change, and delete Route 53 records and permission to describe the VPC. Private-zone visibility also depends on the client using a resolver path that can see the VPC association.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_ID=VPC_ID
+export PRIVATE_ZONE=cloud-interview.test
+export RECORD_NAME=api.cloud-interview.test
+export TEST_PRIVATE_IP=198.51.100.40
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-vpcs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-ids "$VPC_ID" --query 'Vpcs[0].{Id:VpcId,Cidr:CidrBlock,State:State}'
+aws route53 create-hosted-zone --profile "$AWS_PROFILE" \
+  --name "$PRIVATE_ZONE" \
+  --caller-reference "cloud-interview-$(date +%s)" \
+  --hosted-zone-config PrivateZone=true \
+  --vpc "VPCRegion=$AWS_REGION,VPCId=$VPC_ID"
+```
+
+Save the returned hosted-zone ID as `HOSTED_ZONE_ID`. The timestamp is only an idempotency token; it is not a secret. Add a short-TTL record only when the address is a reserved test address:
+
+```bash
+export HOSTED_ZONE_ID=HOSTED_ZONE_ID
+aws route53 change-resource-record-sets --profile "$AWS_PROFILE" \
+  --hosted-zone-id "$HOSTED_ZONE_ID" \
+  --change-batch '{"Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"api.cloud-interview.test.","Type":"A","TTL":60,"ResourceRecords":[{"Value":"198.51.100.40"}]}}]}'
+aws route53 list-resource-record-sets --profile "$AWS_PROFILE" \
+  --hosted-zone-id "$HOSTED_ZONE_ID" \
+  --query 'ResourceRecordSets[?Name==`api.cloud-interview.test.`]'
+```
+
+### J.2 Use, verify, and roll back
+
+From a test workload in the associated VPC, query the VPC resolver and then test the actual service protocol. `dig` against a public resolver is the wrong verification path for a private zone.
+
+```bash
+dig +short api.cloud-interview.test
+aws route53 get-hosted-zone --profile "$AWS_PROFILE" \
+  --id "$HOSTED_ZONE_ID" \
+  --query '{Name:HostedZone.Name,Private:HostedZone.Config.PrivateZone,VPCs:VPCs}'
+```
+
+Expected evidence is the private-zone association, the intended answer and TTL, the resolver used by the client, a route to the returned address, policy allowance, certificate name, and a successful application request. To roll back, restore the previous record or remove the test record after confirming that no test client depends on it:
+
+```bash
+aws route53 change-resource-record-sets --profile "$AWS_PROFILE" \
+  --hosted-zone-id "$HOSTED_ZONE_ID" \
+  --change-batch '{"Changes":[{"Action":"DELETE","ResourceRecordSet":{"Name":"api.cloud-interview.test.","Type":"A","TTL":60,"ResourceRecords":[{"Value":"198.51.100.40"}]}}]}'
+aws route53 disassociate-vpc-from-hosted-zone --profile "$AWS_PROFILE" \
+  --hosted-zone-id "$HOSTED_ZONE_ID" --vpc VPCRegion="$AWS_REGION",VPCId="$VPC_ID"
+aws route53 delete-hosted-zone --profile "$AWS_PROFILE" --id "$HOSTED_ZONE_ID"
+```
+
+### J.3 AWS troubleshooting follow-up
+
+**Question:** `list-resource-record-sets` shows the expected record, but an EC2 test client receives a public answer. What do you inspect?
+
+**Answer:** I verify the instance’s actual VPC and resolver configuration, private-zone association, overlapping hosted zones, forwarding rules, search suffix, and the exact query name. I compare the VPC resolver answer with the authoritative record and then inspect route and policy. A record in a private zone is not visible through every resolver, and a correct private answer would still need a reachable endpoint and matching TLS name.
+
+## K. GCP setup and use
+
+This lab creates a Cloud DNS private managed zone, attaches it to a VPC network, and publishes a short-TTL A record. Read [Cloud DNS zones](https://cloud.google.com/dns/docs/zones) and [private zones](https://cloud.google.com/dns/docs/zones/zones-overview) first. **Cost and state warning:** Cloud DNS queries and other cloud resources may incur charges; private-zone visibility and record changes affect clients in the selected VPC. Use a sandbox project, a `.test` domain, and the reserved address below.
+
+### K.1 Prerequisites and create a private zone
+
+The caller needs permission to create, update, describe, and delete managed zones and record sets. The network must already exist in `PROJECT_ID`. A private zone is not public authority; clients need a supported resolver path from an attached network.
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export NETWORK_NAME=NETWORK_NAME
+export PRIVATE_ZONE=cloud-interview-zone
+export DNS_NAME=cloud-interview.test.
+export RECORD_NAME=api.cloud-interview.test.
+export TEST_PRIVATE_IP=198.51.100.41
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud dns managed-zones create "$PRIVATE_ZONE" \
+  --project="$PROJECT_ID" --dns-name="$DNS_NAME" \
+  --description='Educational private DNS zone' --visibility=private \
+  --networks="$NETWORK_NAME"
+gcloud dns record-sets transaction start --project="$PROJECT_ID" --zone="$PRIVATE_ZONE"
+gcloud dns record-sets transaction add "$TEST_PRIVATE_IP" \
+  --project="$PROJECT_ID" --zone="$PRIVATE_ZONE" \
+  --name="$RECORD_NAME" --ttl=60 --type=A
+gcloud dns record-sets transaction execute --project="$PROJECT_ID" --zone="$PRIVATE_ZONE"
+```
+
+The transaction is a local gcloud staging step followed by a control-plane update. If another learner is using the same local gcloud configuration, use a separate configuration or stop and inspect the transaction state before proceeding.
+
+### K.2 Use, verify, and roll back
+
+```bash
+gcloud dns managed-zones describe "$PRIVATE_ZONE" --project="$PROJECT_ID" \
+  --format='yaml(name,dnsName,visibility,privateVisibilityConfig.networks)'
+gcloud dns record-sets list --project="$PROJECT_ID" --zone="$PRIVATE_ZONE" \
+  --filter="name=$RECORD_NAME" --format='table(name,type,ttl,rrdatas)'
+gcloud compute networks describe "$NETWORK_NAME" --project="$PROJECT_ID" \
+  --format='yaml(name,routingConfig)'
+```
+
+From an approved VM or supported workload in the attached network, run `dig api.cloud-interview.test` using its normal resolver and then test the returned service address. Expected evidence is the zone’s network visibility, the record and TTL, the resolver’s private answer, a route and firewall decision to the returned address, and an application or TLS result. To roll back, delete the record and zone only after confirming no dependent client remains:
+
+```bash
+gcloud dns record-sets transaction start --project="$PROJECT_ID" --zone="$PRIVATE_ZONE"
+gcloud dns record-sets transaction remove "$TEST_PRIVATE_IP" \
+  --project="$PROJECT_ID" --zone="$PRIVATE_ZONE" \
+  --name="$RECORD_NAME" --ttl=60 --type=A
+gcloud dns record-sets transaction execute --project="$PROJECT_ID" --zone="$PRIVATE_ZONE"
+gcloud dns managed-zones delete "$PRIVATE_ZONE" --project="$PROJECT_ID"
+```
+
+### K.3 GCP troubleshooting follow-up
+
+**Question:** A GCP VM resolves `api.cloud-interview.test` through a public answer even though the private zone contains the record. What do you inspect?
+
+**Answer:** I verify the VM’s project, VPC, subnet, resolver path, private-zone network visibility, DNS name including its trailing dot, forwarding or peering policies, and any overlapping zone. I compare the VM’s answer with `gcloud dns record-sets list` and the authoritative view, then check route and firewall evidence. The zone existing in a project does not prove that this VM’s resolver can see it.
+
 ## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [Amazon Route 53 developer guide](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html).
@@ -181,5 +306,6 @@ DNS changes have a broad blast radius because one record can redirect many clien
 - **Fact / Vendor terminology:** [Google Cloud DNS forwarding](https://cloud.google.com/dns/docs/zones/forwarding-zones).
 - **Inference method:** [DNS resolution and operations](../book/06-dns-resolution-and-operations.md).
 - **Inference method:** [Service discovery and configuration](../book/topics/20-service-discovery-configuration.md).
+- **Provider setup:** [Route 53 private hosted zones](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html) and [Google Cloud DNS private zones](https://cloud.google.com/dns/docs/zones/zones-overview).
 
 Provider concepts are labeled **Fact** or **Vendor terminology**; architecture and troubleshooting conclusions are **Inference**. Confirm zone visibility, resolver behavior, routing policy, health integration, TTL limits, regional scope, and pricing in current official documentation for the selected account, project, region, and release.

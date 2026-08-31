@@ -365,6 +365,9 @@ for path in sorted(root.glob('*.md')):
     for marker in ('Learning objectives', 'Prerequisites', 'AWS and GCP', 'References'):
         if marker.lower() not in text.lower():
             raise SystemExit(f'{path}: missing required curriculum marker {marker!r}')
+    for marker in ('AWS setup and use', 'GCP setup and use'):
+        if marker.lower() not in text.lower():
+            raise SystemExit(f'{path}: missing provider walkthrough section {marker!r}')
     if path.name == '16-cloud-interview-synthesis-and-mock-loops.md':
         for marker in ('Mock loop', 'Self-scoring'):
             if marker.lower() not in text.lower():

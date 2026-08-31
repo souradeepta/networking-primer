@@ -108,35 +108,35 @@ Take 20 minutes. A deployment says `orders.internal.example` timed out for 7 min
 
 ## J. Interview questions and direct answers
 
-### J.1 SDE2: Why is “ping fails” weak cloud-network evidence?
+### J.1 Why is “ping fails” weak cloud-network evidence?
 
 **Answer:** ICMP may be filtered, unsupported, or unrelated to the service protocol. Test the actual name, address, port, TLS behavior, and application request, then correlate each result with route, policy, and service logs. A failed ping proves only that one ICMP path was not observed.
 
-### J.2 SDE2: What is the difference between reachability and authorization?
+### J.2 What is the difference between reachability and authorization?
 
 **Answer:** Reachability means packets can reach a listener and return. Authorization means that the listener or cloud API accepts the caller’s identity and requested action. A request can be reachable but denied by IAM, mTLS, an application policy, or a service-level tenant check.
 
-### J.3 SDE2: How do you debug a timeout without changing configuration?
+### J.3 How do you debug a timeout without changing configuration?
 
 **Answer:** Freeze the hypothesis, collect the caller’s DNS answer, route decision, flow evidence, handshake result, load-balancer state, and service trace. Compare a known-good caller and time window. This narrows the first absent or rejected step without turning an uncertain incident into a configuration experiment.
 
-### J.4 SDE2: Why trace the return path?
+### J.4 Why trace the return path?
 
 **Answer:** Forward reachability is not enough. A route, NAT mapping, policy, or asymmetric gateway can allow the request toward the service while the response takes a different or blocked path. TCP completion and flow records from both sides help detect that asymmetry.
 
-### J.5 Staff: How would you make cloud-network diagnosis repeatable across teams?
+### J.5 How would you make cloud-network diagnosis repeatable across teams?
 
 **Answer:** Define a shared request-path contract: every incident records caller, callee, resolved address, forward and reverse route, policy checkpoints, identity, time window, and evidence owner. Standardize dashboards and escalation boundaries, but keep provider-specific commands behind adapters. Measure time to first falsifiable hypothesis and recurrence rate.
 
-### J.6 Staff: What belongs in a design review besides the happy-path diagram?
+### J.6 What belongs in a design review besides the happy-path diagram?
 
 **Answer:** Ownership, failure domains, control-plane dependencies, limits, cost, observability, rollback, identity, and data handling belong beside the request path. Ask how a zone, route controller, DNS association, endpoint, or credential issuer fails. Require a falsifier for each major assumption and a safe migration path.
 
-### J.7 Staff: When is a managed cloud abstraction the wrong choice?
+### J.7 When is a managed cloud abstraction the wrong choice?
 
 **Answer:** It is wrong when its hidden scope, cost, policy, observability, or failure semantics conflict with the service requirement. I would compare the abstraction with a simpler portable mechanism, quantify operational burden, and verify provider limits. “Managed” reduces implementation work; it does not remove architecture risk.
 
-### J.8 SDE2: How should an answer handle uncertain provider behavior?
+### J.8 How should an answer handle uncertain provider behavior?
 
 **Answer:** Label the statement as an inference, state the condition that could change it, and name the official documentation or safe test that would verify it. Avoid inventing quotas or claiming two similarly named features are equivalent. Explicit uncertainty is stronger than a confident unsupported detail.
 
@@ -186,9 +186,170 @@ For a route or policy change, describe blast radius before the change: affected 
 
 **Answer:** It is unsafe when the change altered data routing, authorization, DNS, or stateful translation and the prior state no longer matches active clients or replicated data. I would pause, fence unsafe writers if required, preserve evidence, and choose a staged compensating action. Speed matters, but restoring an inconsistent state can enlarge the incident.
 
+## M. AWS setup and use
+
+This lab creates only a VPC, one subnet, and one security group so that a learner can inspect the five planes without launching an instance. The commands follow the [AWS VPC CLI workflow](https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html). **Cost and state warning:** creation changes the selected account and Region. Use a sandbox account, least-privilege permissions, fictional tags, and a change ticket. Do not paste credentials into the shell; use an AWS CLI profile or an approved federated session.
+
+### M.1 Prerequisites and placeholders
+
+The operator needs AWS CLI credentials with permission to create, tag, describe, and delete VPCs, subnets, route tables, and security groups. A real workload would also require instance or load-balancer permissions, but this learning flow intentionally does not create one. Replace every placeholder before running a command.
+
+```bash
+export AWS_PROFILE=AWS_PROFILE
+export AWS_REGION=AWS_REGION
+export VPC_CIDR=10.240.0.0/16
+export SUBNET_CIDR=10.240.1.0/24
+export AVAILABILITY_ZONE=AWS_AVAILABILITY_ZONE
+export VPC_NAME=interview-foundations-vpc
+
+aws sts get-caller-identity --profile "$AWS_PROFILE"
+aws ec2 describe-availability-zones \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters Name=state,Values=available \
+  --query 'AvailabilityZones[].ZoneName' --output text
+```
+
+The identity result is evidence of *who* can mutate state; it is not evidence that a packet can reach a service. Confirm that `AWS_REGION` and `AVAILABILITY_ZONE` belong together before creating resources.
+
+### M.2 Create and use the smallest path
+
+```bash
+VPC_ID=$(aws ec2 create-vpc \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --cidr-block "$VPC_CIDR" \
+  --tag-specifications "ResourceType=vpc,Tags=[{Key=Name,Value=$VPC_NAME}]" \
+  --query 'Vpc.VpcId' --output text)
+
+SUBNET_ID=$(aws ec2 create-subnet \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-id "$VPC_ID" --cidr-block "$SUBNET_CIDR" \
+  --availability-zone "$AVAILABILITY_ZONE" \
+  --tag-specifications 'ResourceType=subnet,Tags=[{Key=Name,Value=interview-foundations-subnet}]' \
+  --query 'Subnet.SubnetId' --output text)
+
+SG_ID=$(aws ec2 create-security-group \
+  --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-name interview-foundations-sg \
+  --description 'Educational foundations example; no public ingress' \
+  --vpc-id "$VPC_ID" \
+  --tag-specifications 'ResourceType=security-group,Tags=[{Key=Name,Value=interview-foundations-sg}]' \
+  --query 'GroupId' --output text)
+```
+
+The VPC and subnet are the address and placement objects. The security group is a policy object, but it does not attach to the subnet and does not make a workload reachable by itself. To use the path, a separately approved test workload would attach `SG_ID` to an interface; this guide does not launch that workload. That distinction is the interview lesson: resource creation is control-plane intent, while an observed connection is data-plane evidence.
+
+### M.3 Verify effective state and clean up
+
+```bash
+aws ec2 describe-vpcs --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --vpc-ids "$VPC_ID" \
+  --query 'Vpcs[0].{VpcId:VpcId,Cidr:CidrBlock,State:State,Tags:Tags}'
+
+aws ec2 describe-subnets --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --subnet-ids "$SUBNET_ID" \
+  --query 'Subnets[0].{SubnetId:SubnetId,VpcId:VpcId,Az:AvailabilityZone,Cidr:CidrBlock,Available:AvailableIpAddressCount}'
+
+aws ec2 describe-route-tables --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --filters "Name=vpc-id,Values=$VPC_ID"
+
+aws ec2 describe-security-groups --profile "$AWS_PROFILE" --region "$AWS_REGION" \
+  --group-ids "$SG_ID"
+```
+
+Expected evidence is a `pending` or `available` control-plane state that converges to the requested CIDR, a subnet associated with the expected VPC and AZ, a route table with the VPC-local route, and a security group with no unintended ingress. Delete in dependency order only after confirming that no test interface uses the objects:
+
+```bash
+aws ec2 delete-security-group --profile "$AWS_PROFILE" --region "$AWS_REGION" --group-id "$SG_ID"
+aws ec2 delete-subnet --profile "$AWS_PROFILE" --region "$AWS_REGION" --subnet-id "$SUBNET_ID"
+aws ec2 delete-vpc --profile "$AWS_PROFILE" --region "$AWS_REGION" --vpc-id "$VPC_ID"
+```
+
+If deletion reports a dependency, stop and inspect rather than broadening permissions or deleting an unknown resource. Rollback of this lab is deletion; rollback of a real service also requires restoring DNS, routes, policy, and application state.
+
+### M.4 AWS troubleshooting follow-up
+
+**Question:** `describe-vpcs` shows the expected VPC, but an approved test instance cannot reach a private service. What do you check next?
+
+**Answer:** I record the instance ENI and security groups, resolve the service name from the instance, inspect the subnet’s route-table association and the route for the destination, then check the return route and flow evidence. I separate AWS API authorization from packet authorization: `sts get-caller-identity` proves the operator identity, not the instance’s IAM role or service access. I would not add `0.0.0.0/0` as a diagnostic shortcut.
+
 ## L. References and evidence labels
 
 - **Fact:** [AWS VPC concepts](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html) and [Google Cloud VPC overview](https://cloud.google.com/vpc/docs/vpc).
 - **Vendor terminology:** [AWS Regions and Availability Zones](https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html) and [Google Cloud locations](https://cloud.google.com/compute/docs/regions-zones).
 - **Inference:** The five-plane model and evidence ordering are engineering tools derived from the repository’s [observability chapter](../book/12-observability-and-troubleshooting.md) and [cloud primitives topic](../book/topics/37-cloud-networking-primitives.md).
 - [DNS operations](../book/06-dns-resolution-and-operations.md), [security foundations](../book/17-network-security-waf-zero-trust.md), and [interview whiteboard drills](../docs/interview-whiteboard-drills.md) provide deeper portable material.
+- **Provider setup:** [AWS create a VPC using the CLI](https://docs.aws.amazon.com/vpc/latest/userguide/create-vpc.html) and [AWS route tables](https://docs.aws.amazon.com/vpc/latest/userguide/subnet-route-tables.html).
+
+## N. GCP setup and use
+
+This equivalent lab uses a custom-mode Google Cloud VPC and one regional subnet. Google Cloud VPC networks are global resources while subnets are regional; the [VPC overview](https://cloud.google.com/vpc/docs/vpc) and [subnet documentation](https://cloud.google.com/vpc/docs/subnets) define the provider terms. **Cost and state warning:** these commands mutate `PROJECT_ID`; a VPC and firewall rule may be free, but later workloads, external addresses, logs, and NAT can incur charges. Use a disposable project or an approved sandbox.
+
+### N.1 Prerequisites and placeholders
+
+Install and authenticate the Google Cloud CLI through the organization’s approved method. The caller needs permission to create, describe, and delete networks, subnets, and firewall rules. `PROJECT_ID` is a project identifier, not a display name. Replace placeholders and confirm the active project before creation.
+
+```bash
+export PROJECT_ID=PROJECT_ID
+export REGION=REGION
+export ZONE=ZONE
+export NETWORK_NAME=interview-foundations-vpc
+export SUBNET_NAME=interview-foundations-subnet
+export SUBNET_CIDR=10.241.1.0/24
+
+gcloud auth list
+gcloud config set project "$PROJECT_ID"
+gcloud config get-value project
+gcloud compute regions describe "$REGION" --format='value(name)'
+```
+
+### N.2 Create and use the smallest path
+
+```bash
+gcloud compute networks create "$NETWORK_NAME" --subnet-mode=custom \
+  --project="$PROJECT_ID" \
+  --description='Educational foundations example; no public workload'
+
+gcloud compute networks subnets create "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --network="$NETWORK_NAME" --range="$SUBNET_CIDR" \
+  --enable-private-ip-google-access
+
+gcloud compute firewall-rules create interview-foundations-allow-internal \
+  --project="$PROJECT_ID" --network="$NETWORK_NAME" \
+  --direction=INGRESS --priority=1000 --action=ALLOW \
+  --rules=tcp:443 --source-ranges="$SUBNET_CIDR" \
+  --description='Educational rule; applies only to this fictional subnet range'
+```
+
+The custom VPC and regional subnet establish placement and local routing. The firewall rule is a network policy object; without a target VM or other supported endpoint, it has no traffic to allow. For a safe use exercise, create or use only an approved ephemeral test endpoint and target it with a network tag or service account rather than permitting broad sources.
+
+### N.3 Verify effective state and clean up
+
+```bash
+gcloud compute networks describe "$NETWORK_NAME" --project="$PROJECT_ID" \
+  --format='yaml(name,autoCreateSubnetworks,routingConfig)'
+
+gcloud compute networks subnets describe "$SUBNET_NAME" \
+  --project="$PROJECT_ID" --region="$REGION" \
+  --format='yaml(name,network,region,ipCidrRange,privateIpGoogleAccess,secondaryIpRanges)'
+
+gcloud compute routes list --project="$PROJECT_ID" \
+  --filter="network:$NETWORK_NAME" --format='table(name,destRange,nextHopGateway,nextHopInstance,priority)'
+
+gcloud compute firewall-rules describe interview-foundations-allow-internal \
+  --project="$PROJECT_ID"
+```
+
+Expected evidence is the named custom network, a subnet in the intended region, the default local route plus any expected system routes, and a firewall rule whose direction, priority, source range, protocol, and target scope are understood. Remove the rule, subnet, and network only after confirming no endpoint depends on them:
+
+```bash
+gcloud compute firewall-rules delete interview-foundations-allow-internal --project="$PROJECT_ID"
+gcloud compute networks subnets delete "$SUBNET_NAME" --project="$PROJECT_ID" --region="$REGION"
+gcloud compute networks delete "$NETWORK_NAME" --project="$PROJECT_ID"
+```
+
+### N.4 GCP troubleshooting follow-up
+
+**Question:** The firewall rule exists, but a test VM still cannot connect. What provider-specific evidence do you request?
+
+**Answer:** I check the VM’s actual network, subnet, region, network tags or service account target, effective routes, and both ingress and egress firewall evaluation. I use a bounded [Connectivity Test](https://cloud.google.com/network-intelligence-center/docs/connectivity-tests/concepts/overview) for the exact source, destination, port, and project. A rule listed by name is not proof that it matched the endpoint; target scope and higher-priority or hierarchical policy can change the effective decision.
