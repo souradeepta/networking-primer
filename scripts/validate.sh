@@ -62,8 +62,8 @@ import re
 
 cases = sorted(Path("book/case-studies").glob("*.md"))
 cases = [p for p in cases if p.name != "README.md"]
-if len(cases) < 4:
-    raise SystemExit(f"Need 4 infrastructure case studies; found {len(cases)}")
+if len(cases) < 19:
+    raise SystemExit(f"Need 19 infrastructure case studies; found {len(cases)}")
 required = ["Context and goals", "Architecture", "Timeline", "Evidence",
             "Competing hypotheses", "Decision points", "Remediation",
             "Verification", "Rollback or recovery", "Postmortem lessons",
@@ -74,7 +74,7 @@ for path in cases:
     if missing:
         raise SystemExit(f"{path}: missing case-study headings: {', '.join(missing)}")
     prose = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-    prose = "\n".join(line for line in prose.splitlines() if not line.startswith(("#", "|", "- ")))
+    prose = re.sub(r"%%\{init:.*?\}%%", "", prose)
     if len(re.findall(r"\b[\w'-]+\b", prose)) < 1500:
         raise SystemExit(f"{path}: needs 1500 prose words")
     if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < 10:

@@ -5,6 +5,19 @@ debug common failures, and explain how F5 BIG-IP LTM and GTM/BIG-IP DNS steer
 traffic. The material is deliberately application-engineer focused: the goal
 is sound mental models and safe debugging questions, not device administration.
 
+## Choose your depth
+
+| Directory | Best for |
+| --- | --- |
+| [`docs/`](docs/01-foundations.md) | Quick concepts, runbooks, glossary, interview Q&A, and compact labs |
+| [`book/`](book/README.md) | Long-form chapters, focused F5 topics, and 19 infrastructure case studies |
+| [`demos/`](demos/README.md) | Python/shell experiments, Docker/Wireshark workflows, and browser animations |
+| [`exercises/`](exercises/README.md) | Implementation assignments with testable edge cases |
+
+Use `docs/` for a fast operational refresher and `book/` for deep study or
+design review preparation. The overlap is intentional: each layer adds detail,
+evidence, diagrams, and decision context.
+
 ## Who this is for
 
 - **SDE1:** diagnose `connection refused`, DNS, timeout, TLS, and HTTP failures

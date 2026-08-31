@@ -65,7 +65,7 @@ as engineering inferences.
 
 ## Infrastructure case-study expansion (edition 3)
 
-Add at least four case studies, each at least 1,500 prose words, using fictional
+Add at least nineteen case studies, each at least 1,500 prose words, using fictional
 addresses and service names. Each case study must contain context and goals,
 architecture/topology, a timestamped incident or change timeline, evidence
 collected, competing hypotheses, decision points and trade-offs, remediation,
@@ -75,6 +75,19 @@ LTM VIP and certificate migration, (2) GTM/BIG-IP DNS multi-site failover, (3)
 DDI/IPAM-DHCP-DNS drift causing an outage, and (4) certificate automation and
 F5 change safety. Case studies must distinguish observed facts from inferred
 causes and cite primary protocol/vendor references.
+
+Diagram requirement: each infrastructure case study must include at least two
+diagrams (topology plus sequence, timeline, or state); core F5 LTM, GTM,
+transport-security, DDI, proxy, and automation articles should include both a
+topology/architecture view and a packet, control-flow, or state view where the
+relationship is material.
+
+The 15 additional cases must cover distinct scenarios: firewall/TCP timeout,
+MTU black hole, IPv6 migration, DNSSEC validation failure, DHCP exhaustion,
+duplicate IP detection, LTM persistence hotspot, false-positive LTM monitor,
+LTM HA failover, GTM topology misrouting, GTM TTL migration, expired TLS
+intermediate, mTLS trust rotation, F5 SDK idempotency drift, and a failed LB
+upgrade with rollback.
 
 ## Focused files and demos (edition 4)
 
