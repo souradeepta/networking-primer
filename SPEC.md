@@ -170,6 +170,16 @@ verification. Security exercises must remain defensive and non-destructive.
 
 ## Focused files and demos (edition 4)
 
+## Interview practice system (edition 10)
+
+In addition to question banks, maintain a calibrated practice layer: a 0–4
+answer rubric, 20 progressive interviewer simulations, 15 timed whiteboard
+drills, 10 network system-design exercises, and a measurable 4/6/2-week study
+plan. Simulations must include follow-ups, plausible wrong paths, safe testing
+boundaries, and scoring. Whiteboard and design drills must require assumptions,
+failure domains, evidence, trade-offs, and rollback. Security exercises must
+remain authorized and non-destructive.
+
 The book must also expose focused topic files rather than hiding all detail in
 combined chapters. Add at least six focused references covering VIPs/virtual
 servers, certificates and SNI, LTM monitors/pools, GTM Wide IPs and TTL,

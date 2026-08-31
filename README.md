@@ -45,6 +45,11 @@ bank](docs/f5-interview-bank.md), which includes LTM, GTM/BIG-IP DNS, TLS/mTLS,
 HA, SDK/REST/declarative automation, observability, and symptom-driven debug
 exercises.
 
+Additional practice: [interview rubric](docs/interview-rubric.md), [simulation
+pack](docs/interview-simulation-pack.md), [whiteboard drills](docs/interview-whiteboard-drills.md),
+[system-design exercises](docs/network-system-design-exercises.md), and the
+[interview study plan](docs/interview-study-plan.md).
+
 For broad networking interview preparation, use the [networking interview
 bank](docs/networking-interview-bank.md), covering protocols, cloud,
 Kubernetes, observability, security, and automation.

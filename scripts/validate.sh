@@ -7,7 +7,7 @@ required=(
   docs/01-foundations.md docs/02-request-path.md docs/03-f5-ltm.md
   docs/04-f5-gtm.md docs/05-troubleshooting.md docs/06-ddi.md
   docs/07-automation.md docs/08-transport-security.md docs/architecture.md
-  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/interview-dialogue-exercises.md docs/glossary.md docs/references.md
+  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/interview-dialogue-exercises.md docs/interview-rubric.md docs/interview-simulation-pack.md docs/interview-whiteboard-drills.md docs/network-system-design-exercises.md docs/interview-study-plan.md docs/glossary.md docs/references.md
   book/README.md book/FACT-INFERENCE-LEDGER.md
   examples/request_path.py examples/f5_pool_audit.py
   scripts/check_internal_links.py
@@ -189,6 +189,24 @@ if len(questions) < 60:
 if len(exercises) < 16:
     raise SystemExit(f"Networking interview bank needs 16 debugging exercises; found {len(exercises)}")
 print(f"Networking interview bank checks passed: {len(questions)} questions, {len(exercises)} debugging exercises.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+checks = {
+    "docs/interview-rubric.md": (r"^\d+\.\s+\*\*", 12, "scored exemplars"),
+    "docs/interview-simulation-pack.md": (r"^\d+\.\s+", 20, "simulation scenarios"),
+    "docs/interview-whiteboard-drills.md": (r"^\d+\.\s+", 15, "whiteboard drills"),
+    "docs/network-system-design-exercises.md": (r"^\d+\.\s+\*\*", 10, "system-design exercises"),
+}
+for filename, (pattern, minimum, label) in checks.items():
+    text = Path(filename).read_text(encoding="utf-8")
+    count = len(re.findall(pattern, text, flags=re.MULTILINE))
+    if count < minimum:
+        raise SystemExit(f"{filename}: needs {minimum} {label}; found {count}")
+print("Interview practice structure checks passed: rubric, simulations, drills, and design exercises.")
 PY
 
 python3 - <<'PY'
