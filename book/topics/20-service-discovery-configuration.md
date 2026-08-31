@@ -166,18 +166,11 @@ mean discovery is not an instantaneous drain mechanism. If an endpoint is
 removed, keep it safe for the maximum expected cache and connection lifetime,
 or use an explicit application-level drain protocol.
 
-### 5. How do you distinguish stale discovery from an unhealthy service?
-
-Query the authoritative source and the caller’s recursive resolver, then
-compare the answer with the destination in client or proxy logs. If the answer
-is stale but the selected endpoint is healthy, investigate TTL, negative
-caching, and resolver policy. If the answer is current but the endpoint fails,
-move to routing, firewall, TLS, and readiness evidence instead of editing DNS.
-
-### 6. What should configuration automation guarantee?
-
-It should be idempotent, versioned, reviewable, and reversible. Validate input
-schema, ownership, dependencies, and secret references; calculate a minimal
-diff; apply with bounded retries; read back effective state; and run a behavior
-probe. A successful API response is not enough because agents may reload later
-or reject an unsupported field. Preserve the previous version for rollback.
+For SDE2 design, treat discovery as a consistency problem rather than a magic
+lookup. Define the authority, cache owner, freshness bound, health signal,
+version format, and behavior during partitions. A GTM answer can select a
+healthy site while a local LTM pool is draining, and a configuration agent can
+acknowledge a version before the process reloads it. Correlate authoritative
+records, resolver caches, registry leases, F5 pool state, and application
+configuration in one timeline. Use canaries, bounded retries, and read-back
+verification; never use a DNS edit as an instantaneous connection drain.

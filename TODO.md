@@ -14,3 +14,5 @@
       then commit and push.
 - [x] Add five modern platform-networking focused topics with exercises,
       diagrams, tables, and interview-depth Q&A.
+- [x] Split modern transport topics and add NAT/conntrack, CDN, RPC, and
+      automation/testing focused references (topics 22–27).

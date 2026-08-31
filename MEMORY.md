@@ -8,7 +8,7 @@
 - The content target is SDE1/SDE2 networking, focused on F5 LTM and GTM
   (BIG-IP DNS).
 - Public GitHub remote: https://github.com/souradeepta/networking-primer
-- The book contains 17 chapters and 21 focused topic references. New coverage
+- The book contains 17 chapters and 27 focused topic references. New coverage
   includes cloud networking/Kubernetes ingress, BGP/anycast/multi-region,
   WAF/API security/zero trust, observability/SLOs, network testing/chaos, and
   capacity/performance engineering. `docs/10-platform-networking.md` bridges
@@ -23,6 +23,10 @@
   service discovery/configuration, and NTP/time synchronization. Edition 7
   requires these topics to include diagrams, tables, exercises, six detailed
   Q&A items, and at least 1,200 words each.
+- Granular platform references 22–27 split HTTP transports and add NAT/
+  conntrack, CDN edge caching, gRPC/WebSockets/RPC, and network automation.
+  Edition 8 records their focused-reference contract and 600-word validator
+  floor; deeper expansion remains a future content pass.
 
 ## Verification
 

@@ -160,19 +160,11 @@ requests. F5 monitors should be permitted explicitly; otherwise a healthy
 member may be marked down even though user traffic is allowed. GTM health
 probes may originate from different addresses and need equivalent policy.
 
-### 5. Why can a stateful firewall still drop a valid response?
-
-State tracking depends on seeing the expected tuple and sequence behavior. An
-asymmetric route, SNAT change, idle timeout, or failover that lost connection
-state can make a legitimate response look unrelated. Compare both directions,
-firewall state age, NAT mappings, and idle timers. Do not simply increase every
-timeout; that can consume state memory and hide an asymmetric design error.
-
-### 6. What makes a firewall change safe?
-
-Record the exact rule diff, affected zones, expected flows, monitor sources,
-expiration or review date, and rollback command. Apply through an approved
-pipeline, then test a permitted flow, a deliberately denied flow, and the F5
-health check. Preserve evidence and ownership. A green application probe alone
-does not prove that failover, alternate VIPs, IPv6, or administrative paths
-remain protected.
+Policy review should include lifecycle controls. Every temporary rule needs an
+owner, reason, ticket, expiry, and evidence that removing it will not break an
+F5 monitor, GTM probe, certificate renewal, or administrative path. During a
+change, test both the client-side VIP tuple and the SNAT-translated backend
+tuple because a firewall log may show different addresses. Compare accepted,
+denied, and expired-state counters over the same UTC interval. This makes a
+firewall decision auditable and prevents a broad emergency allow from becoming
+the permanent architecture.

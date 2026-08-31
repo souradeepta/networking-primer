@@ -33,7 +33,7 @@ flowchart LR
   S1[Authorized time source] --> D[Time daemon]
   S2[Independent source] --> D
   D --> W[Disciplined wall clock]
-  D --> M[Monotonic measurement API]
+  W -. platform rate discipline .-> M[Monotonic measurement API]
   W --> L[Logs and TLS checks]
   M --> T[Timeouts and latency]
 ```
@@ -141,7 +141,7 @@ independent sources and a documented policy for loss of trust.
 | Audit record | Wall plus sync health | Human correlation |
 | Latency | Monotonic duration | Measures elapsed interval |
 
-## Design notes and evidence
+## Additional design notes and evidence
 
 Time troubleshooting starts by identifying which clock a component uses. A
 kernel wall clock may be corrected by NTP, while a monotonic clock measures
@@ -169,7 +169,7 @@ timestamps. Follow the platform’s approved time-service procedure and test
 failover to a secondary source. For every incident, state whether a timestamp
 is measured, estimated, or inferred, and give the uncertainty interval.
 
-## Design notes and evidence
+## Additional operational evidence
 
 For a production design, identify who owns the approved time sources, which
 network paths carry synchronization traffic, and how hosts behave when all

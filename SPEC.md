@@ -133,6 +133,17 @@ words. Connect each topic to F5 LTM/GTM, DDI, automation, and layered
 troubleshooting where relevant, and distinguish measured evidence from
 inference.
 
+## Granular platform references (edition 8)
+
+Split bundled platform subjects into individually navigable references when
+their protocol, state model, or failure evidence differs materially. The next
+set covers HTTP/2, HTTP/3/QUIC, NAT/conntrack/SNAT, CDN/edge caching,
+gRPC/WebSockets/RPC, and network automation/testing. Each file must include a
+diagram, table, worked example, failure section, checklist, implementation
+exercise, and six interview questions. These are focused references rather
+than replacement book chapters; the validator enforces a 600-word minimum and
+24-word minimum per answer while preserving the deeper chapter contracts.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

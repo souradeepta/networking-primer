@@ -143,25 +143,6 @@ changing worker limits. Neither HTTP/2 nor HTTP/3 removes resource limits.
 | Window | Receiver permits data | Slow means congestion |
 | Fallback | Client protocol choice | Fallback means outage |
 
-### 5. How do F5 profiles affect HTTP/2 and HTTP/3?
-
-On BIG-IP LTM, client-side and server-side protocol profiles can differ. A
-virtual server may accept HTTP/2, terminate TLS, and speak HTTP/1.1 to an
-origin pool. That boundary changes multiplexing, headers, timeouts, and
-observability. HTTP/3 normally requires a UDP listener and QUIC-aware path; an
-ordinary TCP virtual server cannot proxy it by changing an HTTP profile. Verify
-TMOS version, profile compatibility, and ALPN counters instead of assuming
-pass-through.
-
-### 6. When is HTTP/3 a poor default?
-
-It can be a poor default when firewalls block UDP, middleboxes inspect only
-TCP, or the service has little latency sensitivity. It introduces a second
-operational path with separate capture, rate-limit, and capacity signals.
-Start with an opt-in rollout, compare fallback and error rates by network, and
-retain a tested HTTP/2 path. A lower median latency is not worth an outage
-domain if UDP failures are invisible.
-
 ## Design notes and evidence
 
 Preserve the distinction between application semantics and transport mechanics.
@@ -178,3 +159,12 @@ a diff and rollback plan. Reject a change if the certificate SAN misses the
 service name, the monitor uses a different protocol than users, or measured
 fallback exceeds the threshold. Store observations with UTC timestamps and
 versions; do not enable QUIC everywhere because one benchmark improved.
+
+Capacity planning must count both requests and connections. HTTP/2 can reduce
+TCP handshakes through reuse, while HTTP/3 changes the firewall and telemetry
+path to UDP. Track concurrent streams, stream resets, connection migration,
+handshake CPU, fallback percentage, and origin queue time separately. A green
+LTM monitor may exercise HTTP/1.1 while production browsers use HTTP/2, so the
+monitor is evidence for only its own protocol path. During a rollout, compare
+the same URI, payload, client population, and cache state, and define a
+rollback threshold before enabling a new transport broadly.

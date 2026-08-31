@@ -31,11 +31,12 @@ notes; a recommendation is not the same thing as a product guarantee.
 19. [Firewalls, security groups, and NACLs](19-firewalls-security-groups-nacls.md)
 20. [Service discovery and configuration](20-service-discovery-configuration.md)
 21. [NTP and time synchronization](21-ntp-time-synchronization.md)
-17. [HTTP/2, HTTP/3, and QUIC](17-http2-http3-quic.md)
-18. [VXLAN and network overlays](18-vxlan-network-overlays.md)
-19. [Firewalls, security groups, and NACLs](19-firewalls-security-groups-nacls.md)
-20. [Service discovery and configuration](20-service-discovery-configuration.md)
-21. [NTP and time synchronization](21-ntp-time-synchronization.md)
+22. [HTTP/2 deep dive](22-http2-deep-dive.md)
+23. [HTTP/3 and QUIC deep dive](23-http3-quic-deep-dive.md)
+24. [NAT, conntrack, and SNAT](24-nat-conntrack-and-snat.md)
+25. [CDN edge caching](25-cdn-edge-caching.md)
+26. [gRPC, WebSockets, and RPC](26-grpc-websockets-rpc.md)
+27. [Network automation and testing](27-network-automation-testing.md)
 Each topic has objectives, a worked example, a failure section, an operational
 checklist, a diagram, and explained questions and answers. Addresses and names
 are reserved or local: `198.51.100.0/24`, `203.0.113.0/24`, `2001:db8::/32`,

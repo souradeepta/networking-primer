@@ -165,19 +165,11 @@ green while a tenant-to-tenant route or security policy is broken. GTM answers
 should therefore be correlated with the selected site’s underlay and VTEP
 health, not treated as proof of end-to-end reachability.
 
-### 5. Why does an MTU change matter in VXLAN?
-
-VXLAN adds an outer Ethernet, IP, and UDP header, reducing the payload that
-fits without fragmentation. If hosts retain a 1500-byte interface MTU while
-the underlay cannot carry the larger frame, large requests may disappear while
-small health checks succeed. Test packet sizes with the DF bit where supported,
-inspect ICMP too-big messages, and align host, tunnel, and underlay settings.
-
-### 6. How should overlay changes be automated?
-
-Generate a plan that validates VNI uniqueness, endpoint reachability, MTU
-headroom, route policy, and security rules before applying it. Read back the
-effective mapping after a change and run a small inner-flow probe through the
-affected path. Do not infer success from a controller API response alone:
-underlay convergence, ARP/ND, firewall state, and application readiness can
-lag behind the control-plane acknowledgement.
+Capacity and change safety matter because encapsulation consumes headroom on
+every tunnel endpoint. Record the underlay MTU, inner payload size, VNI, VTEP
+pair, and observed drop counters before a migration. Validate one local flow,
+one remote flow, and one deliberately oversized probe. A successful controller
+commit is not proof that all leaf switches converged; compare effective tables
+and application request evidence. F5 LTM pool health can remain green for one
+tenant while another VNI is isolated, so dashboards and runbooks should carry
+tenant identity and source location rather than only a VIP name.
