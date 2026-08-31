@@ -26,6 +26,9 @@
   lists BIG-IP DNS/GTM API resources.
 - [F5 Python SDK source and documentation](https://github.com/F5Networks/f5-common-python)
   is the upstream project for the SDK used in the read-only example.
+- [NIST SP 800-61 Rev. 3](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
+  is the current incident-response recommendations publication and supersedes
+  Rev. 2.
 
 ## Fact / inference ledger
 
