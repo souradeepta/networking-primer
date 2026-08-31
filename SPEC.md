@@ -154,6 +154,13 @@ state mechanism, evidence, trade-offs, and caveats; exercises must provide
 symptoms, clues, expected reasoning, and a safe resolution boundary. Current
 F5 terminology and toolchain claims must link to official documentation.
 
+Maintain a parallel `docs/networking-interview-bank.md` of comparable depth
+with at least 60 protocol/platform questions and 16 debugging exercises. Cover
+Ethernet/IP/IPv6, TCP/UDP/QUIC, DNS/DHCP/IPAM, HTTP/proxies, TLS/PKI/mTLS,
+cloud/Kubernetes, overlays/BGP, observability/SLOs, automation, and security.
+Answers must explain mechanism, evidence, trade-offs, and uncertainty rather
+than provide flash-card definitions.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

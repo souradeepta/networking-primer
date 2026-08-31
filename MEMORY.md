@@ -34,6 +34,10 @@
   follow-up prompts, and eight debugging exercises. New local demos model
   partition-aware planning and REST pagination/task errors without contacting a
   device. Official AS3, DO, TS, and SDK references were added.
+- A matching `docs/networking-interview-bank.md` contains 68 core networking
+  questions plus detailed follow-ups and 16 debugging exercises across
+  protocols, DDI, HTTP, TLS, cloud/Kubernetes, BGP, observability, automation,
+  and security. The two banks are intentionally comparable in depth.
 
 ## Verification
 

@@ -45,6 +45,10 @@ bank](docs/f5-interview-bank.md), which includes LTM, GTM/BIG-IP DNS, TLS/mTLS,
 HA, SDK/REST/declarative automation, observability, and symptom-driven debug
 exercises.
 
+For broad networking interview preparation, use the [networking interview
+bank](docs/networking-interview-bank.md), covering protocols, cloud,
+Kubernetes, observability, security, and automation.
+
 Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small
 [request-path simulator](examples/request_path.py).

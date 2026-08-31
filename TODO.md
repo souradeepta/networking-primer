@@ -22,3 +22,6 @@
 - [x] Add a dedicated F5 interview bank with detailed answers, follow-up
       prompts, debugging exercises, current toolchain references, and local
       SDK/REST safety demos.
+- [x] Add an equally large networking interview bank with protocol, DDI,
+      cloud, Kubernetes, BGP, security, observability, automation, and
+      troubleshooting coverage.
