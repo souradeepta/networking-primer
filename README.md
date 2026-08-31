@@ -23,7 +23,8 @@ is sound mental models and safe debugging questions, not device administration.
 
 Supporting modules: [DDI](docs/06-ddi.md), [architecture diagrams](docs/architecture.md),
 [network automation](docs/07-automation.md), [transport security](docs/08-transport-security.md),
-and the [troubleshooting runbook](docs/05-troubleshooting.md).
+[hands-on labs](docs/09-hands-on-labs.md), and the
+[troubleshooting runbook](docs/05-troubleshooting.md).
 
 Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small

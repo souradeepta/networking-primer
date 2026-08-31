@@ -20,6 +20,8 @@ Traffic Manager (GTM).
 - A DDI module covering DNS, DHCP, IPAM ownership and their consistency risks.
 - Automation guidance, a read-only F5 Python SDK example, and security material
   for SSH, encryption, certificates, TLS, and mTLS.
+- Three safe hands-on labs for DNS/GTM observation, LTM request-path diagnosis,
+  and TLS/mTLS certificate diagnosis.
 - At least two ASCII-only Mermaid diagrams, an interview question bank,
   glossary, references with a fact/inference ledger, and a runnable standard
   library Python exercise.
@@ -33,5 +35,5 @@ Traffic Manager (GTM).
 
 ## Acceptance checks
 
-`./scripts/validate.sh` passes and `python3 examples/request_path.py` emits a
-successful request-path trace.
+`./scripts/validate.sh` passes, internal Markdown links resolve, and
+`python3 examples/request_path.py` emits a successful request-path trace.

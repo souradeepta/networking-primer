@@ -7,8 +7,9 @@ required=(
   docs/01-foundations.md docs/02-request-path.md docs/03-f5-ltm.md
   docs/04-f5-gtm.md docs/05-troubleshooting.md docs/06-ddi.md
   docs/07-automation.md docs/08-transport-security.md docs/architecture.md
-  docs/interview-questions.md docs/glossary.md docs/references.md
+  docs/09-hands-on-labs.md docs/interview-questions.md docs/glossary.md docs/references.md
   examples/request_path.py examples/f5_pool_audit.py
+  scripts/check_internal_links.py
 )
 
 for path in "${required[@]}"; do
@@ -26,3 +27,5 @@ for path in Path("docs").glob("*.md"):
             raise SystemExit(f"Non-ASCII Mermaid content in {path}")
 print("Repository structure and Mermaid ASCII checks passed.")
 PY
+
+python3 scripts/check_internal_links.py

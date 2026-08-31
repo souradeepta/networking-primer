@@ -10,6 +10,12 @@
   specifies DHCPv4 host-configuration and address-allocation behavior.
 - [RFC 1918: Address Allocation for Private Internets](https://www.rfc-editor.org/info/rfc1918/)
   defines the familiar IPv4 private address ranges.
+- [RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3](https://datatracker.ietf.org/doc/html/rfc8446)
+  specifies TLS 1.3, including handshake authentication and protected records.
+- [RFC 5280: Internet X.509 Public Key Infrastructure Certificate and CRL Profile](https://datatracker.ietf.org/doc/html/rfc5280)
+  defines the X.509 certificate and certification-path validation profile.
+- [RFC 4251: The Secure Shell (SSH) Protocol Architecture](https://datatracker.ietf.org/doc/html/rfc4251)
+  specifies SSH protocol architecture and server-host authentication concepts.
 - [F5 LTM virtual server TMSH reference](https://clouddocs.f5.com/cli/tmsh-reference/v14/modules/ltm/ltm_virtual.html)
   and [pool reference](https://clouddocs.f5.com/cli/tmsh-reference/latest/modules/ltm/ltm_pool.html)
   describe LTM configuration objects and options.
@@ -29,6 +35,9 @@
 | DNS has authoritative data and resolver caching. | Protocol fact | RFC 1035 |
 | DHCP delivers configuration parameters and allocates addresses. | Protocol fact | RFC 2131 |
 | RFC 1918 reserves `10/8`, `172.16/12`, and `192.168/16` for private internets. | Protocol fact | RFC 1918 |
+| TLS provides a secure channel with server authentication and optional client authentication. | Protocol fact | RFC 8446 |
+| X.509 certification paths and certificate extensions are part of certificate validation. | Protocol fact | RFC 5280 |
+| SSH includes server-host authentication, which is the basis for host-key verification. | Protocol fact | RFC 4251 |
 | A Wide IP maps an FQDN to pools of virtual servers. | Vendor terminology/fact | F5 Wide IP guide |
 | GTM/BIG-IP DNS does not provide instantaneous universal failover. | Engineering inference | DNS caching and existing connection behavior; test in the target environment |
 | Deep health checks are always better than TCP checks. | Rejected oversimplification | Probe depth trades detection fidelity against dependencies, load, and flapping |
