@@ -330,42 +330,42 @@ import re
 
 root = Path('cloud-networking-interview')
 expected = {
-    'README.md', 'references.md',
-    'cloud-network-foundations.md', 'virtual-network-boundaries-and-design.md',
-    'subnet-and-ip-address-planning.md', 'routes-gateways-and-hybrid-connectivity.md',
-    'internet-ingress-nat-and-egress.md', 'firewalls-security-groups-and-network-acls.md',
-    'private-connectivity-and-service-publishing.md', 'dns-and-service-discovery.md',
-    'load-balancing-and-traffic-entry.md', 'iam-and-workload-identity.md',
-    'containers-kubernetes-and-network-policy.md', 'observability-troubleshooting-and-slos.md',
-    'quotas-capacity-and-network-cost.md', 'multi-region-disaster-recovery-and-failover.md',
-    'cloud-network-migration-and-modernization.md', 'cloud-interview-synthesis-and-mock-loops.md',
+    '00-README.md', '17-references.md',
+    '01-cloud-network-foundations.md', '02-virtual-network-boundaries-and-design.md',
+    '03-subnet-and-ip-address-planning.md', '04-routes-gateways-and-hybrid-connectivity.md',
+    '05-internet-ingress-nat-and-egress.md', '06-firewalls-security-groups-and-network-acls.md',
+    '07-private-connectivity-and-service-publishing.md', '08-dns-and-service-discovery.md',
+    '09-load-balancing-and-traffic-entry.md', '10-iam-and-workload-identity.md',
+    '11-containers-kubernetes-and-network-policy.md', '12-observability-troubleshooting-and-slos.md',
+    '13-quotas-capacity-and-network-cost.md', '14-multi-region-disaster-recovery-and-failover.md',
+    '15-cloud-network-migration-and-modernization.md', '16-cloud-interview-synthesis-and-mock-loops.md',
 }
 actual = {p.name for p in root.glob('*.md')}
 if actual != expected:
     raise SystemExit(f'Cloud track file set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}')
-index = (root / 'README.md').read_text(encoding='utf-8')
+index = (root / '00-README.md').read_text(encoding='utf-8')
 ordered = re.findall(r'\]\(([^)]+\.md)\)', index)
 topic_order = [name for name in ordered if not name.startswith('../')]
 expected_topics = [
-    'cloud-network-foundations.md', 'virtual-network-boundaries-and-design.md',
-    'subnet-and-ip-address-planning.md', 'routes-gateways-and-hybrid-connectivity.md',
-    'internet-ingress-nat-and-egress.md', 'firewalls-security-groups-and-network-acls.md',
-    'private-connectivity-and-service-publishing.md', 'dns-and-service-discovery.md',
-    'load-balancing-and-traffic-entry.md', 'iam-and-workload-identity.md',
-    'containers-kubernetes-and-network-policy.md', 'observability-troubleshooting-and-slos.md',
-    'quotas-capacity-and-network-cost.md', 'multi-region-disaster-recovery-and-failover.md',
-    'cloud-network-migration-and-modernization.md', 'cloud-interview-synthesis-and-mock-loops.md',
+    '01-cloud-network-foundations.md', '02-virtual-network-boundaries-and-design.md',
+    '03-subnet-and-ip-address-planning.md', '04-routes-gateways-and-hybrid-connectivity.md',
+    '05-internet-ingress-nat-and-egress.md', '06-firewalls-security-groups-and-network-acls.md',
+    '07-private-connectivity-and-service-publishing.md', '08-dns-and-service-discovery.md',
+    '09-load-balancing-and-traffic-entry.md', '10-iam-and-workload-identity.md',
+    '11-containers-kubernetes-and-network-policy.md', '12-observability-troubleshooting-and-slos.md',
+    '13-quotas-capacity-and-network-cost.md', '14-multi-region-disaster-recovery-and-failover.md',
+    '15-cloud-network-migration-and-modernization.md', '16-cloud-interview-synthesis-and-mock-loops.md',
 ]
 if topic_order[:len(expected_topics)] != expected_topics:
     raise SystemExit('Cloud track README must list every topic in its ordered learning path')
 for path in sorted(root.glob('*.md')):
-    if path.name in {'README.md', 'references.md'}:
+    if path.name in {'00-README.md', '17-references.md'}:
         continue
     text = path.read_text(encoding='utf-8')
     for marker in ('Learning objectives', 'Prerequisites', 'AWS and GCP', 'References'):
         if marker.lower() not in text.lower():
             raise SystemExit(f'{path}: missing required curriculum marker {marker!r}')
-    if path.name == 'cloud-interview-synthesis-and-mock-loops.md':
+    if path.name == '16-cloud-interview-synthesis-and-mock-loops.md':
         for marker in ('Mock loop', 'Self-scoring'):
             if marker.lower() not in text.lower():
                 raise SystemExit(f'{path}: missing synthesis marker {marker!r}')

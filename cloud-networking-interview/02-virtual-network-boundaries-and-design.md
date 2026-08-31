@@ -10,7 +10,7 @@
 
 ## B. Prerequisites
 
-Read [Cloud Networking Foundations](cloud-network-foundations.md), especially the five-plane request model. Review [cloud networking primitives](../book/topics/37-cloud-networking-primitives.md) and the repository’s [security chapter](../book/17-network-security-waf-zero-trust.md). You should know CIDR notation, route selection, security policy, and basic account or project organization.
+Read [Cloud Networking Foundations](01-cloud-network-foundations.md), especially the five-plane request model. Review [cloud networking primitives](../book/topics/37-cloud-networking-primitives.md) and the repository’s [security chapter](../book/17-network-security-waf-zero-trust.md). You should know CIDR notation, route selection, security policy, and basic account or project organization.
 
 ## C. Boundary thinking
 
@@ -142,4 +142,3 @@ Take 25 minutes. A team wants to connect a legacy network to a shared cloud netw
 - **Vendor terminology:** [AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html) and [Google Cloud Network Connectivity Center](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/overview).
 - **Inference:** The boundary scorecard and blast-radius method extend the repository’s [zero-trust chapter](../book/17-network-security-waf-zero-trust.md) and [Staff design review pack](../docs/staff-design-review-pack.md).
 - [Routing and addressing](../book/02-addressing-subnetting-routing.md) and [firewall concepts](../book/topics/19-firewalls-security-groups-nacls.md) supply the portable mechanisms used here.
-

@@ -55,8 +55,8 @@
 | The included F5 SDK example is production-ready for every BIG-IP release. | Not claimed | Validate installed BIG-IP/SDK versions and team interface standards |
 ## Cloud interview track evidence index
 
-The standalone [Cloud Networking Interview Track](../cloud-networking-interview/README.md)
-contains its own ordered modules and local [fact/terminology/inference ledger](../cloud-networking-interview/references.md).
+The standalone [Cloud Networking Interview Track](../cloud-networking-interview/00-README.md)
+contains its own ordered modules and local [fact/terminology/inference ledger](../cloud-networking-interview/17-references.md).
 Use the AWS and Google Cloud links there for provider-specific claims; verify
 service, region, account/project policy, release, quota, and pricing boundaries
 before applying a claim to a real design.

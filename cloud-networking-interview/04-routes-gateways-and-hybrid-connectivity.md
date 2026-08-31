@@ -10,7 +10,7 @@
 
 ## B. Prerequisites
 
-Read [Cloud Networking Foundations](cloud-network-foundations.md), [Virtual Network Boundaries](virtual-network-boundaries-and-design.md), and [Subnet and IP Planning](subnet-and-ip-address-planning.md). Review the route and packet material in [the addressing chapter](../book/02-addressing-subnetting-routing.md) and BGP fundamentals in [the BGP chapter](../book/16-bgp-anycast-and-multi-region.md). You should know that a route is a forwarding decision, not permission to use the destination.
+Read [Cloud Networking Foundations](01-cloud-network-foundations.md), [Virtual Network Boundaries](02-virtual-network-boundaries-and-design.md), and [Subnet and IP Planning](03-subnet-and-ip-address-planning.md). Review the route and packet material in [the addressing chapter](../book/02-addressing-subnetting-routing.md) and BGP fundamentals in [the BGP chapter](../book/16-bgp-anycast-and-multi-region.md). You should know that a route is a forwarding decision, not permission to use the destination.
 
 ## C. Route and gateway mental model
 
@@ -135,4 +135,3 @@ Take 25 minutes. Build a command-agnostic evidence plan: resolved address, route
 - **Vendor terminology:** [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html), [Google Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), and [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview).
 - **Inference:** The route troubleshooting sequence extends [BGP and anycast](../book/16-bgp-anycast-and-multi-region.md) and [network observability](../book/12-observability-and-troubleshooting.md).
 - [NAT and conntrack](../book/topics/24-nat-conntrack-and-snat.md) covers translation and state once a route exists.
-

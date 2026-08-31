@@ -15,7 +15,7 @@ that track.
 | Become stronger at Unix/network diagnosis | [Toolkit index](infra-engineer-toolkit.md) | Unix sessions -> tools -> cheatsheets -> runbooks/exercises |
 | Learn F5 LTM/GTM | [F5 LTM](03-f5-ltm.md) | [F5 GTM](04-f5-gtm.md), F5 bank, labs, and read-only troubleshooting |
 | Review cloud-native networking | [Platform networking](10-platform-networking.md) | DDI, transport security, Kubernetes, overlays, BGP, and capacity |
-| Prepare for cloud networking interviews | [Cloud networking interview track](../cloud-networking-interview/README.md) | AWS/GCP comparisons, hybrid networking, debugging, capacity, DR, migration, and Staff mock loops |
+| Prepare for cloud networking interviews | [Cloud networking interview track](../cloud-networking-interview/00-README.md) | AWS/GCP comparisons, hybrid networking, debugging, capacity, DR, migration, and Staff mock loops |
 | Practice safely | [Hands-on labs](09-hands-on-labs.md) | Demos, implementation exercises, and case studies |
 
 ## B. Recommended reading sequence

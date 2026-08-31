@@ -72,7 +72,7 @@ bank](docs/networking-interview-bank.md), covering protocols, cloud,
 Kubernetes, observability, security, and automation.
 
 For a dedicated cloud track with its own ordered modules, use the [Cloud
-Networking Interview Track](cloud-networking-interview/README.md). It covers
+Networking Interview Track](cloud-networking-interview/00-README.md). It covers
 AWS and Google Cloud as explicit comparisons across routing, private services,
 identity, Kubernetes, observability, capacity, disaster recovery, migration,
 and Staff-level mock interviews.

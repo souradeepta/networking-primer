@@ -10,7 +10,7 @@
 
 ## B. Prerequisites
 
-Review [addressing, subnetting, and route selection](../book/02-addressing-subnetting-routing.md), [cloud primitives](../book/topics/37-cloud-networking-primitives.md), and [the foundations module](cloud-network-foundations.md). You should be able to calculate a prefix size, understand usable host space at a high level, and distinguish an interface address from a service virtual IP. Provider-specific reserved-address counts and service limits are intentionally not memorized here; check current official documentation for the selected product and region.
+Review [addressing, subnetting, and route selection](../book/02-addressing-subnetting-routing.md), [cloud primitives](../book/topics/37-cloud-networking-primitives.md), and [the foundations module](01-cloud-network-foundations.md). You should be able to calculate a prefix size, understand usable host space at a high level, and distinguish an interface address from a service virtual IP. Provider-specific reserved-address counts and service limits are intentionally not memorized here; check current official documentation for the selected product and region.
 
 ## C. Address planning mental model
 
