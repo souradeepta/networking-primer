@@ -1,5 +1,12 @@
 # 10. F5 LTM in depth
 
+## SDE2 integration lens
+
+Trace configuration hierarchy from VLAN and self IP through virtual server,
+profiles, pool, monitor, persistence, SNAT, and iRules or policies. For every
+incident, record the selected member and both source/destination tuples. A
+healthy monitor proves only its probe path.
+
 ## Learning objectives
 
 By the end of this chapter, you should be able to trace an LTM request from a client-facing virtual server to a pool member and back, explain how nodes and members differ, and choose evidence when a health check or application request fails. You will connect profiles, monitors, persistence, SNAT, TLS, policies, iRules, and high availability into one operational model. The aim is transferable reasoning, not a copy-and-paste production configuration.

@@ -1,5 +1,12 @@
 # 09. Reverse Proxies and Load Balancing
 
+## SDE2 integration lens
+
+Design the proxy as two explicit connections with independent policies: client
+TLS and identity on one side, pool selection, SNAT, health, and backend TLS on
+the other. Budget deadlines across DNS, connect, queue, upstream, and response
+phases so retries cannot amplify an outage.
+
 ## Learning objectives
 
 This chapter builds a request-path model for reverse proxies and load balancers. You will distinguish Layer 4 forwarding from Layer 7 proxying, design meaningful health checks, compare distribution algorithms, understand persistence and source NAT (SNAT), and reason about retries, capacity, and failure domains. You will also learn why a healthy pool can still serve failed requests and why an apparently harmless retry can multiply load.

@@ -2,19 +2,22 @@
 
 ## Current state
 
-- Local repository implementation, including hands-on labs and link validation,
-  is complete at commit `b9fb612`.
+- Local repository implementation, including hands-on labs, link validation,
+  nineteen case studies, and the edition-5 platform expansion, is complete
+  locally but not yet committed.
 - The content target is SDE1/SDE2 networking, focused on F5 LTM and GTM
   (BIG-IP DNS).
 - Public GitHub remote: https://github.com/souradeepta/networking-primer
-- Expansion in progress: book chapters 1-14 are complete; infrastructure case
-  studies 1-2 and focused topic/demo scaffolding are in progress. The current
-  validator will intentionally fail until all four cases and six focused topics
-  exist.
-- Next handoff: finish case studies 3-4 and focused topics, then run Terra review
-  and commit/push the edition-3/4 expansion.
+- The book contains 17 chapters and 16 focused topic references. New coverage
+  includes cloud networking/Kubernetes ingress, BGP/anycast/multi-region,
+  WAF/API security/zero trust, observability/SLOs, network testing/chaos, and
+  capacity/performance engineering. `docs/10-platform-networking.md` bridges
+  those topics into the quick-start path.
+- Next handoff: run Terra review of the edition-5 expansion, fix any findings,
+  then commit and push the public branch.
 
 ## Verification
 
 - Run `./scripts/validate.sh`.
 - Run `python3 examples/request_path.py`.
+- Run `python3 -m py_compile examples/*.py demos/*.py demos/docker/*.py`.

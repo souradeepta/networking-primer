@@ -1,5 +1,12 @@
 # 08. TLS, Certificates, PKI, and mTLS
 
+## SDE2 integration lens
+
+Separate client-side and server-side trust decisions at a proxy. Inventory
+certificate SANs, SNI mappings, chain order, key owner, expiry, and mTLS trust
+bundles per VIP. A successful browser handshake can coexist with backend chain
+failure; automate metadata checks but protect private-key operations.
+
 ## Learning objectives
 
 You will learn to trace a TLS connection, explain the practical differences between TLS 1.2 and TLS 1.3, read an X.509 certificate, distinguish SAN from SNI, validate a chain, and reason about mutual TLS (mTLS). You will also build a rotation plan and understand what changes when an F5 or another reverse proxy terminates TLS. The goal is diagnosis: identify which identity, key, trust store, protocol version, or hop is failing without weakening security as a first response.

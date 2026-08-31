@@ -89,6 +89,26 @@ LTM HA failover, GTM topology misrouting, GTM TTL migration, expired TLS
 intermediate, mTLS trust rotation, F5 SDK idempotency drift, and a failed LB
 upgrade with rollback.
 
+## Curriculum expansion (edition 5)
+
+The book now extends beyond the core 14-chapter foundation into production
+platform networking. Add at least three new chapters covering cloud networking
+and Kubernetes ingress, BGP/anycast/multi-region routing, and WAF/API security
+and zero-trust boundaries. New chapters follow the edition-2 chapter contract
+and must be at least 1,500 words with a worked operational example, a table,
+an ASCII-only Mermaid diagram, and eight explained Q&A items.
+
+Add at least six new focused references covering observability and SLOs,
+BGP/anycast policy, Kubernetes ingress/service mesh, WAF/API security and rate
+limits, network testing/chaos, and capacity/performance engineering. These
+files must be at least 1,200 words and include a table, diagram, worked
+example, checklist, and six explained Q&A items.
+
+All existing chapters and focused references should be expanded when a topic
+is already present: add concrete packet or control-plane reasoning, F5 LTM or
+GTM mappings, DDI implications, automation examples, failure evidence, and
+interview-quality Q&A rather than repeating definitions.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

@@ -1,5 +1,12 @@
 # 12. Observability and troubleshooting
 
+## SDE2 integration lens
+
+Build evidence bundles that join DNS timing, route state, TCP/TLS events, LTM
+client/server counters, monitor reasons, WAF decisions, and application traces
+by request ID and UTC time. Metrics show trends; logs and captures explain a
+transaction. Redact payloads while preserving reproducibility.
+
 ## Learning objectives
 
 This chapter gives you a disciplined method for diagnosing networked services across DNS, TCP, TLS, HTTP, load balancing, and DDI boundaries. You will distinguish metrics, logs, traces, and packet captures; define useful SLO evidence; build layered runbooks; and communicate incident hypotheses without confusing correlation for causation. The examples use F5 terminology where helpful, but the method applies to any distributed service.

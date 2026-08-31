@@ -1,5 +1,12 @@
 # 13. Automation, F5 SDK, REST, and SSH
 
+## SDE2 integration lens
+
+Make every network change a plan: observed version and partition, normalized
+diff, preconditions, approval, post-checks, and rollback. Pin SDK versions,
+classify retryable errors, reconcile idempotently, and prefer read-only REST or
+SDK evidence. SSH remains a constrained diagnostic fallback.
+
 ## Learning objectives
 
 By the end of this chapter you can design a network automation change that is repeatable, reviewable, and safe to stop. You will distinguish declarative desired state from imperative commands, explain idempotency, and choose read-only discovery before a write. You will recognize where the F5 Python SDK wraps iControl REST, how authentication and secrets should be handled, and why a successful HTTP response is not proof that traffic is healthy. You will also be able to reason about SSH host keys, bastion or jump hosts, test doubles, and CI gates.

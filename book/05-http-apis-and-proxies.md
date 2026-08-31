@@ -1,5 +1,12 @@
 # HTTP, APIs, and proxy boundaries
 
+## SDE2 integration lens
+
+An HTTP status is an observation at one hop, not a root cause. Compare client
+and server status classes, retry headers, request IDs, cache keys, and proxy
+timeouts. F5 profiles, WAF rules, and sidecars may rewrite headers or terminate
+TLS; document each boundary without exposing credentials.
+
 ## Learning objectives
 
 This chapter teaches how HTTP versions carry requests and responses, how methods and status codes communicate intent, how caches decide whether a response can be reused, and where an API or reverse proxy should enforce policy. You will learn to separate protocol facts from design inference, trace one request across proxy boundaries, and diagnose failures without blaming “the network” for an application decision.

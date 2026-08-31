@@ -1,5 +1,12 @@
 # DNS resolution and operations
 
+## SDE2 integration lens
+
+Always record resolver location, answer set, TTL, authoritative source, and
+time observed. A GTM decision is filtered by recursive caching and client
+connection reuse. DDI ownership, DNSSEC state, and negative caching can each
+make a correct record look wrong from one vantage point.
+
 ## Learning objectives
 
 You will learn how a stub resolver, recursive resolver, and authoritative server cooperate; how common record types and TTLs shape behavior; what DNSSEC authenticates; how negative caching works; and how DNS-based global traffic management relates to, but does not replace, application health. You will also practice tracing a name-resolution failure by asking which server knew which fact and when that fact may expire.

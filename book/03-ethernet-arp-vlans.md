@@ -1,5 +1,12 @@
 # Chapter 3: Ethernet, ARP, Neighbor Discovery, VLANs, and MTU
 
+## SDE2 integration lens
+
+Treat VLAN, ARP/ND, and MTU state as dependencies of the load-balancer data
+plane. A VIP can be configured correctly while a missing tagged VLAN, stale
+ARP owner, or tunnel MTU prevents traffic. Pair switch counters and neighbor
+tables with F5 self-IP and route evidence.
+
 ## Learning objectives
 
 You will learn how an Ethernet frame carries an IP packet, how switches learn MAC addresses, and why a switch can forward without knowing IP routes. You will compare IPv4 ARP with IPv6 Neighbor Discovery, understand access ports, trunks, VLAN tags, and native-VLAN risks, and diagnose MTU problems across links. You will connect these mechanisms to concrete packet captures and operational checks. [Fact: Ethernet framing and VLAN tagging are defined by IEEE standards; ARP and IPv6 ND are described by IETF specifications listed in the references.] [Inference: The exact command syntax differs by vendor, but the evidence categories are portable.]

@@ -32,8 +32,8 @@ from pathlib import Path
 import re
 
 chapters = sorted(p for p in Path("book").glob("*.md") if p.name not in {"README.md", "FACT-INFERENCE-LEDGER.md"})
-if len(chapters) < 14:
-    raise SystemExit(f"Book edition needs 14 chapters; found {len(chapters)}")
+if len(chapters) < 17:
+    raise SystemExit(f"Book edition needs 17 chapters; found {len(chapters)}")
 required = [
     "Learning objectives", "Prerequisites", "Mental model", "Worked example",
     "When this breaks", "Operational checklist", "Diagram", "Questions and answers",
@@ -46,13 +46,16 @@ for path in chapters:
     prose = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
     prose = "\n".join(line for line in prose.splitlines() if not line.startswith(("#", "|", "- ")))
     words = re.findall(r"\b[\w'-]+\b", prose)
-    if len(words) < 1200:
-        raise SystemExit(f"{path}: needs 1200 prose words; found {len(words)}")
+    minimum = 1500 if path.name.startswith(("15-", "16-", "17-")) else 1200
+    if len(words) < minimum:
+        raise SystemExit(f"{path}: needs {minimum} prose words; found {len(words)}")
     qa = re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)
     if len(qa) < 8:
         raise SystemExit(f"{path}: needs 8 numbered Q&A; found {len(qa)}")
     if "```mermaid" not in text:
         raise SystemExit(f"{path}: missing Mermaid diagram")
+    if path.name.startswith(("15-", "16-", "17-")) and "| --- |" not in text:
+        raise SystemExit(f"{path}: edition-5 chapter needs a Markdown table")
 print(f"Book chapter checks passed: {len(chapters)} chapters.")
 PY
 
@@ -91,8 +94,8 @@ from pathlib import Path
 import re
 
 topics = sorted(p for p in Path("book/topics").glob("*.md") if p.name != "README.md")
-if len(topics) < 10:
-    raise SystemExit(f"Need 10 focused topic files; found {len(topics)}")
+if len(topics) < 16:
+    raise SystemExit(f"Need 16 focused topic files; found {len(topics)}")
 for path in topics:
     text = path.read_text(encoding="utf-8")
     required = ["Learning objectives", "Worked example", "When this breaks",
@@ -100,10 +103,12 @@ for path in topics:
     missing = [h for h in required if f"## {h}" not in text]
     if missing:
         raise SystemExit(f"{path}: missing topic headings: {', '.join(missing)}")
-    if len(re.findall(r"\b[\w'-]+\b", re.sub(r"```.*?```", "", text, flags=re.DOTALL))) < 900:
-        raise SystemExit(f"{path}: needs 900 words")
-    if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < 5:
-        raise SystemExit(f"{path}: needs 5 numbered Q&A")
+    minimum = 1200 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-")) else 900
+    if len(re.findall(r"\b[\w'-]+\b", re.sub(r"```.*?```", "", text, flags=re.DOTALL))) < minimum:
+        raise SystemExit(f"{path}: needs {minimum} words")
+    qa_minimum = 6 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-")) else 5
+    if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < qa_minimum:
+        raise SystemExit(f"{path}: needs {qa_minimum} numbered Q&A")
     if "```mermaid" not in text or "| --- |" not in text:
         raise SystemExit(f"{path}: needs Mermaid diagram and Markdown table")
 print(f"Focused topic checks passed: {len(topics)} topics.")

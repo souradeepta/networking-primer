@@ -5,6 +5,8 @@
 - [x] Add safe hands-on labs for DNS/GTM, LTM, and TLS/mTLS troubleshooting.
 - [x] Validate and create the local Git repository.
 - [x] Create and push the public GitHub remote.
-- [ ] Complete four infrastructure case studies and six focused topic files.
-- [ ] Add and validate shell/Python demos and browser animations.
-- [ ] Run Terra review, commit, and push the expansion.
+- [x] Complete nineteen infrastructure case studies and sixteen focused topic files.
+- [x] Add and validate shell/Python demos, Docker lab scaffolding, and browser animations.
+- [x] Expand the book with cloud/Kubernetes, BGP/anycast, WAF/zero-trust, observability,
+      testing, and capacity topics.
+- [ ] Run Terra review of the edition-5 expansion, then commit and push.

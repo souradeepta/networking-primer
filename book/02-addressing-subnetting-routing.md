@@ -1,5 +1,12 @@
 # Chapter 2: Addressing, Subnetting, and Routing
 
+## SDE2 integration lens
+
+Relate every prefix to an owner, return path, and failure domain. Before
+changing an LTM self IP, SNAT address, GTM listener, or Kubernetes route,
+compare intended CIDR ownership with actual route tables and IPAM. Correct
+subnet arithmetic is necessary but not sufficient when routes overlap.
+
 ## Learning objectives
 
 By the end of this chapter, you should be able to read IPv4 and IPv6 addresses, explain CIDR prefixes, calculate usable subnet ranges, and distinguish a host route from a network route. You will trace how a host chooses a next hop, how a router chooses a route with longest-prefix matching, and why a default route is useful but dangerous. You will also explain private addressing, NAT, IPv6 global and link-local addresses, and the operational clues left by a routing mistake. [Fact: IPv4 forwarding and CIDR behavior are specified by the IETF standards cited in the references.] [Inference: The debugging habits in this chapter make packet captures and route-table output easier to interpret, but they do not replace checking the actual configuration.]

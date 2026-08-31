@@ -1,5 +1,13 @@
 # TCP/IP and Packet Journeys
 
+## SDE2 integration lens
+
+Use this chapter as the evidence contract for every later platform layer. For
+an F5 VIP, capture both proxy legs; for GTM, record the DNS answer and cache
+age; for DDI, identify the address owner; for automation, preserve timestamps
+and object versions. Ask which observation distinguishes route, transport,
+policy, and workload failure.
+
 ## Learning objectives
 
 By the end of this chapter, a reader should be able to trace an application

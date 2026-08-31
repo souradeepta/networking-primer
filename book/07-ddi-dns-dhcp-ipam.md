@@ -1,5 +1,12 @@
 # 07. DDI: DNS, DHCP, and IPAM
 
+## SDE2 integration lens
+
+DDI is a consistency system as much as a set of protocols. Tie every address
+to an allocation owner, lease state, DNS record, and intended consumer. Before
+adding a VIP, node, or SNAT pool, reserve it in IPAM and reconcile in
+dependency-safe order with an audit trail.
+
 ## Learning objectives
 
 By the end of this chapter, you should be able to describe DDI as a coordinated set of services rather than a single product; trace a DHCP lease from discovery through renewal and release; explain why a relay is needed across routed boundaries; assign ownership for address space, DNS zones, and DHCP scopes; and diagnose drift between an IP address management (IPAM) record, a DHCP lease, DNS data, and the actual network. You will also learn to distinguish protocol facts from operational inferences, and to choose evidence that narrows a failure without changing production state.

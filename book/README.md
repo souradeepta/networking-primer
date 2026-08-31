@@ -28,6 +28,9 @@ documentation or local addresses unless an authorized lab target is supplied.
 12. Observability and layered troubleshooting
 13. Automation, F5 Python SDK, REST, and SSH
 14. Reliability, security, and safe change management
+15. Cloud networking and Kubernetes ingress
+16. BGP, anycast, and multi-region traffic engineering
+17. Network security, WAF, and zero trust
 
 The original `docs/` files remain the quick-start edition; these chapters are
 the elaborated treatment.
@@ -41,3 +44,8 @@ fictional but operationally realistic outages and migrations.
 Focused references and runnable demos are in [book/topics](topics/README.md)
 and [`demos/`](../demos/README.md). These files deliberately separate VIP,
 certificate, monitor, GTM, DDI, and automation concerns for targeted study.
+
+The edition-5 platform track adds cloud-native ingress, routing policy, WAF
+controls, observability/SLOs, and performance engineering. Treat these as
+production design material: validate vendor behavior in a lab and preserve a
+tested rollback path before making a change.

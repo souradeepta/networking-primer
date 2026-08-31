@@ -37,14 +37,15 @@ evidence, diagrams, and decision context.
 Supporting modules: [DDI](docs/06-ddi.md), [architecture diagrams](docs/architecture.md),
 [network automation](docs/07-automation.md), [transport security](docs/08-transport-security.md),
 [hands-on labs](docs/09-hands-on-labs.md), and the
-[troubleshooting runbook](docs/05-troubleshooting.md).
+[troubleshooting runbook](docs/05-troubleshooting.md), plus the
+[platform networking bridge](docs/10-platform-networking.md).
 
 Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small
 [request-path simulator](examples/request_path.py).
 
 For book-depth study, use the [Book Edition](book/README.md), which expands the
-topics into 14 chapters with worked examples, diagrams, operational checklists,
+topics into 17 chapters with worked examples, diagrams, operational checklists,
 and chapter-level Q&A.
 
 Practice with the [implementation exercises](exercises/README.md), and run the

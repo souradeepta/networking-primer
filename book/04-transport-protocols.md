@@ -1,5 +1,12 @@
 # Transport protocols: TCP, UDP, and QUIC
 
+## SDE2 integration lens
+
+Map transport state to proxy budgets: SYN backlog, established connections,
+idle timeout, retransmission, TLS handshakes, and SNAT translations. LTM can
+accept a client TCP connection while failing to open the server-side one, and
+GTM DNS steering cannot repair an established flow.
+
 ## Learning objectives
 
 By the end of this chapter, a reader should be able to describe what a transport protocol contributes beyond IP, identify TCP state transitions in a packet trace, choose sensible uses for UDP and QUIC, and explain how congestion control differs from application rate limiting. The reader should also be able to distinguish a connection being established from an application being healthy, and use counters and timings to form a testable diagnosis.

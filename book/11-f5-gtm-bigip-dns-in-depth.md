@@ -1,5 +1,12 @@
 # 11. F5 GTM and BIG-IP DNS in depth
 
+## SDE2 integration lens
+
+Separate GTM control-plane health from DNS cache behavior and LTM dataplane
+health. Record Wide IP, pool, steering decision, TTL, resolver, and site
+capacity. A failover plan must model stale answers and long-lived connections;
+lowering TTL is not an instant drain mechanism.
+
 ## Learning objectives
 
 This chapter explains how BIG-IP DNS, historically called Global Traffic Manager (GTM), answers DNS questions using Wide IPs, pools, data centers, servers, virtual servers, monitors, and steering methods. You will distinguish authoritative selection from LTM request forwarding, reason about TTL and caches, and design evidence-led failover and high-availability checks. Examples are conceptual and omit tenant-specific commands or secrets.

@@ -1,5 +1,12 @@
 # 14. Reliability, Security, and Change Management
 
+## SDE2 integration lens
+
+Connect SLO error budgets to concrete failure domains: VIP, SNAT, certificate,
+monitor, GTM answer, route, WAF policy, and backend capacity. Use canaries and
+explicit stop conditions for upgrades and trust rotations. A rollback is a
+tested state transition with verification, not merely an old file.
+
 ## Learning objectives
 
 This chapter connects reliability engineering, security engineering, and operational change. You will define useful service-level objectives (SLOs), reason about capacity and failure domains, design high availability (HA) without assuming that redundancy removes risk, and choose bounded timeouts and retries. You will practice an incident-response flow, build a threat model for network control planes, and plan changes with review, canaries, rollback, and postmortems. The goal is not a universal policy; it is a habit of making assumptions, evidence, and blast radius visible.
