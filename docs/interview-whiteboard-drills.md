@@ -28,3 +28,45 @@ evidence, and name a falsifier.
 | Valid authoritative DNS | Inspect cache/LDNS | Resolver answer current |
 | API accepted write | GET effective state | Desired version absent |
 
+## Worked answer: DNS/GTM failover (12-minute drill)
+
+Assume two regions, authoritative GTM health checks, a 30-second TTL, and a
+warm-standby database. The client uses a recursive resolver, so TTL is a bound,
+not an instant switch.
+
+```mermaid
+flowchart LR
+  C[Client] --> R[Recursive resolver]
+  R --> G[GTM wide IP]
+  G --> W[West VIP]
+  G --> E[East VIP]
+  W --> A[West app pool]
+  E --> B[East app pool]
+```
+
+**Interviewer:** West is unhealthy. Why do some clients still reach West?
+
+**Candidate:** GTM may stop selecting West only after monitor and iQuery state
+converge. Resolvers that cached the old answer continue until the remaining TTL
+expires; clients may cache locally or reuse existing connections. I compare
+authoritative answers, resolver answers with cache age, GTM member state,
+monitor source, and application errors. The safe action is to confirm the
+approved policy and observe; lowering TTL after the incident cannot flush old
+caches.
+
+| Signal | Supports | Falsifier |
+| --- | --- | --- |
+| Authoritative answer excludes West | GTM decision changed | Resolver still returns West |
+| Resolver answer includes West | Cache/convergence delay | Cache age below TTL yet stale |
+| West monitor down | Regional failure | Direct equivalent probe succeeds |
+
+Two hypotheses are H1, expected cache convergence, and H2, stale or incorrect
+GTM health state. Test H1 from multiple resolver vantage points; test H2 with
+monitor logs and iQuery peer state. Aggressive TTL reduction improves future
+failover but increases DNS load and does not repair an unhealthy application.
+Rollback restores the prior topology only after a canary and database write
+safety are proven.
+
+**Calculation:** if a resolver cached the answer one second before failure,
+the remaining DNS exposure is approximately 29 seconds, excluding client cache
+and connection reuse. Label this as an assumption, not a recovery guarantee.

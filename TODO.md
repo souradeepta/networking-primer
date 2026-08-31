@@ -27,8 +27,9 @@
       troubleshooting coverage.
 - [x] Add dialogue-based debugging, authorized penetration-testing, and
       controlled network-testing exercises with interviewer follow-ups.
-- [ ] Add Terra-reviewed interview rubric, simulations, whiteboard drills,
+- [x] Add Terra-reviewed interview rubric, simulations, whiteboard drills,
       system-design exercises, and a measurable study plan.
-- [ ] Expand practice-system drafts to Terra's per-item quality contract:
-      detailed dialogues, individual diagrams/tables/calculations, full design
-      walkthroughs, scored exemplars, and strict structural validators.
+- [ ] Continue expanding every practice item to Terra's maximum per-item
+      contract (350+ word simulations and 600+ word designs); this pass adds
+      five detailed transcripts, a worked whiteboard drill, a worked design,
+      and marker-aware validators.

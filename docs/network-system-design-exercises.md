@@ -17,3 +17,62 @@ and engineering inferences. Use reserved addresses and authorized tests.
 9. **Observability pipeline:** Requirements: logs, metrics, traces, TS-style export. Path: device/service to collector to store. Capacity: event volume and backpressure. Failures: destination or schema. Security: redaction and RBAC. Observe delivery SLO. Roll out one tenant. Follow-ups: sampling? data retention?
 10. **Authorized resilience test:** Requirements: written scope, rate, abort, owner, recovery. Path: selected lab or canary dependency. Capacity: baseline and error budget. Failures: packet loss, delay, dependency outage. Security: no exploit or credential guessing. Observe impact and stop. Follow-ups: falsifier? rollback?
 
+## Worked design: multi-region F5 application edge
+
+### Requirements and assumptions
+
+Serve 50,000 requests/second across two regions, keep p99 latency below 250 ms,
+survive loss of one region, and avoid split-brain writes. Assume 70% cacheable
+GETs, 30% dynamic requests, 20,000 concurrent TLS sessions per region, a
+30-second DNS TTL, and RTO/RPO targets of 10 minutes/5 minutes. These are
+interview assumptions and must be replaced by measured traffic.
+
+### Architecture and request sequence
+
+```mermaid
+flowchart LR
+  U[Clients] --> D[Recursive DNS]
+  D --> G[GTM Wide IP]
+  G --> V1[Region A VIP]
+  G --> V2[Region B VIP]
+  V1 --> L1[LTM pool and WAF]
+  V2 --> L2[LTM pool and WAF]
+  L1 --> S1[Stateless services]
+  L2 --> S2[Stateless services]
+  S1 --> DB[(Primary database)]
+  S2 --> DB
+```
+
+The resolver receives a GTM answer subject to TTL and cache age. The client
+then performs TCP and TLS to the selected VIP; SNI chooses the certificate and
+the LTM profile terminates or re-encrypts TLS. LTM selects a healthy member,
+applies SNAT if the return route requires it, and emits a request ID. Dynamic
+writes go to the database primary; promotion requires fencing before GTM
+advertises the new region.
+
+### Capacity, failure, and safety
+
+At 70% cacheable traffic, origins see about 15,000 requests/second before
+retries. Size for a full 50,000-request regional burst plus TLS handshakes, not
+the average. Reserve SNAT ports by source/destination tuple and alert on
+allocation failures. A regional failure consumes DNS convergence, connection
+drain, and database-promotion time; a 10-minute RTO is a budget, not a DNS
+promise. Monitors test the real dependency path without writes. WAF and rate
+limits fail closed for admin routes and fail safely for approved public reads.
+
+### Observability and rollout
+
+Track answer distribution, monitor state, TLS errors by SNI, 4xx/5xx, queue
+depth, SNAT utilization, replication lag, resolver cache age, and trace IDs.
+Roll out one VIP/profile at a time, canary known clients, compare p50/p95/p99
+and error budgets, then expand. Roll back with the versioned LTM/GTM
+declaration, drain new traffic, and verify data-plane health and database
+fencing.
+
+### Follow-ups
+
+1. How would IPv6 avoid an asymmetric return path?
+2. Which certificates and trust stores rotate, and how is mTLS identity mapped?
+3. What evidence distinguishes GTM cache delay from an LTM pool outage?
+4. How is an SDK/AS3 deployment made idempotent after an API timeout?
+5. What is the safe rollback if the promoted database accepts writes too early?

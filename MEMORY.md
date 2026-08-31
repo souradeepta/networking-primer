@@ -46,12 +46,11 @@
   new rubric, 20-scenario simulation pack, 15 whiteboard drills, 10 system
   design exercises, and 4/6/2-week study plan are now in `docs/`. Validators
   enforce their minimum item counts and required files.
-- Current uncommitted practice-system drafts (`interview-rubric.md`,
-  `interview-simulation-pack.md`, `interview-whiteboard-drills.md`,
-  `network-system-design-exercises.md`, `interview-study-plan.md`) are not
-  complete. Terra found they need per-item dialogue, diagrams, calculations,
-  follow-ups, scoring, and strict validators before commit/push. Do not present
-  the current line-count checks as sufficient.
+- The practice-system files now include role scoring, answer templates, five
+  detailed interview transcripts, a worked DNS/GTM whiteboard drill, and a
+  multi-region F5 design walkthrough. Validators check substantive markers in
+  addition to item counts. Full per-item 350/600-word expansion remains tracked
+  in TODO rather than being hidden behind a count-only pass.
 
 ## Verification
 

@@ -206,6 +206,20 @@ for filename, (pattern, minimum, label) in checks.items():
     count = len(re.findall(pattern, text, flags=re.MULTILINE))
     if count < minimum:
         raise SystemExit(f"{filename}: needs {minimum} {label}; found {count}")
+sim = Path("docs/interview-simulation-pack.md").read_text(encoding="utf-8")
+for marker in ("Detailed conversation transcripts", "Interviewer", "Candidate", "Follow-up", "Wrong path", "Boundary", "Scorecard"):
+    if marker not in sim:
+        raise SystemExit(f"simulation pack missing detailed marker: {marker}")
+if len(re.findall(r"^### Scenario", sim, flags=re.MULTILINE)) < 5:
+    raise SystemExit("simulation pack needs at least five detailed transcript scenarios")
+drills = Path("docs/interview-whiteboard-drills.md").read_text(encoding="utf-8")
+for marker in ("Worked answer", "Assume", "falsifier", "Calculation", "```mermaid"):
+    if marker not in drills:
+        raise SystemExit(f"whiteboard drills missing detailed marker: {marker}")
+design = Path("docs/network-system-design-exercises.md").read_text(encoding="utf-8")
+for marker in ("Worked design", "Requirements and assumptions", "Capacity", "Observability", "Follow-ups", "```mermaid"):
+    if marker not in design:
+        raise SystemExit(f"system-design exercises missing detailed marker: {marker}")
 print("Interview practice structure checks passed: rubric, simulations, drills, and design exercises.")
 PY
 
