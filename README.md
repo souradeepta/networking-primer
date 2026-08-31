@@ -49,6 +49,10 @@ For broad networking interview preparation, use the [networking interview
 bank](docs/networking-interview-bank.md), covering protocols, cloud,
 Kubernetes, observability, security, and automation.
 
+Practice evidence-led conversations with the [interview dialogue
+exercises](docs/interview-dialogue-exercises.md), including DNS, TCP, TLS, F5,
+incident response, authorized testing, and chaos-test planning.
+
 Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small
 [request-path simulator](examples/request_path.py).

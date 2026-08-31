@@ -25,3 +25,5 @@
 - [x] Add an equally large networking interview bank with protocol, DDI,
       cloud, Kubernetes, BGP, security, observability, automation, and
       troubleshooting coverage.
+- [x] Add dialogue-based debugging, authorized penetration-testing, and
+      controlled network-testing exercises with interviewer follow-ups.

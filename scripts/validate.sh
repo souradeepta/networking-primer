@@ -7,7 +7,7 @@ required=(
   docs/01-foundations.md docs/02-request-path.md docs/03-f5-ltm.md
   docs/04-f5-gtm.md docs/05-troubleshooting.md docs/06-ddi.md
   docs/07-automation.md docs/08-transport-security.md docs/architecture.md
-  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/glossary.md docs/references.md
+  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/interview-dialogue-exercises.md docs/glossary.md docs/references.md
   book/README.md book/FACT-INFERENCE-LEDGER.md
   examples/request_path.py examples/f5_pool_audit.py
   scripts/check_internal_links.py
@@ -189,6 +189,20 @@ if len(questions) < 60:
 if len(exercises) < 16:
     raise SystemExit(f"Networking interview bank needs 16 debugging exercises; found {len(exercises)}")
 print(f"Networking interview bank checks passed: {len(questions)} questions, {len(exercises)} debugging exercises.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+path = Path("docs/interview-dialogue-exercises.md")
+text = path.read_text(encoding="utf-8")
+scenarios = re.findall(r"^## \d+\.", text, flags=re.MULTILINE)
+if len(scenarios) < 12:
+    raise SystemExit(f"Dialogue exercise bank needs 12 scenarios; found {len(scenarios)}")
+if "Interviewer" not in text or "Candidate" not in text or "## Evidence table template" not in text:
+    raise SystemExit("Dialogue exercise bank is missing conversation/evidence structure")
+print(f"Dialogue exercise checks passed: {len(scenarios)} scenarios.")
 PY
 
 python3 scripts/check_internal_links.py

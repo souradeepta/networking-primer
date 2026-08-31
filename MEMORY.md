@@ -38,6 +38,10 @@
   questions plus detailed follow-ups and 16 debugging exercises across
   protocols, DDI, HTTP, TLS, cloud/Kubernetes, BGP, observability, automation,
   and security. The two banks are intentionally comparable in depth.
+- `docs/interview-dialogue-exercises.md` now models 12 interviewer/ interviewee
+  scenarios for full logs, unresponsive systems, expired certificates,
+  vulnerability findings, suspected breach, DNS/TCP/MTU/F5/SNAT failures,
+  authorized penetration testing, and controlled network chaos/load testing.
 
 ## Verification
 

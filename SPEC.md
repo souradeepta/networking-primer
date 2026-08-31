@@ -161,6 +161,13 @@ cloud/Kubernetes, overlays/BGP, observability/SLOs, automation, and security.
 Answers must explain mechanism, evidence, trade-offs, and uncertainty rather
 than provide flash-card definitions.
 
+Maintain `docs/interview-dialogue-exercises.md` with at least twelve
+interviewer/interviewee scenarios spanning operational debugging, authorized
+penetration testing, and controlled network testing. Each scenario must state
+scope and authorization, clarifying questions, evidence and commands, competing
+hypotheses, safe containment or test boundaries, follow-up questions, and
+verification. Security exercises must remain defensive and non-destructive.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in
