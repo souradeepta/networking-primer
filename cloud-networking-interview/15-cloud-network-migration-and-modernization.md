@@ -116,7 +116,47 @@ The first 5% canary shows equal success but 20% higher latency and unexpected cr
 
    **Answer:** Convert the disagreement into explicit customer impact, reversibility, evidence, and residual risk. Offer a smaller canary or staged boundary, assign decision ownership, and record what is accepted. Speed is safe when scope and rollback are bounded; broad emergency access is not a migration strategy.
 
-## H. References and evidence labels
+## H. Advanced design review: migration contracts, rollback, and organizational ownership
+
+### H1. Build a dependency graph before a cutover graph
+
+A migration plan is incomplete if it lists networks and servers but not the behavior around them. Inventory caller cohorts, DNS names and TTLs, certificates and SNI, ports and protocols, source-identity expectations, routes and NAT, policy attachments, health checks, queues, databases, third-party endpoints, identity providers, observability, owners, and failure paths. Annotate each edge with direction, volume, latency budget, data sensitivity, and whether the dependency is hard or soft.
+
+Use observed traffic to challenge the inventory. If a service handles 800 requests per second and 5% create long-lived connections, there may be 40 new long-lived connections per second; their age distribution matters more than the count at cutover. If 40% of clients reuse connections for up to 10 minutes, a 60-second DNS TTL cannot move those sessions. **Inference:** DNS, drain time, certificate rotation, and connection lifetime form one migration contract. A weekend window does not make an old path disappear.
+
+### H2. Resolve overlap without hiding identity
+
+Overlapping CIDRs create ambiguity in route selection and return traffic. Options include renumbering, isolation behind a proxy, translation, or a temporary application gateway. Each changes observability and source identity. Translation can make connectivity possible while collapsing many callers behind one address; a proxy can preserve authenticated application identity but adds a hop, timeout, certificate, and quota boundary. Renumbering costs more upfront but leaves the cleanest long-term route and policy model.
+
+Evaluate the choice with a decision matrix: time to deploy, data-plane performance, source fidelity, failure isolation, rollback ease, cost, and retirement effort. If translation is selected, document the original identity carrier and prove that logs can correlate it end to end. A hidden NAT bridge is a common Staff failure: it solves packets while making authorization, rate limiting, and incident diagnosis weaker.
+
+### H3. Migration arithmetic and phased gates
+
+Suppose a canary receives 5% of 800 requests per second: `40 requests/second`. If the target path adds 20 ms at p95 and sends 30% of its 2 MiB average response across regions, the canary produces roughly `40 * 2 MiB * 0.30 = 24 MiB/second` of cross-region response traffic. Over an hour, that is about `84.4 GiB`, before retries and protocol overhead. These figures are planning inputs for cost and capacity review, not provider pricing claims.
+
+Use gates that test behavior, not just deployment completion. Gate 1 verifies address, route, identity, certificate, and telemetry prerequisites. Gate 2 compares a controlled canary with an old-path control for success, latency, retries, dependency load, source identity, and cost. Gate 3 exercises one dependency or zone failure. Gate 4 expands traffic while the old path remains safe. Gate 5 retires the bridge only after connection drain, DNS convergence, audit review, and a removal test. Each gate needs an owner and a stop condition.
+
+### H4. Provider boundaries, ownership, and rollback
+
+AWS and GCP offer different hybrid connectivity, load-balancing, identity, quota, and address-scope mechanisms. **Vendor terminology** can describe the candidate implementation; it cannot prove that a migration path is reversible. Verify route propagation, transitivity, MTU, health-check source, source translation, endpoint scope, quota lead time, and billing for the selected design. Keep portable acceptance criteria—reachability, authorization, latency, failure behavior, evidence, and cost—above product choices.
+
+The migration owner coordinates the plan, but component owners must accept their contracts: application for behavior and idempotency, network for paths and policy, security for trust and certificates, data for replication and consistency, and finance for material cost changes. Rollback means restoring a known-good request path, credentials, dependencies, and capacity, not merely changing DNS. Preserve the old path until the rollback test has passed, and give every temporary bridge an expiry date, metric, owner, and removal evidence.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **The canary has equal success rates but 20% higher latency. Do you continue?**
+
+   **Answer:** First isolate the added time by DNS, connect, TLS, proxy, backend, and dependency spans. Compare payload size, client cohort, route, zone, and cache state with the control. If the latency violates the target SLO or creates hidden cost, pause expansion and optimize or redesign. Equal success is not sufficient when tail latency or cross-region transfer consumes the reliability and cost budget.
+
+2. **When should a temporary translation layer be removed?**
+
+   **Answer:** After the target has an overlap-free address plan, all dependencies use the new identity and DNS contracts, long-lived connections are drained, telemetry can correlate callers without translation, and rollback no longer requires the bridge. Set a measured deadline at design approval. If it remains, the owner must accept its route, port, cost, and security risk explicitly rather than allowing temporary complexity to become invisible infrastructure.
+
+3. **A migration needs a broad firewall exception to meet the date. How do you respond?**
+
+   **Answer:** Bound the exception to the canary source, destination, protocol, and time, assign an owner, and define evidence and removal gates. If a narrow rule cannot be expressed, treat that as a design defect or stop condition. I would explain the customer and security impact, offer a smaller reversible phase, and record residual risk. Schedule pressure changes the decision timeline, not the trust boundary.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS hybrid connectivity](https://aws.amazon.com/hybridconnectivity/).
 - **Fact / Vendor terminology:** [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html).

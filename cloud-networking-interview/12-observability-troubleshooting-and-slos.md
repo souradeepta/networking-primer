@@ -126,7 +126,47 @@ A regional latency SLO burned 30% of its monthly budget in 12 minutes. Construct
 
    **Answer:** Start from decisions and SLOs, then collect the minimum fields and resolution needed to make them. Use tiered retention, sampling that preserves rare failures, aggregation for high-cardinality dimensions, and access controls. Review cost against diagnostic value and test that sampling still preserves the failure classes that matter.
 
-## H. References and evidence labels
+## H. Advanced design review: evidence quality, SLO math, and diagnostic ownership
+
+### H1. Turn symptoms into measurable hypotheses
+
+The first Staff-level move in a networking incident is to define the affected operation and cohort. “The network is slow” should become something such as: `checkout.create` p95 from North America increased from 320 ms to 780 ms between 10:05 and 10:17 UTC, with 3% 504s, while read traffic stayed within its baseline. This statement identifies a service-level indicator, percentile, window, geography, and comparison. It also leaves room for several hypotheses: DNS latency, edge queueing, backend saturation, dependency delay, retransmission, or a rollout.
+
+Build a hypothesis-evidence-falsifier table before changing a control. For “zone C is overloaded,” predict zone-specific queueing, connection count, backend latency, and retries. Balanced zone metrics falsify or weaken it. For “DNS caused the incident,” compare resolver timing and answers for affected clients with a control population; a stable answer and low lookup latency weaken the claim. For “policy dropped return traffic,” inspect both directions and a controlled flow; an accepted flow with a complete application response falsifies that specific path hypothesis.
+
+### H2. Calculate error budgets and measurement limits
+
+For a 99.95% monthly availability SLO in a 30-day month, the nominal error budget is `30 * 24 * 60 * 0.0005 = 21.6` minutes. If a regional latency event consumes 30% of the monthly budget, it represents about 6.48 minutes of equivalent budget, but only if the SLO defines latency failures as eligible bad events and the burn-rate window is comparable. Do not silently convert request errors, latency violations, and user impact into the same unit.
+
+Percentiles are also contracts. A p99 over a small cohort may be unstable; an average can hide a severe tail; a sampled flow log may omit the very packet loss under investigation. State sample rate, aggregation key, clock source, and missing-data treatment. If telemetry delivery is delayed by two minutes, a live dashboard cannot establish a minute-by-minute causal sequence without correction. **Inference:** an observation is useful only relative to its coverage, delay, and semantic boundary.
+
+### H3. Design an evidence architecture with cost and privacy boundaries
+
+Every signal should have an owner, retention class, access policy, cardinality budget, and documented query purpose. Flow records can answer whether a source-destination tuple was observed, but may omit payload, TLS outcome, or application status. Load-balancer logs can identify listener and backend decisions, but may not show client-side DNS or a downstream timeout. Traces can connect spans across services, but sampling may exclude rare failures and network devices may not propagate the trace context.
+
+Use stable correlation fields where privacy permits: request ID, trace ID, deployment revision, zone, and a hashed or bounded tenant dimension. Avoid logging credentials, full payloads, or unbounded user identifiers. A Staff design explains how to diagnose without exposing sensitive data and how retention supports incident review. Cost is part of the design: retain high-resolution data briefly for diagnosis, aggregate longer-lived trends, and sample in a way that preserves rare error classes rather than only the common success path.
+
+### H4. Ownership, rollback, and evidence preservation
+
+The service owner is accountable for the user SLO and application semantics. The network or platform owner is accountable for route, policy, load-balancer, DNS, and telemetry contracts. Security and privacy owners define allowable fields and access. During an incident, the incident commander owns sequencing and communication, not every technical decision. Record who can declare a rollback, who can pause a rollout, and who can approve a temporary evidence change.
+
+Rollback can destroy evidence: replacing a proxy version may remove the failing logs, and changing a route may eliminate the comparison path. First preserve relevant dashboards, configuration versions, timestamps, and representative request IDs. Then reduce blast radius with a canary, traffic split, or feature gate. Define stop conditions such as a second consecutive window above the error budget burn threshold, unexplained loss of trace coverage, or a new cohort showing materially worse p99. Restoration is not complete until telemetry confirms the original failure mode is gone and the causal explanation is recorded.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **Flow logs show accepted connections, but users report TLS failures. What does the evidence prove?**
+
+   **Answer:** It proves only that the flow telemetry observed an accepted transport flow under its collection semantics. TLS could fail during handshake, certificate validation, SNI selection, or protocol negotiation. I would correlate edge handshake logs, client error classes, certificate version, and listener configuration. If a controlled client completes TLS with the same SNI and path, the hypothesis must be narrowed to the affected client cohort.
+
+2. **How do you choose between more telemetry and a faster mitigation?**
+
+   **Answer:** Protect users first with a reversible, bounded mitigation, but preserve the minimum evidence needed to distinguish competing causes. If the mitigation changes the path, capture before/after samples and keep a control cohort where safe. I would avoid broad logging changes during a high-load event unless their cost and cardinality are bounded. The decision depends on reversibility, customer harm, and whether missing evidence could make recurrence likely.
+
+3. **What makes an SLO useful for a shared networking platform?**
+
+   **Answer:** It measures an outcome that service teams recognize, defines eligibility and exclusions, identifies the platform boundary, and has an owner for remediation. “Load balancer up” is weaker than successful, correctly routed requests within latency and availability objectives. A platform may publish component indicators, but it should connect them to customer journeys and show which team can act when the budget burns.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS VPC Flow Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html).
 - **Fact / Vendor terminology:** [AWS Elastic Load Balancing access logs](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-access-logs.html).

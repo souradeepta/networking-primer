@@ -136,7 +136,47 @@ Take 25 minutes. A team wants to connect a legacy network to a shared cloud netw
 
 **Answer:** State the portable mechanism first, then say, “In AWS this may be represented by X; in GCP it may be represented by Y; I would verify scope and behavior for the selected service.” That demonstrates useful provider fluency without pretending product names imply identical semantics.
 
-## K. References and evidence labels
+## K. Advanced boundary review: isolation as a testable claim
+
+### K.1 Packet and request tuple walk-through
+
+Assume tenant A calls a shared policy service in a platform network. The client sends `(10.40.12.19:53001 -> 10.70.4.18:443, TCP)` for `POST /evaluate`, with tenant identity `tenant-a` and request ID `b-442`. Walk the tuple through each boundary: the source subnet route, the inter-network attachment, any inspection hop, the service listener, and the reverse path. Then walk the request identity separately. A transit path may preserve a source address while a proxy changes it; a shared endpoint may make many consumers appear as one provider-facing source. Neither address alone proves tenant authorization.
+
+Ask which edges are intentionally reachable and which are merely possible because of a broad route. If tenant B can select the same destination and policy path, the boundary is not expressed at the needed identity or network layer. The answer should include a negative test: show that an unapproved tuple is rejected at the first intended enforcement point and that the rejection is observable.
+
+### K.2 Assumptions to calculation
+
+Suppose three tenant groups each need 600 Mbps peak to a shared service, but the design promises to survive loss of one of two inspection zones. The surviving-zone requirement is `(3 x 600) / 1 = 1,800 Mbps`, before a stated headroom factor. With 30% headroom, the target is 2,340 Mbps, not 780 Mbps per zone. If each zone has two 1-Gbps inspection paths, the design fails the stated loss scenario even though normal traffic fits. This calculation is an engineering estimate; verify actual throughput, connection, rule, and failover limits for the selected AWS or GCP service.
+
+The important Staff-level move is to connect capacity to boundary choice. A single shared choke point may be cheaper and easier to govern, but its blast radius includes every tenant. Independent paths reduce correlated failure while increasing policy duplication, cost, and drift risk.
+
+### K.3 Provider non-equivalence and verification boundary
+
+AWS VPC sharing, accounts, subnets, route-table associations, security groups, and Transit Gateway attachments express ownership differently from GCP Shared VPC host/service projects, global VPC networks, routes, hierarchical firewall policies, and Network Connectivity Center patterns. “Separate account” and “separate project” are administrative facts, not isolation proofs. AWS subnet-to-route-table association behavior should not be assumed from GCP’s global VPC route model; likewise, a GCP firewall target selector is not an AWS security-group attachment.
+
+Use **Fact** for documented provider behavior, **Vendor terminology** for product names, and **Inference** for the design conclusion that a boundary reduces blast radius. Verify effective routes, inherited policy, target selection, transitivity, quotas, and ownership permissions in the chosen account/project and region. In an interview, explicitly say which comparison is a hypothesis until the provider documentation or a bounded test confirms it.
+
+### K.4 Evidence, blast radius, and rollback
+
+Evidence must distinguish administrative separation from packet isolation. A resource inventory can prove ownership metadata but cannot prove that no path exists. Route graphs identify possible reachability; effective policy and flow records show whether a particular tuple was allowed or denied. Application identity logs are needed to falsify the claim that a network-allowed tenant request was authorized.
+
+Before changing a shared boundary, enumerate affected tenants, prefixes, DNS views, inspection capacity, service endpoints, and emergency access. Canary one low-risk consumer, snapshot effective policy and routes, and watch both allowed and denied traffic. Rollback should restore the prior graph and policy version, but preserve newly learned dependencies and avoid immediately deleting temporary routes or records. If the change exposed data, rollback of packets does not reverse reads; incident handling and access review remain necessary.
+
+### K.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: Would you put every team in one shared VPC to reduce complexity?**
+
+**Answer:** Only if the trust model, ownership, route scale, noisy-neighbor risk, and failure objective support it. A shared network can simplify connectivity but centralizes route, policy, address, quota, and gateway blast radius. I would define service contracts and guardrails, then compare that model with separate network domains joined through explicitly reviewed interfaces.
+
+**Follow-up 2: How do you prove that an environment is isolated?**
+
+**Answer:** Define isolation as a set of forbidden edges and identities, build a route and policy graph, test representative tuples from each trust domain, and retain effective-state evidence. Include DNS, shared endpoints, management paths, and control-plane permissions. “No incident has occurred” is not evidence of isolation.
+
+**Follow-up 3: What is the safest migration from flat to segmented networking?**
+
+**Answer:** Inventory observed dependencies, classify intended contracts, add observability and narrow policies in report-only or staged mode, migrate one boundary at a time, and keep a bounded rollback path. I would measure unexpected denies and permitted-but-unowned flows. Deleting broad routes before discovering dependencies is fast only until the first hidden dependency fails.
+
+## L. References and evidence labels
 
 - **Fact:** [AWS VPC sharing](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html) and [Google Cloud Shared VPC](https://cloud.google.com/vpc/docs/shared-vpc).
 - **Vendor terminology:** [AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html) and [Google Cloud Network Connectivity Center](https://cloud.google.com/network-connectivity/docs/network-connectivity-center/overview).

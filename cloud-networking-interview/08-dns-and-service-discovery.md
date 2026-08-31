@@ -133,7 +133,47 @@ An operator says the primary record was changed, but half of clients still conne
 
 Ask: “Product wants a five-second DNS failover guarantee.” A Staff answer should challenge the guarantee’s scope, measure resolver and client behavior, discuss connection reuse and health decision latency, define what “failed over” means for reads and writes, and offer a testable SLO. It should also explain the cost and load impact of very low TTLs.
 
-## H. References and evidence labels
+## H. Advanced DNS review: cache behavior, identity, and failover
+
+### H.1 Packet and request tuple walk-through
+
+Assume a client at `10.111.4.21` requests `payments.internal.test`. The first tuple is a DNS query from the client’s configured resolver, such as `(10.111.4.21:53000 -> 10.111.0.53:53, UDP)`, but the application tuple comes later: `(10.111.4.21:49152 -> 10.112.8.14:443, TCP)` with SNI `payments.internal.test` and request ID `d-621`. Trace both. The resolver’s answer and TTL determine the destination candidate; the route and policy determine reachability; TLS validates the name and certificate; service discovery or load balancing determines the backend; application health determines whether the request succeeds.
+
+If the client uses a sidecar, node-local cache, forwarding resolver, or split-horizon view, record every answer and cache boundary. A public answer can be syntactically correct yet wrong for a private client. A private answer can be correct while the endpoint is pending or unreachable. The key interview distinction is that name resolution chooses an address; it does not attest to route, authorization, health, or freshness.
+
+### H.2 Assumptions to calculation
+
+Suppose a service has a 30-second authoritative TTL, a resolver cache that honors it, a client library that resolves at process start, and existing TCP connections that last up to 120 seconds. A DNS failover cannot be promised in 30 seconds: new lookups may converge around 30 seconds, process-start clients may not re-resolve at all, and existing connections can persist for up to 120 seconds. A conservative client-visible bound is at least `max(30, 120)` seconds, plus health decision and retry time, subject to measurement.
+
+For service discovery, assume 200 instances and 20 clients each refreshing every 15 seconds. That is about `200 / 15 = 13.3` registration observations per second if spread evenly, but a control-plane event or synchronized refresh can create a burst. The estimate informs rate-limit and cache design; verify actual resolver, registry, and provider policy limits. Falsify a stale-cache hypothesis with independent clients using a fresh query and observing the same new answer.
+
+### H.3 Provider non-equivalence and verification boundary
+
+Route 53 private hosted zones, Resolver endpoints, routing policies, Cloud DNS private zones, forwarding, peering, and policies provide related capabilities with different visibility, attachment, health, scope, and ownership semantics. A Route 53 routing policy is not automatically equivalent to a Cloud DNS policy, and a private zone association does not imply that every workload uses the intended resolver. AWS and GCP load-balancer health integrations and failover behavior also differ by selected product.
+
+Use **Fact** or **Vendor terminology** for provider constructs and **Inference** for the portable model that DNS is a control-plane dependency with cache delay. Verify authoritative answers, resolver path, zone visibility, forwarding precedence, health inputs, TTL/negative caching, regional scope, quotas, and pricing in the exact AWS/GCP environment. State the provider feature mode and client behavior before promising a recovery time.
+
+### H.4 Evidence, blast radius, and rollback
+
+Interpret DNS evidence by vantage point and time: client resolver configuration, cache timestamp, recursive response, authoritative response, record version, and application lookup behavior. An `NXDOMAIN` may be cached negatively; a correct answer from an external resolver does not falsify a private-view problem. A new DNS answer falsifies only the stale-answer hypothesis for that client and lookup path, not the open-connection or authorization hypotheses.
+
+DNS changes have a broad blast radius because one record can redirect many clients, regions, tenants, or data operations. Before changing a high-value record, define old and new targets, readiness and fencing conditions, TTL effects, client refresh behavior, and rollback authority. Use a canary name or small client cohort where possible. Rollback means restoring the prior answer and ensuring the old target is still safe; it does not instantly terminate clients holding the new answer or make unsafe writes disappear. For stateful failover, data ownership must be solved before DNS steering.
+
+### H.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: Why did a five-second TTL not produce five-second failover?**
+
+**Answer:** The TTL controls eligible cache lifetime, not process behavior, negative caching, health-decision latency, connection reuse, or retry timing. I would measure the resolver path, client lookup frequency, open connections, and health transition timestamps. I would define a testable client-visible SLO instead of promising a TTL-sized outage window.
+
+**Follow-up 2: When is service discovery better than a load balancer?**
+
+**Answer:** Discovery is useful when clients can select instances, understand locality, and own retries and health interpretation. A load balancer is better when centralized TLS, transport policy, health enforcement, draining, or application routing is required. I would compare failure semantics and observability, because a list of addresses is not a load-balancer contract.
+
+**Follow-up 3: How do you roll back a bad DNS migration?**
+
+**Answer:** Restore the prior record or routing policy, keep the old service healthy, identify clients that cached the new answer, and monitor both targets until caches and connections converge. If writes or credentials crossed the wrong boundary, involve application and security owners. DNS rollback limits future selection; it cannot reverse completed requests or erase cached data.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [Amazon Route 53 developer guide](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/Welcome.html).
 - **Fact / Vendor terminology:** [Amazon Route 53 private hosted zones](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/hosted-zones-private.html).

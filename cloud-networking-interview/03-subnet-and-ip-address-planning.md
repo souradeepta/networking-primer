@@ -135,7 +135,47 @@ Take 25 minutes. A cluster rollout fails only in one zone with an “address una
 
 **Answer:** Monitor allocated and free addresses by subnet, zone, range, and consumer; pending allocation failures; growth rate; overlap findings; route changes; and quota headroom. Alert before exhaustion and attach an owner and action to each alert so it is not merely a dashboard metric.
 
-## K. References and evidence labels
+## K. Advanced address-plan review: capacity, placement, and recovery
+
+### K.1 Packet and request tuple walk-through
+
+Treat an address plan as part of the request path. Suppose a worker at `10.51.8.24` calls a service at `10.62.16.9:8443`. The tuple is not enough to answer whether the request can be placed: identify the worker interface or pod address source, the subnet or secondary range that owns it, the route scope, any endpoint or load-balancer address, and the return destination. If a Kubernetes pod address comes from a separate range, the packet may leave the node with a source that changes policy targeting and flow-log interpretation. If a private endpoint consumes an interface address, a successful DNS answer can still point at a depleted or unreachable placement scope.
+
+For each hop, record the address owner and allocation scope. A service IP may be virtual and movable; an interface IP may be tied to a zone or node lifecycle. The interview answer should distinguish “the address is syntactically valid” from “the address is allocated, routed, authorized, observable, and recoverable.”
+
+### K.2 Assumptions to calculation
+
+Assume two regions, three zones per region, 180 nodes per zone, two interface addresses per node, 30% growth, and 20% reserve for migration and replacement. A simple interface estimate is `180 x 2 x 1.30 x 1.20 = 562` addresses per zone before subnet/provider reservations and other consumers. A `/23` has 512 total IPv4 addresses, so it is insufficient even before reserved addresses; the next candidate must be checked against the provider’s usable-address rules and endpoint, load-balancer, and management consumption.
+
+For container ranges, repeat the calculation separately for node interfaces, pod addresses, and service virtual IPs. Do not add all categories blindly if one category is not allocated from the same pool. State the assumptions and then identify the falsifier: actual IPAM inventory showing only 90 nodes and one address per node would invalidate this estimate, while a placement error that names a specific exhausted zone supports it.
+
+### K.3 Provider non-equivalence and verification boundary
+
+AWS subnets are Availability Zone-scoped and commonly consume VPC address space through interfaces and service-specific allocations. GCP subnets are regional and serve zonal resources, while GKE VPC-native clusters use primary and secondary alias ranges. Those statements are not a promise that every service allocates addresses identically. A subnet’s apparent free count may not capture per-zone, per-interface, per-endpoint, quota, or contiguous-range constraints.
+
+Use **Fact** for documented placement and allocation behavior, **Vendor terminology** for terms such as ENI, alias IP, primary range, and secondary range, and **Inference** for sizing recommendations. Verify the selected AWS/GCP service, CNI mode, region, version, reserved addresses, expansion support, and quota. In an interview, explain the portable arithmetic first, then state that the provider’s usable capacity and failure scope must be confirmed from current documentation.
+
+### K.4 Evidence, blast radius, and rollback
+
+Interpret “address exhaustion” narrowly. A failed allocation with free aggregate addresses may indicate the wrong zone, unsupported placement, a limit on a resource type, an unavailable contiguous block, or delayed control-plane release. Collect allocation inventory by scope, pending requests, object type, and timestamp. A route table showing the prefix proves forwarding intent but not that a new interface can be created inside it.
+
+Address changes have a wide blast radius because they affect routing, firewall allowlists, DNS, certificates, partner contracts, and logs. Prefer adding a new range and migrating canaries over renumbering an active range. A rollback plan must say whether old and new addresses can coexist, how DNS TTL and connection draining are handled, and when the old range is safe to retire. Restoring the old CIDR does not restore clients that cached the new address or partners that updated allowlists.
+
+### K.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: The dashboard shows 40% free addresses, but deployment fails. What is your first hypothesis?**
+
+**Answer:** The aggregate metric hides the relevant allocation scope. I would inspect the target zone or secondary range, resource type, quota, prefix shape, and pending control-plane state. I would compare a small control allocation in the same scope and use the provider error as evidence rather than immediately expanding every subnet.
+
+**Follow-up 2: Would you use a larger CIDR to solve all future growth?**
+
+**Answer:** Not automatically. A large range can simplify growth but may collide with on-premises, peers, acquired networks, or future regions and can make policy and route summarization harder. I would reserve non-overlapping blocks based on a growth model, publish ownership, and retain migration space while avoiding an unbounded address promise.
+
+**Follow-up 3: How do you make a renumbering rollback safe?**
+
+**Answer:** Run old and new paths in parallel where supported, keep stable service names, migrate by dependency or shard, validate return routes and policy, and delay deallocation until caches, connections, certificates, and partners converge. Roll back traffic selection first; remove addresses later. The rollback criterion should be observable error and dependency evidence, not elapsed time alone.
+
+## L. References and evidence labels
 
 - **Fact:** [AWS subnets](https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html) and [Google Cloud subnets](https://cloud.google.com/vpc/docs/subnets).
 - **Vendor terminology:** [Amazon VPC CNI](https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html) and [GKE VPC-native clusters](https://cloud.google.com/kubernetes-engine/docs/concepts/alias-ips).

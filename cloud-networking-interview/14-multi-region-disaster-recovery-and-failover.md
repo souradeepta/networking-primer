@@ -116,7 +116,47 @@ At 09:00, region A reports high errors, but health checks are mixed and replicat
 
    **Answer:** Active-passive can reduce write conflicts and simplify ownership when state cannot safely be multi-writer. It may cost more idle capacity and increase promotion time. Choose based on state semantics, RTO/RPO, failure evidence, and operational ability to test—not on a generic availability preference.
 
-## H. References and evidence labels
+## H. Advanced design review: failover safety, capacity, and customer modes
+
+### H1. Turn failover into an ordered state machine
+
+A regional recovery design should distinguish at least these states: normal service, suspected degradation, confirmed loss, writes fenced, secondary promoted, traffic shifted, recovery validated, and failback ready. Each transition needs an authority, evidence, timeout, and abort condition. “Health check red” may move the service from normal to suspected degradation; it should not by itself authorize promotion. This framing exposes unsafe gaps such as a secondary accepting writes before the primary is fenced or DNS moving before capacity is ready.
+
+Write the RTO budget as a sum: detection, diagnosis or quorum decision, fencing, promotion, warm-up, traffic steering, client reconnection, and verification. If the target is 15 minutes and you reserve 3 minutes for uncertainty and communication, the remaining phases might be allocated 2 + 2 + 3 + 2 + 3 minutes, but those numbers are **Inference** for an interview scenario. The important follow-up is whether each phase has been measured in a game day. A control-plane API returning success is not evidence that data-plane traffic, credentials, queues, and dependencies are ready.
+
+### H2. Calculate survivor demand and RPO honestly
+
+Suppose each region normally serves 3,000 requests per second, traffic is split evenly, and a region loss sends all 6,000 requests to the survivor. With 10% retry amplification and 15% cache-miss or recovery overhead, demand is approximately `6,000 * 1.10 * 1.15 = 7,590 requests per second`. If tested survivor capacity is 7,000, the design needs priority shedding, a pre-warmed capacity increase, or a lower recovery promise. Do not hide the gap behind “autoscaling”; scaling latency and quota availability are part of the RTO.
+
+RPO is not just replication lag. Include acknowledged writes not yet durable in the survivor, in-flight payment calls, queued messages, and client retries. If the required RPO is 30 seconds but observed replication lag reaches 45 seconds, the design is out of contract before a failure occurs. Promotion then requires a business decision: pause writes, accept bounded data loss, or restore from a more recent durable source. Idempotency keys and reconciliation may reduce duplicate effects, but they do not magically recover missing data.
+
+### H3. Fencing, traffic steering, and provider boundaries
+
+Fencing must be authoritative. A failed health check, lost route, or operator timeout does not prove the old writer stopped. Use a lease, quorum, revoked credential, disabled endpoint, or storage-level writer ownership mechanism whose success and failure semantics are observable. Record the fencing acknowledgement and test the case where the old region is partitioned but still able to serve some clients. If evidence is ambiguous, the safe mode is to stop writes or serve explicitly degraded reads.
+
+AWS and GCP provide multiple regional, global, DNS, and load-balancing mechanisms, but product scope and health semantics differ. **Vendor terminology** identifies the mechanism; **Inference** determines whether it meets this service’s RTO/RPO and state-ownership contract. Verify propagation, health-check source, connection behavior, quotas, address scope, and billing in the selected provider and region. A global front door can successfully redirect packets to a secondary that is still stale, under-sized, or unauthorized.
+
+### H4. Ownership, rollback, and failback
+
+The application or data owner decides whether writes may stop and what data loss is acceptable. The platform/network owner controls steering, endpoint, DNS, and capacity transitions. The database or storage owner controls promotion and fencing. Incident leadership coordinates evidence, customer communication, and the decision record. These roles must be identified before the incident; otherwise the person with access becomes the de facto authority.
+
+Rollback after promotion is a new failover, not a simple undo. First establish the authoritative writer, reconcile or discard divergent writes, re-establish replication, and prove the original region is safe. Keep traffic on the survivor until the former primary is fenced against stale sessions and its capacity is validated. Define a failback gate that includes data consistency, replication direction, client cache behavior, and a measured observation period. A rapid oscillation between regions can be worse than a long controlled degradation.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **The secondary is healthy and has fresh replicas, but fencing the primary cannot be confirmed. What do you do?**
+
+   **Answer:** Do not enable writes in the secondary if split brain could cause conflicting state. Move customers to a read-only or queued mode if that is safe, increase evidence collection, and use an authoritative storage or lease mechanism to prove writer ownership. If the business accepts data loss, that is an explicit risk decision, not an engineering assumption. The recovery record should state what could still be served and why.
+
+2. **Why can a DNS failover appear successful while availability remains poor?**
+
+   **Answer:** Resolver caches and existing connections delay movement, and the target may reject requests because of capacity, identity, dependency, or state readiness. I would compare new versus existing connections, resolver cohorts, backend health, and customer-level success. The traffic shift is complete only when the eligible request population reaches the intended target and the service SLO recovers.
+
+3. **How would you justify active-active over active-passive to a Staff review?**
+
+   **Answer:** Show that state semantics, conflict resolution, capacity, latency, and operational testing support multi-writer behavior. Active-active may reduce steering time and use capacity efficiently, but it increases consistency and debugging complexity. Active-passive may be safer for a single writer with clear fencing, even if idle capacity costs more. The choice follows measured RTO/RPO and ownership ability, not a generic “active-active is more available” claim.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS disaster recovery guidance](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html).
 - **Fact / Vendor terminology:** [Amazon Route 53 routing policies](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html).

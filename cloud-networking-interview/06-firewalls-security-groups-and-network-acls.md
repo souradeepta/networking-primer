@@ -132,7 +132,47 @@ Only one zone reports connection resets from `checkout` to `payments`; the appli
 
 Ask: “Security wants one central policy team to approve every network rule. What would you propose?” A Staff answer should separate global guardrails from local ownership, define a risk-based exception path, automate static and effective-policy checks, publish service contracts, and measure lead time and incident outcomes. Central review without clear interfaces can create shadow changes and emergency broad access.
 
-## H. References and evidence labels
+## H. Advanced policy review: effective decisions and rollback safety
+
+### H.1 Packet and request tuple walk-through
+
+Assume `checkout` at `10.91.4.27:53001` calls `payments` at `10.92.8.14:443`. Walk `(10.91.4.27:53001 -> 10.92.8.14:443, TCP)` through route selection, interface or subnet policy, security-group or firewall evaluation, inspection, listener, and reverse state. Then add the request tuple: SNI, authenticated workload identity, tenant, method, path, and request ID. If a proxy or NAT changes the source, the policy at the next boundary must be evaluated against the new observed source or an authenticated identity.
+
+A SYN permitted by one stateful control does not prove that a stateless control permits the return packet. Conversely, a flow record showing a deny at an enforcement point does not explain whether the rule missed, was shadowed by priority, or matched an unexpected source. State the policy layer, target selector, direction, and effective revision for every conclusion.
+
+### H.2 Assumptions to calculation
+
+Suppose a service has 1,200 dependencies, each requiring two directional policy observations during a staged default-deny rollout. The minimum evidence matrix is `1,200 x 2 = 2,400` dependency-direction checks, before health checks, DNS, telemetry, and administrative paths. If the team can validate 150 checks per review cycle, the base inventory requires 16 cycles; adding a 25% uncertainty reserve means planning for 20 cycles. The calculation is a planning estimate, not a policy quota.
+
+For a stateful flow, assume 8,000 concurrent connections per zone and a 15% failover surge. A surviving zone must plan for `8,000 x 1.15 = 9,200` connections plus provider and inspection headroom. Falsify a capacity hypothesis with stable effective policy and connection counts below the tested threshold; falsify a target-selection hypothesis by showing the exact workload matched the intended rule in the failing zone.
+
+### H.3 Provider non-equivalence and verification boundary
+
+AWS security groups are interface-associated and commonly treated as stateful, while AWS network ACLs are subnet-level ordered filters with different return-traffic reasoning. GCP VPC firewall rules and hierarchical firewall policies have their own targeting, scope, priority, and evaluation semantics. Similar words such as “firewall,” “security group,” or “network ACL” do not establish equivalent attachment or state behavior.
+
+Label documented behavior as **Fact** or **Vendor terminology**, and the recommendation to use layered policy as **Inference**. Verify effective policy, inherited hierarchy, target selection, implied behavior, logging, statefulness, quotas, and rollout semantics for the selected AWS/GCP account, project, region, and release. A provider comparison is incomplete until it explains what evidence the platform exposes for an actual tuple.
+
+### H.4 Evidence, blast radius, and rollback
+
+Interpret evidence by the question it can answer. A configured rule proves desired intent; effective-policy output proves what should match; a flow decision proves an observed packet reached that evaluator; a server log proves the request passed earlier controls. An absent flow log is not automatically a deny. Correlate timestamps, interface or target identity, source after translation, protocol, port, and rule revision.
+
+Policy changes have a blast radius defined by target selection and shared hierarchy, not just by the file being edited. A high-priority shared deny may affect every region; a broad allow may expose every tenant. Stage with report-only or a narrow canary where supported, snapshot effective state, and preserve an audited break-glass path with expiry. Rollback should restore the prior policy version and verify convergence, but existing connections, cached decisions, and data already returned may outlive the rollback. Include those residual effects in the incident plan.
+
+### H.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: The rule says allow, but the request is denied. What do you inspect?**
+
+**Answer:** I inspect whether the rule targeted the actual interface, tag, service account, or workload; whether a higher-priority or inherited rule won; whether the source changed at a proxy; and whether the denial occurred at another policy layer. I compare desired and effective state and use a bounded control flow with the same tuple. The word “allow” is not evidence of a match.
+
+**Follow-up 2: Is default deny always the safest design?**
+
+**Answer:** It is a strong objective for unknown traffic, but unsafe rollout can disable DNS, health checks, telemetry, updates, or recovery access. I would inventory dependencies, observe before enforcing, stage by failure domain, and define a narrow audited break-glass path. Safety includes recoverability and evidence, not only the deny default.
+
+**Follow-up 3: How do you roll back a policy that exposed data?**
+
+**Answer:** Stop or narrow the exposure first, preserve logs and effective policy, identify affected identities and data, and restore a known-good policy with verified convergence. Then rotate credentials or tokens if needed and assess data access separately. A network rollback limits future packets but cannot erase already observed data.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS security groups](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html).
 - **Fact / Vendor terminology:** [AWS network ACLs](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html).

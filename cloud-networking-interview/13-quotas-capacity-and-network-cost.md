@@ -122,7 +122,47 @@ A new private endpoint reduces latency but doubles network cost and causes inter
 
    **Answer:** Establish whether the quota is the first limiting boundary, whether it is adjustable with acceptable lead time, and whether raising it shifts risk to a coupled resource. If the design remains fragile under failure or growth, redesign. A quota increase is an enabler, not a capacity argument.
 
-## H. References and evidence labels
+## H. Advanced design review: coupled limits, survivor capacity, and cost decisions
+
+### H1. Model the bottleneck graph
+
+Capacity is not one number. A cloud network design can be constrained by addresses, interfaces, routes, listeners, target registrations, concurrent connections, NAT translation slots, bandwidth, API operations, quota allocations, or an organizational budget. Draw these as a bottleneck graph: demand enters through traffic, deployments, and control-plane operations; each node has a limit, utilization, recovery time, and owner. Raising one limit can expose the next limit without improving the user SLO.
+
+For a three-zone service at 10,000 requests per second, losing one evenly loaded zone raises demand on each survivor from about 3,333 to 5,000 requests per second, a 50% increase. If retries add 8% and a recovery job adds 400 requests per second, survivor demand becomes roughly `10,000 * 1.08 + 400 = 11,200` across the two remaining zones, or 5,600 each before imbalance. This is a scenario estimate, not a provider limit. Include cache misses, connection re-establishment, health-check traffic, and rolling-update overlap when the service depends on them.
+
+### H2. Distinguish quota exhaustion from saturation
+
+Quota failure usually appears at allocation or control-plane time: a new endpoint, address, target, rule, or route cannot be created. Saturation appears in the data plane: queues grow, latency rises, connections reset, or drops increase even though provisioning succeeds. They can interact. A target-registration quota can leave a deployment partially programmed, while a NAT port pool can exhaust only for one destination tuple and look like random application failure.
+
+For each limit, name the measurement and falsifier. “The endpoint quota is exhausted” predicts a rejected API operation and usage near the relevant scope; low usage and successful equivalent creation in the same scope falsify it. “NAT is the bottleneck” predicts translation errors or port occupancy correlated with destination and concurrency; stable translation metrics with backend queueing weakens it. Do not retry a rejected allocation blindly: retries can increase API pressure and obscure the original scope.
+
+### H3. Cost arithmetic with ownership boundaries
+
+Treat cost as a function of traffic shape and architecture, not a single monthly price. A simplified model can be written as `monthly cost = fixed resources + processed bytes * unit rate + cross-zone bytes * unit rate + endpoint hours + control-plane operations`. If a 2 GiB/hour path sends 40% of its traffic across zones, cross-zone volume is `2 * 0.40 * 24 * 30 = 576 GiB/month`. The amount is only an input to a current pricing lookup; it is not a remembered provider price. Ask whether bytes are counted once or at multiple boundaries and whether the failure path changes the volume.
+
+Assign cost ownership at the traffic-producing decision. The platform may own the shared load balancer and NAT baseline, while a service owns unusually large cross-zone transfers or high-cardinality endpoints. A fair model publishes allocation dimensions, shows uncertainty, and avoids charging teams for costs they cannot influence. Conversely, “centralized” should not mean cost disappears. A Staff review connects spend to SLO or blast-radius benefit and names the optimization lever: locality, connection reuse, caching, private service publication, batching, or traffic shedding.
+
+### H4. Rollout gates and quota requests
+
+Every quota request should state the demand forecast, current utilization, failure headroom, expected growth, and why redesign is not the better control. Test the design under one-zone loss and rolling-update overlap before requesting more capacity. If the quota is adjustable but the design fails under regional loss, increasing it only moves the failure outward.
+
+For a canary, measure both steady-state and control-plane pressure: allocation failures, API latency, retry count, address/port occupancy, target health, bytes by path, per-zone utilization, and cost attribution. Define a stop gate for a new private endpoint if provisioning failure exceeds the baseline, p95 latency regresses beyond the agreed margin, or cost per successful request rises without an accepted SLO benefit. Rollback must account for existing connections and resources that cannot be deleted immediately; record cleanup ownership and expiry.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **A quota increase is approved, but the service still fails during a zone outage. Why?**
+
+   **Answer:** The quota was not the first limiting boundary, or the increase created capacity without tested survivor behavior. I would compare demand after loss—including retries and recovery work—with addresses, backend connections, bandwidth, translation state, dependency capacity, and per-zone distribution. The remedy could be locality, admission control, priority shedding, or a redesign rather than another quota request.
+
+2. **How do you decide whether to pay for a second NAT or private endpoint path?**
+
+   **Answer:** Start with the failed requirement: port headroom, availability, source control, latency, or isolation. Quantify peak concurrency and destination-tuple concentration, then model normal and failure traffic. Compare fixed and processed-byte costs with the cost of an outage or weaker isolation. If a second path improves availability, make its ownership and failover behavior explicit; redundancy that is not exercised may only add spend.
+
+3. **What do you say when an interviewer asks for an exact provider limit?**
+
+   **Answer:** Name the resource, scope, and workload dimension, then say the current value must be verified in quota tooling and official documentation. Continue with a symbolic limit `L`, measured demand `D`, and required headroom `H`, where the gate is `D * failure_factor <= L * (1 - H)`. This demonstrates engineering judgment without turning stale memory into a design fact.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS Service Quotas](https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html).
 - **Fact / Vendor terminology:** [AWS VPC quotas](https://docs.aws.amazon.com/vpc/latest/userguide/amazon-vpc-limits.html).

@@ -124,7 +124,43 @@ During a canary, the load balancer reports all targets healthy, but 15% of clien
 
    **Answer:** Start with state ownership, not the global product. Establish whether reads, writes, sessions, certificates, dependencies, and capacity can move. Define detection, fencing, promotion, DNS or traffic steering, RTO/RPO, and failback separately. A global front door can redirect packets while the application remains unable to serve safely; that is a routing success but an availability failure.
 
-## H. References and evidence labels
+## H. Advanced design review: health, identity, and rollback contracts
+
+### H1. Make the request contract explicit
+
+At SDE2 level, it is enough to name a listener and a target group. At Staff level, explain the contract between the traffic-entry platform and every service team. The contract should specify the protocol and version, maximum request and response size, timeout at each hop, retry ownership, source-identity behavior, TLS termination point, health-check semantics, and the acceptable behavior during draining. These values must be compatible: a proxy timeout shorter than the application timeout creates avoidable 504s, while a client retry timeout longer than the server’s idempotency window can duplicate work.
+
+Write the timeout chain as an inequality rather than a collection of remembered defaults. For example, if the client has a 2.0-second deadline, the edge should reserve 100 ms for connection and TLS work, the proxy-to-target budget might be 1.7 seconds, and the application should set its dependency budget below 1.6 seconds. The exact numbers are **Inference** from this fictional scenario, not provider limits. The reasoning is what matters: every layer needs time to return a controlled error, and retries must fit inside the original deadline. If a retry is allowed, reserve its full cost explicitly; otherwise the edge may turn one slow request into two slow backend operations.
+
+### H2. Interpret health as a sampled decision, not truth
+
+Health checking is an observation path with its own source address, DNS resolver, protocol, credentials, and schedule. A target can pass because the check is served from a local cache while customer requests depend on a remote database. A target can fail because the checker cannot reach a dependency even though the service is safe for read-only traffic. Ask whether the health contract is binary or has modes such as ready for reads, ready for writes, draining, and quarantined.
+
+Use independent evidence to avoid circular reasoning. If the load balancer says a target is unhealthy, target logs alone may be unavailable; use the checker’s observed status, flow telemetry, and a controlled request from an equivalent source. If it says healthy while users fail, compare the complete tuple `(source, destination, protocol, SNI, path, method, headers, timeout, dependency set)`. A falsifier for “the target is broken” is a successful request with the same tuple from the same entry path. A falsifier for “the balancer is broken” is a target-side record showing that the balancer never attempted the request.
+
+### H3. Ownership and rollback trade-offs
+
+Centralizing TLS, routing, and certificates in a platform team reduces duplicated expertise but increases the blast radius of a policy or configuration rollout. Delegating listener rules to service teams improves local autonomy but can create inconsistent security, quota exhaustion, and unclear incident ownership. A strong platform design exposes a narrow interface: service teams declare protocol, hostnames, backend health, and SLO; the platform owns safe defaults, certificate lifecycle, admission checks, logs, and rollback mechanics. Exceptions need an owner, reason, expiry, and evidence requirement.
+
+Rollback is not simply restoring the previous listener configuration. Consider connections already accepted by the new target set, DNS answers already cached, certificates already issued, and backend schema changes that are not reversible. Define a rollback point for configuration, a drain policy for existing connections, a capacity reserve on the old path, and a maximum observation window. A useful canary gate is: no statistically meaningful increase in 5xx or tail latency for two consecutive windows, no unexplained source-identity change, and no target saturation above the tested threshold. If any gate fails, stop expansion first; decide whether to roll back after preserving the evidence.
+
+### H4. Follow-up interview questions and substantive answers
+
+1. **The balancer reports healthy targets, but only one client population receives 502s. What do you ask next?**
+
+   **Answer:** Segment by resolver answer, IP family, listener, TLS version, geography, and target zone. Then compare a successful and failing request through the same entry path, including whether the failing clients use a different SNI or connection reuse pattern. If failures correlate with IPv6, an AAAA path or backend return route becomes more likely; if they correlate with one target group, inspect backend protocol and health-check asymmetry. I would not change weights until the cohort boundary and a falsifier are known.
+
+2. **Should a platform preserve the original client IP?**
+
+   **Answer:** Only if the consumer genuinely needs it and the trust boundary is explicit. A proxy may replace the network source with its own address and may add a forwarding header. The header is useful only when the target accepts it from authenticated, controlled proxies and does not accept arbitrary client-supplied values. If tenant or user identity matters, a signed application identity is usually stronger than a mutable address. Preserve source information as evidence, but do not treat it as authorization by itself.
+
+3. **When is a global traffic layer a liability?**
+
+   **Answer:** It is a liability when it adds a control-plane dependency, hides regional ownership, or steers traffic to a region that lacks state, quota, identity, or dependency capacity. I would first define the regional service contract and failover state machine, then add global steering only if it improves a measured requirement. The review should include propagation time, stale decisions, cost, troubleshooting ownership, and a safe way to prevent traffic from entering a recovering region.
+
+The key Staff signal is not naming more load-balancer products. It is showing that health, identity, timeout, capacity, and rollback decisions belong to different owners and must be tested together at their boundaries.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS Elastic Load Balancing documentation](https://docs.aws.amazon.com/elasticloadbalancing/).
 - **Fact / Vendor terminology:** [AWS Gateway Load Balancer](https://docs.aws.amazon.com/elasticloadbalancing/latest/gateway/introduction.html).

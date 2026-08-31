@@ -121,7 +121,47 @@ A migration removes static credentials from 200 workers. Five percent fail only 
 
    **Answer:** Separate existing-token behavior from token refresh. Define cached-token lifetime, safe degradation, queue limits, and recovery behavior; do not silently mint or distribute static credentials. Establish an SLO for credential issuance, monitor refresh failure before expiry, and document which operations are safe to pause.
 
-## H. References and evidence labels
+## H. Advanced design review: trust chains, blast radius, and recovery
+
+### H1. Analyze the complete trust chain
+
+An interview answer becomes materially stronger when it writes down the trust chain as predicates instead of saying “the pod has a role.” For `invoice-worker`, the chain might be: the scheduler places an approved workload; the identity integration binds its service identity to a provider principal; the token issuer validates issuer, subject, audience, and time; the network path reaches the token or API endpoint; the provider evaluates action, resource, conditions, and explicit denies; the application applies tenant authorization; and audit telemetry records the resulting principal. A failure at any predicate should produce a different evidence signature.
+
+Use a table in a design review with columns for **claim**, **enforcer**, **evidence**, **failure mode**, and **owner**. “Only billing workers can read invoice objects” is not one claim: workload admission, identity mapping, IAM resource scope, object-prefix policy, and application tenant checks may each enforce part of it. This decomposition prevents a common Staff-level mistake—assigning a security property to a network control that cannot enforce it.
+
+### H2. Calculate refresh pressure and compromise exposure
+
+Suppose 200 replicas use 20-minute tokens, restart uniformly over a 10-minute deployment, and refresh at 80% of token lifetime. A steady-state upper estimate is `200 / 1,200 = 0.17` refreshes per second. During the rollout, however, 200 replicas may request credentials in a short burst. If 50 replicas start in each of four minutes, the identity service sees about `50 / 60 = 0.83` initial exchanges per second before retries and sidecars. The point is not to assert a provider throughput limit; it is to expose burst assumptions and ask which quota or dependency is tested.
+
+Token lifetime is a trade-off. Longer tokens reduce refresh traffic and make a provider outage less disruptive, but increase the usable window after compromise. Shorter tokens reduce exposure but amplify clock-skew sensitivity, startup storms, and dependency coupling. Define a maximum tolerated stale-credential window, a refresh jitter policy, a clock-health signal, and behavior when refresh fails. Existing tokens may continue to work while new tokens cannot be issued; the application should distinguish those states rather than treating all authorization errors as network failures.
+
+### H3. Provider behavior boundaries and evidence interpretation
+
+AWS and GCP both support delegated workload access, but the binding, token exchange, principal representation, policy hierarchy, and audit fields are provider-specific. **Fact:** the cited provider documentation describes the supported mechanism. **Inference:** the design is least-privilege only if the mapping is narrow, auditable, and tested against an unauthorized resource. A successful API call proves one authorization path worked; it does not prove that a sibling namespace, node, or compromised service cannot use the same principal.
+
+For a denial, collect evidence in this order: endpoint reachability and DNS; token acquisition result; token issuer, subject, audience, and expiry; provider audit principal; requested action and resource; policy evaluation or denial reason; and application tenant context. A falsifier for “the network blocks access” is a provider audit record showing the request arrived and was denied. A falsifier for “IAM is wrong” is a successful call from the same principal and resource with the same conditions. Do not widen a role while any of these fields is unknown.
+
+### H4. Ownership, rollback, and incident containment
+
+The platform team should own federation plumbing, admission defaults, identity-provider availability, policy linting, and audit delivery. Service teams should own the action/resource contract and application authorization. Security should own threat models and review standards, while the resource owner decides data sensitivity. Shared ownership without a named escalation path often results in a broad temporary role becoming permanent.
+
+During migration from static credentials, rollback can reintroduce the original compromise risk. A safe rollback uses a bounded cohort, a time limit, an emergency principal with only the previous required actions, and an explicit revocation deadline. Disable or quarantine the failed mapping only after confirming whether existing tokens remain valid. The rollback gate should include both availability—successful required calls—and safety—negative tests for unrelated resources, role assumption, metadata access, and cross-namespace use. Preserve audit evidence before deleting the old principal.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **A workload can reach the API and receives `AccessDenied`, but the provider audit log names the node role. What does that imply?**
+
+   **Answer:** The intended workload federation path may not be active, or the request may be falling back to node credentials. I would inspect credential-provider configuration, environment precedence, metadata access, token subject, and the exact audit principal. The immediate containment is to prevent unintended metadata access and narrow the node role, but I would preserve service availability while proving which credential source the SDK selected.
+
+2. **How do you design for an identity-provider outage without weakening authorization?**
+
+   **Answer:** Separate already-issued-token validity from token refresh. Set a tested token lifetime and refresh margin, add jitter, queue non-critical work, and fail closed for operations that require new authority. A bounded read-only degradation may be acceptable if data freshness and tenant boundaries remain clear. Static emergency keys are not a recovery plan; a pre-reviewed, time-bound break-glass path with audit is safer.
+
+3. **Why is a namespace-to-role mapping insufficient for multi-tenant authorization?**
+
+   **Answer:** Namespace membership identifies a workload grouping, not necessarily the end user, tenant, or object being accessed. A compromised workload may use every permission granted to that role. Combine narrow workload identity with resource-level conditions, application authorization, tenant-aware audit records, and negative tests. The right question is not only “which role?” but “which principal may perform which action on which resource under which context?”
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html).
 - **Fact / Vendor terminology:** [Amazon EKS Pod Identity](https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html).

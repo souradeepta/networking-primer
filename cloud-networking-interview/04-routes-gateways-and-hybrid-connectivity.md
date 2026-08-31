@@ -129,7 +129,47 @@ Take 25 minutes. Build a command-agnostic evidence plan: resolved address, route
 
 **Answer:** A route lookup and packet/flow observation establish whether forwarding is attempted. A policy decision or counter shows whether a packet was evaluated and rejected. If no packet reaches the policy boundary, investigate an earlier route or interface issue; if it reaches and is denied, the policy hypothesis gains support.
 
-## K. References and evidence labels
+## K. Advanced route review: forwarding, convergence, and hybrid failure
+
+### K.1 Packet and request tuple walk-through
+
+Assume an application in `10.81.12.44:443` calls an on-premises database at `172.22.40.15:5432`. Trace `(10.81.12.44:443 -> 172.22.40.15:5432, TCP)` through the cloud subnet route, transit or VPN attachment, cloud edge, customer router, database firewall, and the reverse path. At each boundary ask: which destination prefix matched, which next hop won, was the route learned or static, and what source address did the next device observe? A VPN control session being established is separate from this data-plane tuple.
+
+Then trace the request contract: DNS name, TLS or database identity, timeout, and correlation ID. If a proxy or translation layer exists, record both tuples. An asymmetric path can allow SYN in and lose SYN-ACK out even though each local route table appears plausible. A Staff answer draws forward and reverse paths separately and identifies the state owner.
+
+### K.2 Assumptions to calculation
+
+Suppose the primary hybrid path carries 700 Mbps peak and the design requires operation after one path fails, with 25% headroom. If there are two equal paths and either may be lost, each surviving path must support `700 x 1.25 = 875 Mbps`; the normal design should not assume both paths are available for safety. If encryption and inspection overhead reduce usable capacity by an assumed 15%, provisioned link capacity should be at least `875 / 0.85 = 1,030 Mbps`, rounded up to the next supported tier. These are engineering assumptions, not provider guarantees.
+
+Falsify the congestion hypothesis with interface and queue evidence below the calculated threshold during the incident. Conversely, high retransmission with low link utilization should redirect investigation toward MTU, route asymmetry, policy, or an application timeout rather than adding bandwidth.
+
+### K.3 Provider non-equivalence and verification boundary
+
+AWS route tables, Transit Gateway, Site-to-Site VPN, Direct Connect, and BGP have different route scope, propagation, attachment, and policy behavior from GCP VPC routes, Cloud Router, Cloud VPN, Interconnect, and Network Connectivity Center. “Transit” is an architectural role, not a guarantee that two provider transit products have equal transitivity, inspection insertion, route priority, or failure convergence. AWS subnet association should not be generalized to GCP’s global VPC route model.
+
+Label provider behavior as **Fact** or **Vendor terminology** and comparison conclusions as **Inference**. Verify advertised and received prefixes, route priority, regional/global scope, BGP timers and policies, MTU, quotas, and maintenance behavior for the exact account/project, region, attachment, and release. A strong answer names the route lookup or provider documentation that will confirm the assumption.
+
+### K.4 Evidence, blast radius, and rollback
+
+Evidence should be ordered from intent to forwarding to application: desired prefixes, learned routes, effective route selection, tunnel counters, packet/flow records, transport retransmission, and service logs. “Tunnel up” falsifies only a negotiation failure. “Route present” falsifies only a missing-route hypothesis for that scope; it does not prove the selected next hop is healthy. An MTU test that works for small packets but fails with the application’s payload is especially valuable because it explains protocol-specific symptoms.
+
+Route changes can affect every prefix behind a shared attachment. Before rollout, define changed advertisements, affected spokes, failover path, convergence budget, and a last-known-good route policy. Canary a narrow prefix, enforce maximum-prefix and loop protections, observe both directions, and keep rollback available. Withdrawals can be slower or riskier than additions, and existing sessions may remain pinned; rollback must include connection draining and application retry behavior.
+
+### K.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: Both sides show the route, but the request still times out. What do you check?**
+
+**Answer:** I verify the exact longest-prefix winner and next-hop state on both directions, then inspect tunnel counters, MTU, policy, NAT, and packet evidence at each demarcation. I compare a small control payload with the real protocol. A route entry is intent; an observed bidirectional handshake is stronger evidence.
+
+**Follow-up 2: Would you advertise all cloud prefixes to the data center?**
+
+**Answer:** Only if the operational and security model requires it. Summarization can reduce route scale but may create a broader blast radius and send traffic to an attachment that cannot reach every component. I would advertise explicit, owned prefixes with filters, document failure behavior, and test whether summarization changes the return path.
+
+**Follow-up 3: When is automatic failover a liability?**
+
+**Answer:** It is a liability when route convergence is faster than application or data readiness, when both paths share a hidden failure, or when oscillation causes repeated connection loss. I would gate failover on path health and service readiness, add hold-down or dampening where appropriate, and measure recovery against the RTO rather than celebrating route convergence alone.
+
+## L. References and evidence labels
 
 - **Fact:** [AWS route options](https://docs.aws.amazon.com/vpc/latest/userguide/route-table-options.html), [AWS Transit Gateway](https://docs.aws.amazon.com/vpc/latest/tgw/what-is-transit-gateway.html), and [Google Cloud routes](https://cloud.google.com/vpc/docs/routes).
 - **Vendor terminology:** [AWS Site-to-Site VPN](https://docs.aws.amazon.com/vpn/latest/s2svpn/VPC_VPN.html), [Google Cloud VPN](https://cloud.google.com/network-connectivity/docs/vpn/concepts/overview), and [Cloud Router](https://cloud.google.com/network-connectivity/docs/router/concepts/overview).

@@ -127,7 +127,47 @@ Workers succeed for five minutes and then experience 12% timeouts. Build an orde
 
 Ask: “The platform team proposes a single global egress pool because it is cheaper. What would you challenge?” A Staff answer should ask about data residency, partner allowlists, regional failure, port and throughput headroom, tenant isolation, attribution, incident ownership, and rollback. It should quantify the savings and compare them with the cost of correlated failure, not reject centralization reflexively.
 
-## H. References and evidence labels
+## H. Advanced egress review: identity, capacity, and safe recovery
+
+### H.1 Packet and request tuple walk-through
+
+Assume worker `10.90.4.27:49152` requests `https://api.partner.example:443`. The client first resolves the name, selects a route for the returned address, and emits `(10.90.4.27:49152 -> 198.51.100.24:443, TCP)`. At the NAT boundary, record the translated tuple, for example `(203.0.113.18:61001 -> 198.51.100.24:443)`, without assuming those example addresses or port choices match a provider implementation. The partner sees the post-translation source; the worker sees the original response after stateful reverse translation.
+
+Now add the request tuple: SNI `api.partner.example`, HTTP method, identity token, and request ID `e-712`. A NAT mapping can prove that a transport flow exists, but it cannot prove partner authorization or that the request used the expected identity. For ingress, walk the separate path from public listener to private target and note where TLS terminates, where source identity changes, and where the response state is maintained. This avoids the common mistake of treating one combined “Internet path” as if ingress and egress had symmetric controls.
+
+### H.2 Assumptions to calculation
+
+Suppose 300 workers can open 12 new connections per second during a 10-second burst, and average connection state lasts 75 seconds. The rough peak is `300 x 12 x 75 = 270,000` concurrent mappings if connections are not reused. With three independently usable translated addresses, that is about 90,000 mappings per address before per-destination concentration and provider allocation behavior. If a client pool reuses connections for 80% of requests, the real pressure can be far lower; that is an assumption to measure, not a reason to claim a fixed quota.
+
+For partner allowlisting, assume two regions each need 400 Mbps peak and the partner permits four source addresses. The design must state whether failover concentrates both regions behind two addresses or preserves four regional identities. Calculate peak flows, translated ports, bandwidth, and retry amplification, then verify the provider’s address, port, throughput, logging, and cost limits. A falsifier is low new-flow rate with failures only on one destination, which points away from aggregate NAT exhaustion.
+
+### H.3 Provider non-equivalence and verification boundary
+
+AWS NAT Gateway, egress-only Internet Gateway, load balancers, and public addresses are distinct mechanisms. GCP Cloud NAT, external addresses, forwarding resources, load balancers, and firewall policy likewise have separate roles. A managed IPv4 translation service must not be treated as equivalent to IPv6 egress, and a public listener does not imply that private targets are directly exposed. Source preservation, eligible source types, regional scope, port allocation, health behavior, logging, and pricing differ.
+
+Use **Fact** and **Vendor terminology** for documented AWS/GCP behavior, and **Inference** for the portable conclusion that egress identity should be deliberate and observable. Verify the exact address family, region, source resource, gateway mode, quotas, and release in current documentation. In an interview, say which tuple and metric would confirm the mapping rather than reciting a remembered limit.
+
+### H.4 Evidence, blast radius, and rollback
+
+Interpret a failed outbound request in layers: DNS answer, route and next hop, translation allocation, egress policy, TCP handshake, TLS/SNI, partner response, and application retry. A flow-log absence may indicate that the flow never reached the logging boundary. Existing connections continuing while new connections fail supports a capacity or allocation hypothesis, but does not distinguish aggregate pressure from destination-specific pressure without per-destination evidence.
+
+A shared egress platform can create a large blast radius: one bad allowlist, address withdrawal, quota exhaustion, or gateway failure can affect many tenants and partner integrations. Canary a workload and destination, keep old and new egress identities available during migration, and define rollback as restoring route selection and verified source identity. Do not revoke the old allowlist until DNS, connection pools, partner observations, and regional failover evidence converge. If credentials or data were sent through the wrong egress path, routing rollback does not undo the security event.
+
+### H.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: Why do existing connections work while new ones fail?**
+
+**Answer:** Existing state may already have mappings and established transport, while new flows require ports, policy evaluation, route lookup, or a fresh listener path. I would compare new-flow error rate, mapping counts, per-destination allocation, retries, and policy logs. I would not add capacity until the evidence separates translation pressure from a destination or policy failure.
+
+**Follow-up 2: Would you give every workload a public address to avoid NAT?**
+
+**Answer:** No. That changes exposure, address ownership, ingress policy, identity assumptions, and observability. I would use deliberate egress translation or a proxy for stable outbound identity, and use public addressing only when the service contract requires it and the full inbound policy is designed. IPv6 can remove one translation need but not these controls.
+
+**Follow-up 3: What makes egress rollback safe?**
+
+**Answer:** Keep source identities and partner allowlists compatible during a transition, stage by tenant or region, drain connections, monitor requests by egress identity, and retain the previous route and policy version. Define a rollback signal such as error budget burn plus confirmed partner rejection, not merely a dashboard alarm. Remove temporary addresses only after delayed caches and long-lived connections are accounted for.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS NAT gateways](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
 - **Fact / Vendor terminology:** [AWS egress-only Internet gateways](https://docs.aws.amazon.com/vpc/latest/userguide/egress-only-internet-gateway.html).

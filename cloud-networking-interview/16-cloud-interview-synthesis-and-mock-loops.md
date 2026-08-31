@@ -195,7 +195,86 @@ An SDE2 target is at least 16 of 24 with no zero in request path, failure safety
 
    **Answer:** Say it is provider-dependent, name the resource and scope, and explain how you would verify it in current documentation or quota tooling. Continue with symbolic variables and headroom calculations. Honest uncertainty with a verification plan is stronger than a confident stale number.
 
-## I. References and evidence labels
+## I. Fourth integrated mock loop: global API edge with identity and telemetry split
+
+### I1. Interview prompt and expected opening
+
+An organization runs a multi-tenant API on AWS today and plans to add a GCP region. Customers use HTTPS, the API calls a private fraud service, and a small subset of tenants requires data residency. The current platform has one global hostname, a shared edge, workload federation, private service publication, per-tenant rate limits, and centralized telemetry. During a release, 1% of requests return 401, p99 latency doubles for European tenants, and cost rises sharply because traffic appears to cross regions. The interviewer asks whether the edge, identity, routing, or observability design is at fault.
+
+Do not accept “multi-cloud active-active” as a requirement without clarifying the state model. Ask which tenants may be served in which region, whether writes are single-home or multi-home, how the fraud service is reached, what identity the edge forwards, whether rate limits are global or regional, and which SLO defines success. Clarify whether the 401s are provider authorization failures, application authentication failures, expired tokens, or an edge-generated response. Ask who owns global traffic policy, tenant placement, identity federation, telemetry pipelines, and cost allocation.
+
+Your opening should establish four separate paths: customer DNS and edge entry; edge-to-API routing; API-to-fraud private connectivity; and workload-to-provider identity. Draw the return path for each. Then state assumptions: 4,000 requests per second globally, 60% from Europe, 5% retries during the incident, 20-minute token lifetime, and 30% of fraud calls crossing the region boundary in the current design. Mark these as **Inference** from the prompt rather than facts.
+
+### I2. Design path, calculations, and trade-offs
+
+The baseline should prefer tenant-aware regional affinity with an explicit escape path, not indiscriminate global balancing. If Europe normally receives 2,400 requests per second and 5% retries are added, the incident demand is about `2,400 * 1.05 = 2,520 requests/second`. If one European region is lost and the alternate region is tested for 2,800 requests per second, the capacity margin is only 280 requests per second, or about 10%. That margin may disappear with cache misses, fraud-service calls, and connection re-establishment. State what traffic would be shed first: low-priority reads, expensive fraud checks, or new writes.
+
+For p99 latency, decompose the increase into DNS, edge queue, TLS, API queue, fraud RPC, and response serialization. If 30% of requests call fraud and those calls add 100 ms when cross-region, the expected average contribution is approximately `0.30 * 100 ms = 30 ms`; p99 can be much larger if the cross-region cohort is concentrated or retries cascade. This arithmetic is a diagnostic estimate, not a claim about any provider’s network. A falsifier for “cross-region fraud traffic caused the latency” is stable fraud-call geography and duration for affected requests while edge queueing rises independently.
+
+The 401 cohort requires a different evidence path. Compare token issuer, audience, subject, expiry, clock skew, edge-to-backend forwarding, and provider audit principal. A load balancer or proxy can preserve a connection while altering headers or source address. If the API sees a valid customer token but the fraud service sees a workload token with the wrong audience, the network is reachable and the authorization boundary is wrong. The remedy is not a wider firewall rule.
+
+### I3. Provider comparison and behavior boundaries
+
+Map only the mechanisms needed by the prompt. **Vendor terminology:** AWS and GCP each offer global or regional traffic-entry products, workload identity mechanisms, private service publication, flow/load-balancer logs, and quota systems. **Fact:** the selected product documentation defines its own scope, health semantics, identity fields, limits, and pricing. **Inference:** a portable platform contract should expose tenant placement, source identity, health, telemetry, quota, and rollback semantics without claiming that similarly named services behave identically.
+
+For AWS, ask which edge, regional load balancer, VPC, private endpoint, and workload identity mode are selected. For GCP, ask which global or regional load-balancing path, VPC, private service publication, and GKE identity mode are selected. Compare health-check source, regionality, DNS behavior, source translation, service-provider approval, token subject, log coverage, and quota scope. If a provider detail is unknown, state the exact verification question instead of inventing a limit or promising feature parity.
+
+### I4. Interviewer follow-ups, falsifiers, and wrong paths
+
+- **Follow-up:** “The 401s disappear when traffic is pinned to AWS.” Ask whether the GCP path uses a different token issuer, audience, clock source, header policy, or application configuration. A falsifier for a GCP network hypothesis is a provider audit record showing the intended principal arrived and was denied by policy.
+- **Follow-up:** “The European region is healthy, so why not send all traffic there?” Ask about residency, tested survivor capacity, fraud-service locality, state ownership, and existing connections. Health is insufficient if the region cannot safely own the tenant’s data or withstand retry-amplified demand.
+- **Follow-up:** “Central telemetry shows no edge errors.” Ask about sampling, pipeline delay, tenant cardinality, log source coverage, and whether the edge-generated 401 is represented. Absence of an edge record may falsify edge handling only after coverage is proven.
+- **Follow-up:** “Finance asks why cross-region cost rose.” Correlate bytes by path, tenant, region, retry count, and failover state. Do not charge all teams for a shared routing decision without identifying the control that can reduce the cost.
+- **Wrong path:** Making both clouds active for every tenant before defining state and residency ownership.
+- **Wrong path:** Treating a shared customer JWT as sufficient workload authorization for the fraud service.
+- **Wrong path:** Turning up telemetry sampling globally during an incident without a cardinality, privacy, or cost bound.
+
+### I5. Scoring example and recovery sequence
+
+An SDE2 answer should identify the four paths, separate 401 from latency, perform one survivor calculation, and propose an evidence sequence. A strong Staff answer additionally proposes a tenant placement contract, a cross-cloud identity contract, cost attribution, quota and capacity gates, and a staged rollback. Score the answer higher when it says what each owner can change safely and what evidence authorizes the next change.
+
+A credible recovery sequence is: freeze the release; preserve representative request IDs and configuration versions; segment 401 and p99 cohorts; validate identity claims and audit principals; reduce cross-region fraud calls or route only an eligible tenant cohort; enforce priority shedding if survivor margin is insufficient; and keep a control cohort on the previous path. Restore traffic only after identity success, customer latency, fraud-service locality, and cost return to defined ranges for two observation windows. If the evidence contradicts the leading hypothesis, say so and reopen the decision tree.
+
+## J. Interviewer calibration: distinguishing competent, strong, and Staff answers
+
+### J1. Use observable behaviors rather than confidence
+
+Interviewers should score the candidate’s reasoning artifacts, not fluency or product familiarity. A competent answer names a plausible architecture. A strong answer states assumptions, traces request and return paths, calculates a pressure point, and proposes evidence. A Staff answer makes the design repeatable across teams by naming interfaces, ownership, guardrails, exceptions, cost, migration, and learning mechanisms. A candidate who says “I would verify the current limit” should receive credit when they identify the resource, scope, evidence source, and design consequence.
+
+### J2. Calibration rubric with examples
+
+| Dimension | Competent signal | Strong signal | Staff signal |
+|---|---|---|---|
+| Requirements | Asks about scale and availability | Adds latency, state, residency, and change constraints | Identifies conflicting stakeholders and decision owner. |
+| Path reasoning | Draws client, edge, and backend | Includes DNS, routing, policy, identity, dependency, and return path | Shows control plane, data plane, state, and cost/limit plane. |
+| Calculations | Estimates requests or concurrency | Includes retries, zone loss, addresses, ports, or bytes | Tests coupled limits, uncertainty, and sensitivity to assumptions. |
+| Provider mapping | Names a plausible AWS/GCP service | Compares scope, semantics, and verification boundaries | Defines a portable contract and isolates provider-specific risk. |
+| Failure handling | Suggests failover or rollback | Gives evidence, falsifiers, and stop gates | Defines safe state transitions, authority, communication, and residual risk. |
+| Ownership | Names a responsible team | Separates platform and service ownership | Creates interfaces, exception expiry, cost allocation, and review cadence. |
+
+For a worked scoring example, consider a candidate who proposes a global load balancer, active-active writes, default-deny policy, and autoscaling. If they cannot explain writer fencing, survivor capacity, token audience, or how the load balancer health check differs from customer success, score the architecture knowledge as partial despite confident delivery. If they pause, identify those gaps, and replace the proposal with a staged, testable design, score the recovery behavior separately and reward the correction.
+
+### J3. Follow-up dialogue for calibration
+
+**Interviewer:** “The target region is healthy, but replication lag is 45 seconds and the RPO is 30 seconds. Shift writes?”
+
+**Competent candidate:** “I would be cautious and check the database.”
+
+**Strong candidate:** “No. The observed lag violates the stated RPO. I would pause promotion, determine whether the business accepts loss, and check whether the old writer can be fenced.”
+
+**Staff candidate:** “No automatic write promotion. I would declare the RPO contract currently unmet, move eligible reads or queued operations to a degraded mode, and assign data, platform, and business owners to the decision. I would preserve evidence of lag, verify writer fencing, quantify affected writes, and state the exact condition for accepting bounded loss. If we later promote, I would require an idempotency and reconciliation plan, not just a green health check.”
+
+**Interviewer:** “A team asks for a broad firewall exception to recover faster.”
+
+**Strong candidate:** “I would narrow it to the required source, destination, protocol, and time, then add a rollback.”
+
+**Staff candidate:** “I would first identify whether the failure is reachability, authorization, or identity. If an exception is necessary, it is a time-bound experiment with an owner, audit evidence, a negative test, and a removal gate. I would explain the customer impact of waiting versus the security and blast-radius cost of widening access, and I would offer a smaller cohort or alternate path. Recovery speed does not justify making an unmeasured trust boundary permanent.”
+
+### J4. Candidate self-review prompts
+
+After each mock, write down: the assumption you failed to state, the limit you treated as infinite, the owner you left ambiguous, the evidence that would falsify your favorite hypothesis, and the sentence where you overclaimed provider equivalence. Repeat the scenario with one changed variable—provider, region, identity mode, traffic skew, or state model. The goal is not to memorize this answer. It is to demonstrate a stable method when the interviewer changes the facts.
+
+## K. References and evidence labels
 
 - **Inference method:** [Networking interview bank](../docs/networking-interview-bank.md).
 - **Inference method:** [Interview whiteboard drills](../docs/interview-whiteboard-drills.md).

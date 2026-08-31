@@ -121,7 +121,47 @@ A Service has three ready pods and the cloud load balancer is green, but request
 
    **Answer:** Inventory address use and dependencies, create an overlap-free target, run dual validation, canary namespaces or services, preserve DNS and identity contracts, and establish rollback checkpoints. Prove negative isolation and positive reachability before cutover. Treat controller version, CNI mode, and cloud quota as explicit release inputs.
 
-## H. References and evidence labels
+## H. Advanced design review: reconciliation, identity, and safe policy rollout
+
+### H1. Separate desired state from effective data-plane state
+
+Kubernetes networking is a chain of controllers and enforcement points, not a direct translation from YAML to packets. A Service selects pods through labels; EndpointSlices represent the selected addresses; a controller may program a cloud load balancer; the CNI assigns or routes pod addresses; and a policy engine translates NetworkPolicy intent into enforcement. Each stage has its own convergence delay and failure mode. In an interview, draw both the desired object and the effective state observed at the node, cloud entry point, and pod.
+
+Assume 120 application pods across three zones, a 25% rolling-update surge, and 10% address reserve for system workloads. The planning address requirement is roughly `120 * 1.25 * 1.10 = 165` pod addresses, before provider or CNI-specific reservations. If each zone must survive loss of one peer zone, the distribution must also be checked per zone; a single large regional range does not prove zonal placement capacity. **Inference:** address headroom, scheduler capacity, and load-balancer backend limits are coupled constraints. A deployment can have CPU available and still fail because the CNI or subnet cannot allocate another address.
+
+### H2. Understand policy semantics and bypass paths
+
+“Default deny” is meaningful only after answering five questions: which policy engine enforces it, which direction is isolated, what identity selectors mean, whether DNS and health traffic are allowed, and which paths bypass the cluster policy. A cloud load balancer entering through a node port, a host-networked pod, a service mesh sidecar, or a direct cloud API path may not be governed by the same policy. Labels are convenient selectors but should not be treated as immutable identities unless the admission and ownership model makes them trustworthy.
+
+For every allow rule, define a positive and negative test. “Checkout may call payments on 443” should produce a successful request from an approved workload and a denied request from an unapproved namespace, with evidence at the enforcement point. If the approved request succeeds only after a broad cloud firewall rule is added, that proves reachability changed—not that the intended NetworkPolicy is enforced. A falsifier for “policy caused the outage” is a denied flow that never reaches the policy engine, or an equally affected path outside the cluster.
+
+### H3. Provider boundaries and rollout ownership
+
+EKS and GKE expose similar Kubernetes abstractions while differing in CNI choices, pod-address placement, load-balancer controller behavior, identity integration, and version support. **Vendor terminology** names the integration; it does not guarantee the same source-address or health-check behavior. Ask which cluster mode, CNI version, service type, controller, IP family, and cloud resource scope are in use. If those inputs are unknown, keep the answer at the mechanism level and identify the documentation boundary to verify.
+
+The platform team should own cluster networking, supported ingress classes, CNI upgrades, policy defaults, quotas, and telemetry. Application teams own ports, readiness semantics, dependencies, and service-level SLOs. Security owns the threat model and exception criteria. During a policy or CNI rollout, use a canary namespace or node pool, record controller and policy versions, and compare a control cohort. A rollback may restore manifests but not necessarily remove already-programmed cloud resources or connections. Define cleanup evidence and allow enough drain time for endpoint changes to propagate.
+
+### H4. Advanced troubleshooting sequence
+
+Start with the symptom boundary: pending pod, DNS failure, connection refusal, timeout, TLS error, HTTP error, or policy denial. Then correlate scheduler events, pod readiness, EndpointSlices, Service ports, controller events, cloud backend health, route and policy evidence, node sockets, and application logs. Do not jump from “load balancer red” to “application broken.” A backend can be healthy from the controller’s probe source while client traffic fails due to a different path, SNI, policy, or return route.
+
+When requests fail intermittently, compare by node, zone, IP family, pod identity, and connection age. If only newly scheduled pods fail, suspect address allocation, readiness timing, or policy propagation. If only one zone fails, compare route programming, subnet capacity, health-check reachability, and cloud backend registration. If old connections succeed and new connections fail, distinguish listener or policy changes from application state. The evidence plan should be read-only until a hypothesis has a falsifier.
+
+### H5. Follow-up interview questions and substantive answers
+
+1. **A NetworkPolicy object is accepted, but traffic is still allowed. What do you say?**
+
+   **Answer:** API acceptance proves the object was stored, not that the selected CNI or policy engine enforces the intended semantics. I would verify enforcement capability, policy events, selector resolution, namespace labels, direction, and a controlled deny test. I would also inspect cloud and host-network bypass paths. If the test cannot demonstrate a deny at the expected boundary, the security claim remains unproven.
+
+2. **How do you choose between pod-routable and node-translated traffic?**
+
+   **Answer:** Compare source-identity needs, address consumption, route scale, policy enforcement, observability, and failure behavior. Pod-routable traffic can simplify source visibility but consumes and propagates more addresses. Node translation may reduce route complexity but moves identity to headers or application tokens and can create port pressure. Choose from measured requirements, then document the loss of source fidelity explicitly.
+
+3. **A rollout makes 2% of requests fail, but all pods are ready. What is your next decision?**
+
+   **Answer:** Pause expansion and separate the cohort by pod revision, node, zone, entry path, and request type. Compare EndpointSlices, target health, readiness timing, policy decisions, connection errors, and application responses. If failures are limited to the new revision, rollback that cohort while preserving evidence. If they span revisions but one zone, the safer rollback may be to traffic or infrastructure rather than deployment state.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [Amazon EKS networking](https://docs.aws.amazon.com/eks/latest/userguide/eks-networking.html).
 - **Fact / Vendor terminology:** [AWS Load Balancer Controller](https://kubernetes-sigs.github.io/aws-load-balancer-controller/).

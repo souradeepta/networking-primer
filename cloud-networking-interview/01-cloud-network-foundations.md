@@ -140,10 +140,55 @@ Take 20 minutes. A deployment says `orders.internal.example` timed out for 7 min
 
 **Answer:** Label the statement as an inference, state the condition that could change it, and name the official documentation or safe test that would verify it. Avoid inventing quotas or claiming two similarly named features are equivalent. Explicit uncertainty is stronger than a confident unsupported detail.
 
-## K. References and evidence labels
+## K. Advanced design walk-through: from tuple to decision
+
+### K.1 Packet and request tuple walk-through
+
+Start with an explicit request rather than a vague statement such as “the service is down.” Assume workload `checkout-a` resolves `payments.example.test` to `10.20.8.14`, opens TCP from `10.20.4.27:49152` to `10.20.8.14:443`, negotiates TLS with SNI `payments.example.test`, and sends request ID `r-1842`. The packet tuple is source address, source port, destination address, destination port, and protocol. The request tuple adds the name, SNI, method, path, identity, and correlation ID. Each transformation must be named:
+
+1. The resolver returns an address and TTL; this is a naming observation, not proof of reachability.
+2. The workload route chooses the next hop for `10.20.8.14`; longest-prefix or provider-specific route priority is the forwarding observation.
+3. A policy evaluates the five-tuple and possibly workload identity. If a proxy or NAT intervenes, record the tuple before and after that boundary.
+4. TCP state proves transport progress only after SYN, SYN-ACK, and ACK evidence. TLS then proves a certificate and protocol contract, not application authorization.
+5. The service observes a source that may be the workload, a proxy, or a translated address. Match its access log to `r-1842`, then follow the response tuple back to the caller.
+
+This walk-through prevents a common SDE2 error: treating one successful `curl` as evidence that every layer is healthy. A Staff answer states which layer owns each observation and what would falsify it.
+
+### K.2 Assumptions to calculation
+
+Assume 240 checkout workers each create at most 18 new connections per second during a five-second burst, and each connection occupies translation state for 90 seconds. The peak mapping population is `240 x 18 x 90 = 388,800` mappings if connections are not reused. If the design has four independent egress addresses, the average mapping pressure is about 97,200 per address before provider-specific per-destination or port limits. This is an estimate, not a provider quota. The conclusion is to measure connection reuse, destination concentration, allocation behavior, and the selected AWS or GCP limits before choosing more addresses or a proxy.
+
+State the assumptions that make the estimate useful: burst rate is per worker, all workers can burst together, connection lifetime is representative, and translation is the bottleneck. Then name a falsifier: a flow record showing only 20,000 concurrent mappings during the incident weakens the exhaustion hypothesis, while new failures concentrated on one destination strengthen a per-destination hypothesis.
+
+### K.3 Provider non-equivalence and verification boundary
+
+The portable model has data, control, identity, observability, and cost/limit planes. AWS and GCP expose different scopes and ownership for those planes. For example, AWS account, Region, VPC, subnet, route-table association, and security-group concepts do not map one-for-one to GCP project, region, VPC network, regional subnet, route, and firewall concepts. A GCP VPC route being global in scope does not mean every AWS route-table association behaves globally, and a similarly named managed service does not establish matching source preservation or logging.
+
+Label provider claims as **Fact** or **Vendor terminology** and verify the exact service, region, account/project, release, and feature mode. Label a cross-provider architecture conclusion as **Inference**. A good answer says, “I expect this path to work given the documented scope, then I would verify the effective route, policy, and endpoint state in the selected environment.”
+
+### K.4 Evidence, blast radius, and rollback
+
+Interpret evidence by proximity to the disputed layer. A DNS answer falsifies only a name-resolution hypothesis; it does not falsify a missing route. A flow log showing no record may mean the flow never reached that logging boundary, not that the packet was denied. A server log with `r-1842` falsifies the claim that the request never arrived, but not the claim that its response was lost. Prefer independent observations from caller, enforcement point, and service.
+
+For a route or policy change, describe blast radius before the change: affected prefixes, tenants, zones, regions, shared gateways, and control-plane dependencies. Use a canary boundary, capture effective state, and define rollback as restoration of the last-known-good intent plus verification of convergence. Rollback itself may not undo established connections, cached DNS answers, or issued credentials, so the recovery plan must address those residual states.
+
+### K.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: The packet reaches the backend, but the client times out. What do you ask next?**
+
+**Answer:** I ask whether the backend emitted a response, which source and destination tuple it used, and whether the response crossed the same stateful boundary. I correlate server, proxy, NAT, and client evidence by timestamp and request ID. If the backend response exists but no client ACK appears, I prioritize return routing, translation state, MTU, or policy evidence over changing the listener.
+
+**Follow-up 2: How do you make the five-plane model useful at Staff level?**
+
+**Answer:** Turn it into review fields and ownership: every design names the data path, controller, identity issuer, telemetry, limit, cost owner, failure boundary, and rollback signal. The model is useful only when it changes decisions, exposes missing owners, and produces a falsifiable test for each important assumption.
+
+**Follow-up 3: When is a fast rollback unsafe?**
+
+**Answer:** It is unsafe when the change altered data routing, authorization, DNS, or stateful translation and the prior state no longer matches active clients or replicated data. I would pause, fence unsafe writers if required, preserve evidence, and choose a staged compensating action. Speed matters, but restoring an inconsistent state can enlarge the incident.
+
+## L. References and evidence labels
 
 - **Fact:** [AWS VPC concepts](https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html) and [Google Cloud VPC overview](https://cloud.google.com/vpc/docs/vpc).
 - **Vendor terminology:** [AWS Regions and Availability Zones](https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions.html) and [Google Cloud locations](https://cloud.google.com/compute/docs/regions-zones).
 - **Inference:** The five-plane model and evidence ordering are engineering tools derived from the repository’s [observability chapter](../book/12-observability-and-troubleshooting.md) and [cloud primitives topic](../book/topics/37-cloud-networking-primitives.md).
 - [DNS operations](../book/06-dns-resolution-and-operations.md), [security foundations](../book/17-network-security-waf-zero-trust.md), and [interview whiteboard drills](../docs/interview-whiteboard-drills.md) provide deeper portable material.
-

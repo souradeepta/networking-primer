@@ -128,7 +128,47 @@ A consumer’s private DNS name resolves to a private address, but requests time
 
 Ask: “A business unit wants every consumer connected to the producer network for convenience.” A Staff answer should challenge the requirement, offer a service contract, quantify blast radius and operational cost, define exceptions for genuine network-level needs, and establish an exit path. It should include the customer experience of onboarding and revocation, not only packet reachability.
 
-## H. References and evidence labels
+## H. Advanced private-service review: contracts, identity, and lifecycle
+
+### H.1 Packet and request tuple walk-through
+
+Assume consumer workload `10.101.4.20:52000` resolves `ledger.partner.test` to `10.140.8.12` and sends `(10.101.4.20:52000 -> 10.140.8.12:443, TCP)`. Trace the tuple to the consumer endpoint, provider-side service attachment or endpoint load balancer, backend listener, and reverse path. At the same time trace the request tuple: SNI, endpoint name, consumer identity, tenant, and request ID `p-902`. The provider may observe a translated or endpoint-associated source rather than `10.101.4.20`; therefore source address should not be the sole authorization signal.
+
+Separate lifecycle state from packet state. An endpoint can be provisioned but pending producer approval; approved but mapped to the wrong private DNS view; reachable but directed to unhealthy backends; or healthy at transport while application authentication fails. A service-oriented connection deliberately exposes a contract, not the producer’s entire route graph. The interview answer should say what each side owns and how revocation becomes visible.
+
+### H.2 Assumptions to calculation
+
+Suppose 80 consumers each create 25 new TLS connections per second during a 12-second deployment burst, with a 45-second average handshake and endpoint state lifetime. The rough burst population is `80 x 25 x 45 = 90,000` concurrent endpoint flows if reuse is absent. If a shared endpoint path fails over and all 80 consumers retry twice, the short-term new-flow demand can approach `80 x 25 x 3 = 6,000` attempts per second. These are workload estimates; verify endpoint connection, target, quota, and retry behavior for the selected AWS PrivateLink or GCP Private Service Connect mode.
+
+The design decision is not “more endpoints always help.” Many endpoints can reduce shared blast radius but increase address consumption, DNS records, approval objects, and cost. A falsifier for endpoint capacity pressure is stable endpoint flow and handshake counts while only one producer target fails; that redirects attention to backend health or authorization.
+
+### H.3 Provider non-equivalence and verification boundary
+
+AWS PrivateLink interface endpoints and endpoint services, and GCP Private Service Connect endpoints and service attachments, both support producer-consumer private service patterns. They differ in endpoint types, acceptance flows, DNS integration, regional constraints, source visibility or translation, supported protocols, quota, and billing. Neither should be presented as generic peering, and neither comparison should assume arbitrary bidirectional reachability.
+
+Label provider details as **Fact** or **Vendor terminology**, and the conclusion that service publication narrows route exposure as **Inference**. Verify the exact AWS/GCP endpoint mode, producer approval, service region, DNS behavior, source address seen by the producer, health semantics, quotas, and pricing. A precise interview answer says which provider documentation or effective-state check would confirm the mode rather than claiming the products are interchangeable.
+
+### H.4 Evidence, blast radius, and rollback
+
+Interpret endpoint evidence as a state machine: consumer object exists, producer accepts it, private name resolves to the intended endpoint, route and policy permit the tuple, transport completes, TLS validates the name, and the provider backend authorizes the request. Each observation falsifies only the preceding hypothesis. A producer log with the request ID is stronger than a consumer-side “endpoint available” status, while a DNS answer alone proves neither approval nor reachability.
+
+Blast radius depends on whether the endpoint, service attachment, DNS zone, backend, or shared producer policy is changed. A producer-side policy edit can affect every consumer; a consumer endpoint change may affect one tenant but still consume shared quota. Canary one consumer and one non-critical operation, keep the previous endpoint or DNS target during convergence, and define rollback as restoring approval, name resolution, route/policy, and backend selection. Revoking an endpoint is not enough if clients cache addresses or keep connections open.
+
+### H.5 Follow-up interview questions and substantive answers
+
+**Follow-up 1: Why choose private service publication instead of peering?**
+
+**Answer:** I choose publication when consumers need a bounded service contract, producer-controlled approval, revocation, or protection from the producer’s broader routes. I choose peering or transit when both sides intentionally need network-level reachability. I compare protocol, source identity, regional scope, DNS, route scale, cost, and failure ownership rather than treating private connectivity as one category.
+
+**Follow-up 2: The endpoint resolves correctly but returns 403. Is networking working?**
+
+**Answer:** Name resolution and at least some path to an application boundary are working, but the endpoint may still have a policy or identity mismatch. I correlate endpoint and producer logs, source visibility, TLS identity, consumer authorization, and request ID. A 403 is evidence against a pure route failure, not proof that every network boundary is healthy.
+
+**Follow-up 3: How do you roll back a producer service publication?**
+
+**Answer:** Stop new onboarding or narrow producer acceptance, preserve existing consumers until the replacement is proven, shift a canary through the previous endpoint or versioned name, and verify health, identity, and traffic. Then revoke or delete in dependency order. The rollback must account for cached DNS, open connections, consumer retries, and any credentials or data exposed during the bad version.
+
+## I. References and evidence labels
 
 - **Fact / Vendor terminology:** [AWS PrivateLink concepts](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html).
 - **Fact / Vendor terminology:** [AWS interface VPC endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html).
