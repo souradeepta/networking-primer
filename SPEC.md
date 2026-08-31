@@ -144,6 +144,16 @@ exercise, and six interview questions. These are focused references rather
 than replacement book chapters; the validator enforces a 600-word minimum and
 24-word minimum per answer while preserving the deeper chapter contracts.
 
+## F5 interview bank (edition 9)
+
+Maintain a dedicated `docs/f5-interview-bank.md` with at least 30 role-specific
+questions, detailed answers, follow-up prompts, and eight debugging exercises.
+Coverage must include LTM, GTM/BIG-IP DNS, TLS/mTLS, HA/upgrades, SDK/iControl
+REST, AS3/DO/FAST/TS, observability, and failure diagnosis. Answers should
+state mechanism, evidence, trade-offs, and caveats; exercises must provide
+symptoms, clues, expected reasoning, and a safe resolution boundary. Current
+F5 terminology and toolchain claims must link to official documentation.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

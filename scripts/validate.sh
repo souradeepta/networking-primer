@@ -7,12 +7,13 @@ required=(
   docs/01-foundations.md docs/02-request-path.md docs/03-f5-ltm.md
   docs/04-f5-gtm.md docs/05-troubleshooting.md docs/06-ddi.md
   docs/07-automation.md docs/08-transport-security.md docs/architecture.md
-  docs/09-hands-on-labs.md docs/interview-questions.md docs/glossary.md docs/references.md
+  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/glossary.md docs/references.md
   book/README.md book/FACT-INFERENCE-LEDGER.md
   examples/request_path.py examples/f5_pool_audit.py
   scripts/check_internal_links.py
   demos/README.md demos/dns_observe.sh demos/tls_inspect.sh
-  demos/vip_ltm_model.py demos/certificate_audit.py
+  demos/vip_ltm_model.py demos/certificate_audit.py demos/f5_change_planner.py
+  demos/f5_rest_pagination_tasks.py
   demos/animations/request-journey.html demos/animations/dns-failover.html
   demos/docker/README.md demos/docker/compose.yml demos/docker/server.py demos/docker/client.py
   demos/wireshark.md exercises/README.md
@@ -156,6 +157,21 @@ for path in [*Path("docs").glob("*.md"), *Path("book").glob("*.md")]:
         if not block.isascii():
             raise SystemExit(f"Non-ASCII Mermaid content in {path}")
 print("Repository structure and Mermaid ASCII checks passed.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+path = Path("docs/f5-interview-bank.md")
+text = path.read_text(encoding="utf-8")
+questions = re.findall(r"^\d+\.\s+\*\*", text, flags=re.MULTILINE)
+exercises = re.findall(r"^\d+\.\s+\*\*", text.split("## Debugging exercises", 1)[-1], flags=re.MULTILINE)
+if len(questions) < 30:
+    raise SystemExit(f"F5 interview bank needs 30 questions; found {len(questions)}")
+if len(exercises) < 8:
+    raise SystemExit(f"F5 interview bank needs 8 debugging exercises; found {len(exercises)}")
+print(f"F5 interview bank checks passed: {len(questions)} questions, {len(exercises)} debugging exercises.")
 PY
 
 python3 scripts/check_internal_links.py

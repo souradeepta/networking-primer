@@ -19,3 +19,6 @@
 - [x] Map F5 gaps and add traffic-processing, SDK workbench, LTM capacity,
       BIG-IP DNS operations, troubleshooting, and API-toolchain references
       (topics 28–33).
+- [x] Add a dedicated F5 interview bank with detailed answers, follow-up
+      prompts, debugging exercises, current toolchain references, and local
+      SDK/REST safety demos.

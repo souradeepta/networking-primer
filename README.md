@@ -40,6 +40,11 @@ Supporting modules: [DDI](docs/06-ddi.md), [architecture diagrams](docs/architec
 [troubleshooting runbook](docs/05-troubleshooting.md), plus the
 [platform networking bridge](docs/10-platform-networking.md).
 
+For F5-focused interview preparation, use the [dedicated F5 role interview
+bank](docs/f5-interview-bank.md), which includes LTM, GTM/BIG-IP DNS, TLS/mTLS,
+HA, SDK/REST/declarative automation, observability, and symptom-driven debug
+exercises.
+
 Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small
 [request-path simulator](examples/request_path.py).

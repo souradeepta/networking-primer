@@ -30,6 +30,10 @@
 - F5 expansion plan is documented in `docs/f5-expansion-plan.md`. Topics 28–33
   now cover traffic processing/TMM, SDK workbench, LTM capacity, BIG-IP DNS
   debugging, read-only troubleshooting, and the API/declarative toolchain.
+- A dedicated `docs/f5-interview-bank.md` now contains 34 core F5 questions,
+  follow-up prompts, and eight debugging exercises. New local demos model
+  partition-aware planning and REST pagination/task errors without contacting a
+  device. Official AS3, DO, TS, and SDK references were added.
 
 ## Verification
 

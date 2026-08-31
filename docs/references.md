@@ -26,6 +26,14 @@
   lists BIG-IP DNS/GTM API resources.
 - [F5 Python SDK source and documentation](https://github.com/F5Networks/f5-common-python)
   is the upstream project for the SDK used in the read-only example.
+- [F5 BIG-IP AS3 documentation](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/)
+  documents the current declarative application-service model and release
+  selector; schema and feature support remain version-dependent.
+- [F5 Declarative Onboarding documentation](https://clouddocs.f5.com/products/extensions/f5-declarative-onboarding/latest/)
+  covers declarative base-device onboarding and compatibility considerations.
+- [F5 Telemetry Streaming documentation](https://clouddocs.f5.com/products/extensions/f5-telemetry-streaming/latest/)
+  describes exporting structured BIG-IP telemetry; it is not a configuration
+  transaction or health guarantee.
 - [NIST SP 800-61 Rev. 3](https://csrc.nist.gov/pubs/sp/800/61/r3/final)
   is the current incident-response recommendations publication and supersedes
   Rev. 2.
