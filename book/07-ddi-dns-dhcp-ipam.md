@@ -79,12 +79,35 @@ flowchart LR
 ## Questions and answers
 
 1. **Why can a DHCP client not simply send a unicast request at startup?** It may have no address, server address, or route. The initial broadcast lets a relay and server discover the client’s subnet.
+
+Interview reasoning: For “Why can a DHCP client not simply send a unicast request at startup,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **What does a relay add?** It carries the request across a routed boundary and supplies subnet context so the server can select the appropriate scope. It does not become the lease authority.
+
+Interview reasoning: For “What does a relay add,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Does a DHCPACK prove DNS works?** No. The ACK proves the server accepted a lease and returned options; resolver reachability, zone data, and delegation still need testing.
+
+Interview reasoning: For “Does a DHCPACK prove DNS works,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 4. **Why is IPAM not automatically authoritative for every address?** IPAM usually records intended allocation and ownership, while DHCP records dynamic lease state. Their authority depends on the agreed data model.
+
+Interview reasoning: For “Why is IPAM not automatically authoritative for every address,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What is drift?** Drift is disagreement between systems or between recorded intent and observed state, such as an IPAM-free address that DHCP leases or a DNS name pointing to a retired host.
+
+Interview reasoning: For “What is drift,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why can deleting a stale DNS record be dangerous?** It may be owned by another service, be temporarily hidden by caching, or be the only name for a still-live endpoint. Establish ownership and evidence first.
+
+Interview reasoning: For “Why can deleting a stale DNS record be dangerous,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 7. **What does a TTL control?** It bounds how long a caching resolver may reuse an answer; it does not control DHCP leases or guarantee instant worldwide change.
+
+Interview reasoning: For “What does a TTL control,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 8. **How should conflicts be remediated?** Preserve evidence, quarantine the conflicting object, identify field owners, apply the smallest reversible correction, and verify from multiple vantage points.
+
+Interview reasoning: For “How should conflicts be remediated,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [RFC 2131](https://www.rfc-editor.org/rfc/rfc2131), [RFC 2132](https://www.rfc-editor.org/rfc/rfc2132), [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034), and [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035). **Fact/inference note:** protocol lifecycle and message roles are facts from the RFCs; recommendations about reconciliation order and quarantine are engineering inferences.

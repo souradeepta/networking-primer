@@ -125,19 +125,37 @@ or serialize changes per device/service, record correlation IDs, and make
 
 1. **Is SSH inherently safer than REST?** No. Safety depends on identity,
    authorization, host verification, auditing, and change controls.
+
+Interview reasoning: For “Is SSH inherently safer than REST,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 2. **What is idempotency?** Repeating the same desired-state request converges
    without duplicate or unintended additional changes.
+
+Interview reasoning: For “What is idempotency,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 3. **Why capture pre-state?** It supports review, precise diffs, and rollback.
+
+Interview reasoning: For “Why capture pre-state,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Why verify TLS in an API client?** Without server identity validation, a
    management credential may be sent to an impostor endpoint.
+
+Interview reasoning: For “Why verify TLS in an API client,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 5. **What should happen after an uncertain timeout?** Read back state and audit
    evidence; do not blindly retry a potentially completed write.
+
+Interview reasoning: For “What should happen after an uncertain timeout,” correlate packet direction, timer values, MSS/MTU, firewall state, and application timing across both sides of the boundary. A timeout can be a silent drop, an expired state entry, or a black-hole path, while an RST is explicit evidence. Change one boundary at a time and verify recovery without masking the underlying capacity or policy fault.
+
 6. **Why serialize changes?** Concurrent edits can invalidate assumptions and
    produce split or partial configuration.
+
+Interview reasoning: For “Why serialize changes,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What is a useful post-change check?** Object read-back plus health signal
    and a controlled request, not merely an HTTP success status.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “What is a useful post-change check,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446) describes TLS used to
 protect management sessions, and [RFC 4253](https://www.rfc-editor.org/rfc/rfc4253)

@@ -90,14 +90,43 @@ flowchart TD
 ## Questions and answers
 
 1. **What makes an SLO useful?** It ties a named user-facing event to a denominator, time window, measurement point, and target. Without those, “99.9% available” is not reproducible.
+
+Interview reasoning: For “What makes an SLO useful,” define the SLO numerator, denominator, threshold, window, and exclusions, then decompose the symptom into DNS, connect, TLS, queue, origin, and retry time. Use request IDs and tail percentiles rather than averages. Retries may improve apparent success while consuming capacity, so report attempts, outcomes, and retry amplification separately.
+
 2. **What is an error budget?** The allowed unreliability implied by an SLO. It supports a risk discussion; it is not a license to spend failures carelessly.
+
+Interview reasoning: For “What is an error budget,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Why are two redundant devices not automatically independent?** They may share power, software defects, routes, credentials, certificates, or human changes. Enumerate failure domains explicitly.
+
+Interview reasoning: For “Why are two redundant devices not automatically independent,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Why cap retries?** Retries consume capacity and may repeat side effects. Use a total deadline, bounded attempts, backoff, and idempotency or deduplication.
+
+Interview reasoning: For “Why cap retries,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What belongs in a threat model?** Assets, actors, trust boundaries, entry points, assumptions, threats, impacts, and controls with owners and evidence.
+
+Interview reasoning: For “What belongs in a threat model,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **What is the first incident-response goal?** Establish scope and stabilize user impact while preserving evidence. Assign roles and avoid uncontrolled changes that enlarge the incident.
+
+Interview reasoning: For “What is the first incident-response goal,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What is a canary?** A limited rollout that exercises a change on a bounded population or partition with explicit success and abort criteria. It is not proof that every failure mode is absent.
+
+Interview reasoning: For “What is a canary,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **What makes rollback credible?** It is tested, observable, authorized, and reaches a known-good state within the remaining incident budget. An inverse command alone is not proof.
+
+Interview reasoning: For “What makes rollback credible,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 9. **Why are postmortems blameless?** They focus on conditions and guardrails so people report facts; blameless does not mean vague, consequence-free, or without accountable actions.
+
+Interview reasoning: For “Why are postmortems blameless,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 10. **How should capacity tests be reported?** Name workload mix, traffic rate, connection behavior, dependencies, measurement points, limits, test date, stop criteria, and uncertainty. Do not present an unrelated benchmark as a guarantee.
+
+Interview reasoning: For “How should capacity tests be reported,” turn the answer into budgets for concurrent flows, new connections, requests, bytes, TLS handshakes, SNAT ports, queues, and policy cost. Measure representative packet sizes and failure concentration, including retries and health checks. Nominal device throughput is not application capacity; a site failover can concentrate traffic and exhaust per-member or per-translation limits.
 
 Primary references: [Google SRE Workbook: Implementing SLOs](https://sre.google/workbook/implementing-slos/), [NIST SP 800-61 Rev. 3](https://csrc.nist.gov/pubs/sp/800/61/r3/final), [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework), [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293), and [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446). **Fact/inference ledger:** SLI/SLO terminology, TCP/TLS protocol facts, and NIST incident-response guidance come from primary references; capacity assumptions, failure-domain analysis, retry budgets, control ownership, canary design, and rollback criteria are engineering inferences that require service-specific evidence.

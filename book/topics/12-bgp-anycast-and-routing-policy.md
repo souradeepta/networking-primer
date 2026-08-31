@@ -183,27 +183,48 @@ allowlisted command, not a blind `StrictHostKeyChecking=no` shortcut.
 1. **Does BGP choose the geographically nearest site?** No. It chooses a
    policy-selected path, which may correlate with geography but is not a GPS
    distance calculation.
+
+Interview reasoning: For “Does BGP choose the geographically nearest site,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 2. **How is GTM/DNS steering different from anycast?** DNS returns an answer
    that the client caches; anycast advertises the same route and lets network
    forwarding select a site after resolution.
+
+Interview reasoning: For “How is GTM/DNS steering different from anycast,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 3. **Can an F5 monitor withdraw a BGP route automatically?** It can be part of
    a controller’s decision, but the integration, safety gates, and ownership
    are implementation-specific and must be reviewed.
+
+Interview reasoning: For “Can an F5 monitor withdraw a BGP route automatically,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 4. **Why can a route be visible but traffic still fail?** The forwarding next
    hop, firewall, VIP, TLS profile, pool, or return path can be broken after
    control-plane convergence.
+
+Interview reasoning: For “Why can a route be visible but traffic still fail,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 5. **What is a more-specific route?** A longer prefix that wins longest-prefix
    matching, potentially attracting traffic away from an aggregate.
+
+Interview reasoning: For “What is a more-specific route,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 6. **What is route flapping?** Repeated announcements and withdrawals that
    destabilize convergence and can harm traffic; hold-downs and stable health
    signals reduce it.
+
+Interview reasoning: For “What is route flapping,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 7. **Why are communities dangerous to assume?** Their semantics are local to
    a provider or organization; the same numeric value can mean something else.
+
+Interview reasoning: For “Why are communities dangerous to assume,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **What should an SDE own?** The application-side health contract, evidence,
    synthetic tests, and safe intent generation; network owners should approve
    and operate authoritative routing policy.
 
-## References and fact-inference notes
+Interview reasoning: For “What should an SDE own,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 4271](https://www.rfc-editor.org/rfc/rfc4271) specifies BGP-4,
 [RFC 4632](https://www.rfc-editor.org/rfc/rfc4632) discusses CIDR, and

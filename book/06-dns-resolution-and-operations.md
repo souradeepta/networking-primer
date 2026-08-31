@@ -73,13 +73,39 @@ flowchart LR
 ## Questions and answers
 
 1. **What is the difference between recursive and authoritative service?** A recursive resolver finds and caches answers for clients; an authoritative server publishes the data for zones it serves. One deployment can contain both roles, but the responsibilities differ.
+
+Interview reasoning: For “What is the difference between recursive and authoritative service,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **What does TTL control?** It tells caches how long an RRset may be considered fresh. It does not force every client to forget an address at the exact instant a change is made.
+
+Interview reasoning: For “What does TTL control,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 3. **What is NXDOMAIN?** It indicates that the queried name does not exist in the relevant DNS namespace. It differs from an existing name with no requested type, commonly called NODATA.
+
+Interview reasoning: For “What is NXDOMAIN,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Why can a new record remain invisible?** Resolvers may have cached an earlier NXDOMAIN or old RRset. Negative and positive caching preserve those observations until their applicable lifetimes expire.
+
+Interview reasoning: For “Why can a new record remain invisible,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What does DNSSEC protect?** Signatures let a validating resolver detect altered or forged DNS data along a chain of trust. DNSSEC does not provide confidentiality or application availability.
+
+Interview reasoning: For “What does DNSSEC protect,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 6. **Why is SERVFAIL not the same as NXDOMAIN?** SERVFAIL reports that the resolver could not successfully obtain or validate an answer; NXDOMAIN is a specific authoritative nonexistence result. Conflating them sends operators toward the wrong fix.
+
+Interview reasoning: For “Why is SERVFAIL not the same as NXDOMAIN,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **How does GTM relate to DNS?** GTM is an authoritative DNS decision point that selects an address using policy and health inputs. Its answer is then subject to resolver and client caching, and the selected service must still work.
+
+Interview reasoning: For “How does GTM relate to DNS,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 8. **Why query with and without recursion?** A nonrecursive query tests what a server itself knows authoritatively, while a recursive query tests the client-facing resolver path and cache. Comparing them localizes the boundary of disagreement.
+
+Interview reasoning: For “Why query with and without recursion,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 9. **Why can multiple records fail to balance traffic?** Resolver, client, connection reuse, and address-selection behavior vary. RRset multiplicity is not a guarantee of equal distribution or health-aware selection.
+
+Interview reasoning: For “Why can multiple records fail to balance traffic,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034), [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC 2308](https://www.rfc-editor.org/rfc/rfc2308), and [RFC 4033](https://www.rfc-editor.org/rfc/rfc4033). **Fact** marks standards or vendor terminology; **Inference** marks operational conclusions.

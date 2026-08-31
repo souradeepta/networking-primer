@@ -91,14 +91,49 @@ The new change record therefore includes an explicit “who may answer?” quest
 ## Questions and answers
 
 1. **Why did the pool monitor stay green?** Both claimants could answer TCP and HTTP checks, so monitor success did not test unique ARP ownership.
+
+Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
+
 2. **What was the strongest fact?** The switch observed one address on two authenticated ports while the gateway ARP entry changed.
+
+Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
+
 3. **Why not flush ARP first?** Flushing could hide the symptom while the duplicate remained connected and could return later.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 4. **What is an inference here?** The restored image caused the conflict; timing, inventory, and banners support it but do not make it a protocol fact.
+
+Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
+
 5. **How did LTM help containment?** Operators could disable one member, preserving service while investigating the Layer-2 condition.
+
+Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
+
 6. **What does RFC 5227 add?** It describes address-conflict detection probes and announcements for IPv4 hosts.
+
+Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
+
 7. **Why involve IPAM?** IPAM records ownership and prevents an apparently free address from being assigned twice.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 8. **Can DNS create a duplicate IP?** DNS can point names incorrectly, but it does not make two Ethernet hosts own one address.
+
+Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
+
 9. **Why quarantine instead of power off?** VLAN isolation was reversible and preserved the guest disk and forensic evidence.
+
+Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
+
 10. **What should a pre-change checklist ask?** It should verify VLAN, address, reservation, owner, and duplicate detection before service enablement.
+
+Interview reasoning: Interviewers want the control loop: discover current state, normalize only supported fields, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record evidence. For F5, include partition/folder/self-link handling, pagination, version compatibility, bounded retries, and read-back after uncertain responses; use SSH for approved diagnostics rather than hidden mutation. The caveat is that an HTTP 200 or successful SDK call is not proof of traffic health, so rollback and post-change probes are part of correctness.
+
 11. **Does a gratuitous ARP prove compromise?** No; it proves an announcement was observed, not whether the cause was malicious.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 12. **What is the SDE2 design lesson?** Availability, naming, address ownership, and endpoint identity require cross-system reconciliation.
+
+Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.

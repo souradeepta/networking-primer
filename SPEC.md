@@ -109,6 +109,16 @@ is already present: add concrete packet or control-plane reasoning, F5 LTM or
 GTM mappings, DDI implications, automation examples, failure evidence, and
 interview-quality Q&A rather than repeating definitions.
 
+## Interview-answer depth (edition 6)
+
+Every numbered interview answer in the book, focused topics, case studies, and
+the quick-start interview bank must be explanatory rather than flash-card
+length. Each answer must contain at least 35 words after the bold question
+(30 words for a case-study answer), and should explain mechanism, trade-offs,
+an observable diagnostic or example, and a relevant caveat. The validator
+checks this minimum so future edits cannot silently regress to one-line
+answers.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

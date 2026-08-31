@@ -113,20 +113,38 @@ and after state, and defines rollback.
 
 1. **Does DNS prove an address is in use?** No; it proves an authoritative
    mapping exists, not that a host currently owns or answers there.
+
+Interview reasoning: For “Does DNS prove an address is in use,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 2. **What proves a DHCP lease?** The authoritative DHCP server’s lease record
    tied to a client identifier and validity interval.
+
+Interview reasoning: For “What proves a DHCP lease,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Why not auto-delete stale records?** The apparent staleness may be a
    delayed lease update, static host, or split authority; deletion can break it.
+
+Interview reasoning: For “Why not auto-delete stale records,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **What is IPAM’s role?** It records allocation, ownership, purpose, and
    lifecycle; exact capabilities depend on the product and process.
+
+Interview reasoning: For “What is IPAM’s role,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **How detect duplicates?** Correlate authoritative records with controlled
    ARP/ND or switch evidence and host identity, recognizing each limitation.
+
+Interview reasoning: For “How detect duplicates,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why include TTL in drift work?** A corrected authority may remain hidden
    behind resolver caches until their permitted lifetime ends.
+
+Interview reasoning: For “Why include TTL in drift work,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 7. **What makes reconciliation safe?** Read-only report, explicit authority,
    narrow diff, approval, audit trail, and tested rollback.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “What makes reconciliation safe,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 2131 DHCP](https://www.rfc-editor.org/rfc/rfc2131), [RFC 1034 DNS](https://www.rfc-editor.org/rfc/rfc1034),
 and [RFC 4861 Neighbor Discovery](https://www.rfc-editor.org/rfc/rfc4861) describe

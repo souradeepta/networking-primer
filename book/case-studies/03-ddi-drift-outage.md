@@ -133,14 +133,49 @@ The most useful operational improvement was adding observed/inferred labels to i
 ## Questions and answers
 
 1. **Why did one VIP appear to fail intermittently?** Two devices answered ARP for the same address, so different flows could reach different MACs. The duplicate-owner conclusion is [Inferred] from [Observed] alternating ARP replies.
+
+Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
+
 2. **What does a DHCP relay add?** It forwards client broadcasts as routed unicast and identifies the client network, commonly with `giaddr` (RFC 2131). A wrong value can select the wrong scope.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 3. **Why did stopping the test scope help new clients first?** New DHCP negotiations stopped receiving the conflicting offer. Existing leases remained valid until renewal or release.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 4. **Why was DNS not the whole outage?** DNS answers explained different destination addresses, but cannot by itself create two MAC owners for `.50`.
+
+Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
+
 5. **What is IPAM’s role?** It records intended ownership, reservations, and lifecycle metadata. It does not automatically constrain every DHCP or DNS server unless integrated.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 6. **Why keep the old lease logs?** They establish who was offered the address and when, supporting both diagnosis and safe rollback.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 7. **What does a green LTM monitor prove?** It indicates the configured monitor reached pool members successfully; it does not prove DDI uniqueness or client-side routing.
+
+Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
+
 8. **How does TTL affect recovery?** Recursive resolvers may retain an answer until TTL expiry, so different clients can legitimately observe different records during convergence (RFC 1034/1035).
+
+Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
+
 9. **Why stage renewals?** Staging limits DHCP load and avoids disrupting unrelated clients; it is an engineering choice tied to blast radius.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 10. **What check best prevents recurrence?** A scheduled, read-only comparison of IPAM, DHCP, DNS, relay, and LTM ownership creates early evidence without making an unsafe automatic change.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 11. **Why use documentation addresses?** RFC 5737 blocks prevent examples from being mistaken for reachable customer infrastructure.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
+
 12. **What should an engineer label as inferred?** Causal claims such as “the relay caused the outage” should remain inferred until packet, configuration, and timing evidence support them.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.

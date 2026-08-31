@@ -135,21 +135,39 @@ dashboard look normal.
 1. **Does configuration sync mirror every connection?** No. Configuration and
    ephemeral state are different; supported mirroring depends on platform and
    feature.
+
+Interview reasoning: For “Does configuration sync mirror every connection,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Why upgrade standby first?** It preserves a serving peer while testing the
    candidate, reducing the initial blast radius.
+
+Interview reasoning: For “Why upgrade standby first,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **What does drain mean?** Usually stop admitting new flows while allowing
    existing work to finish, subject to protocol and timeout behavior.
+
+Interview reasoning: For “What does drain mean,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Is a virtual load balancer equivalent to hardware?** It may expose similar
    objects, but compute, storage, network, and failure domains differ.
+
+Interview reasoning: For “Is a virtual load balancer equivalent to hardware,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What proves failover succeeded?** Role ownership, reachable service,
    healthy monitors, expected routes, controlled traffic, and observed errors.
+
+Interview reasoning: For “What proves failover succeeded,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **What should happen after an upgrade timeout?** Establish whether it
    completed, read back state, preserve evidence, and follow the approved
    recovery path; do not issue a duplicate upgrade.
+
+Interview reasoning: For “What should happen after an upgrade timeout,” correlate packet direction, timer values, MSS/MTU, firewall state, and application timing across both sides of the boundary. A timeout can be a silent drop, an expired state entry, or a black-hole path, while an RST is explicit evidence. Change one boundary at a time and verify recovery without masking the underlying capacity or policy fault.
+
 7. **Why measure TLS handshakes separately from bandwidth?** Handshakes can
    consume substantial CPU even when byte volume is modest.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “Why measure TLS handshakes separately from bandwidth,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
 Fact: [RFC 793](https://www.rfc-editor.org/rfc/rfc793) and [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293)
 describe TCP connection behavior relevant to resets and retransmission.

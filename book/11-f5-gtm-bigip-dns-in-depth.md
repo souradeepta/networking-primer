@@ -91,14 +91,43 @@ flowchart LR
 ## Questions and answers
 
 1. **What is a Wide IP?** A service-level DNS name whose policy selects eligible destinations, rather than a proxy connection to the destination.
+
+Interview reasoning: For “What is a Wide IP,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 2. **Why distinguish server and virtual server?** A server groups an endpoint system; virtual servers identify reachable application addresses and ports on it.
+
+Interview reasoning: For “Why distinguish server and virtual server,” distinguish the address from the LTM listener contract: the virtual server owns profiles, policies, pool selection, SNAT, and persistence. Trace a client tuple to the VIP and a second tuple to the member, then compare direct-member and VIP tests. The caveat is that a reachable VIP can still have no eligible pool member or an incorrect route domain.
+
 3. **What does a monitor prove?** Only that a particular test succeeded from a particular observation point at that time.
+
+Interview reasoning: For “What does a monitor prove,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 4. **What is topology steering?** A rule that maps requester or resolver context to a preferred location or pool.
+
+Interview reasoning: For “What is topology steering,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **How does G-A differ from ratio?** G-A prioritizes configured availability order and falls back; ratio distributes eligible selections by relative weights.
+
+Interview reasoning: For “How does G-A differ from ratio,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why does failover appear slow?** Recursive and client caches can retain the old answer until TTL and local caching rules permit refresh.
+
+Interview reasoning: For “Why does failover appear slow,” define the SLO numerator, denominator, threshold, window, and exclusions, then decompose the symptom into DNS, connect, TLS, queue, origin, and retry time. Use request IDs and tail percentiles rather than averages. Retries may improve apparent success while consuming capacity, so report attempts, outcomes, and retry amplification separately.
+
 7. **Can BIG-IP DNS repair a dead application?** No. It can stop advertising an endpoint when evidence says it is unavailable; the client still connects elsewhere.
+
+Interview reasoning: For “Can BIG-IP DNS repair a dead application,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 8. **Why test DNS over TCP?** Large or truncated responses and some DNSSEC/EDNS situations require TCP fallback.
+
+Interview reasoning: For “Why test DNS over TCP,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 9. **What makes DNS HA real?** Independent delegated nameserver paths, healthy listeners, synchronized state, resilient routing, and tested cache convergence.
+
+Interview reasoning: For “What makes DNS HA real,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 10. **Why can “nearest” disappoint?** Resolver location may not represent the end user, and latency measurements may not match the client path.
+
+Interview reasoning: For “Why can “nearest” disappoint,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [F5 GTM management](https://techdocs.f5.com/en-us/bigip-14-1-0/big-ip-dns/managing-gtm.html), [F5 Wide IP](https://clouddocs.f5.com/cli/tmsh-reference/latest/modules/gtm/gtm_wideip.html), [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034), [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035), and [RFC 2308](https://www.rfc-editor.org/rfc/rfc2308). **Fact/inference ledger:** DNS protocol behavior and F5 terminology are facts; monitor depth, steering suitability, TTL policy, and HA sufficiency are engineering inferences requiring local validation.

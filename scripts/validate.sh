@@ -118,6 +118,35 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 
+def check_answers(paths, minimum, label):
+    checked = 0
+    for path in paths:
+        text = path.read_text(encoding="utf-8")
+        match = re.search(r"^## Questions and answers\s*$", text, flags=re.MULTILINE)
+        if not match:
+            continue
+        section = text[match.end():]
+        section = re.split(r"^## (?!Questions and answers)", section, maxsplit=1, flags=re.MULTILINE)[0]
+        entries = re.split(r"^\s*\d+\.\s+\*\*.*?\*\*", section, flags=re.MULTILINE)
+        for answer in entries[1:]:
+            words = re.findall(r"\b[\w'-]+\b", answer)
+            if len(words) < minimum:
+                raise SystemExit(f"{path}: interview answer has {len(words)} words; needs {minimum}")
+            checked += 1
+    if checked == 0:
+        raise SystemExit(f"{label}: no interview answers found")
+    print(f"Interview answer-depth checks passed: {checked} answers ({label}).")
+
+check_answers(sorted(Path("book").glob("*.md")), 35, "book chapters")
+check_answers(sorted(Path("book/topics").glob("*.md")), 35, "focused topics")
+check_answers(sorted(Path("book/case-studies").glob("*.md")), 30, "case studies")
+check_answers([Path("docs/interview-questions.md"), Path("docs/10-platform-networking.md")], 25, "quick-start docs")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
 for path in [*Path("docs").glob("*.md"), *Path("book").glob("*.md")]:
     text = path.read_text(encoding="utf-8")
     for block in re.findall(r"```mermaid\n(.*?)```", text, re.DOTALL):

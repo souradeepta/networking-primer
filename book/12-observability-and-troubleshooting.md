@@ -94,14 +94,43 @@ flowchart TD
 ## Questions and answers
 
 1. **What is the first troubleshooting step?** Define symptom, scope, start time, path, and success criteria before changing anything.
+
+Interview reasoning: For “What is the first troubleshooting step,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **What does a metric provide?** Aggregated magnitude and trend; it needs population, window, labels, and measurement location.
+
+Interview reasoning: For “What does a metric provide,” define the SLO numerator, denominator, threshold, window, and exclusions, then decompose the symptom into DNS, connect, TLS, queue, origin, and retry time. Use request IDs and tail percentiles rather than averages. Retries may improve apparent success while consuming capacity, so report attempts, outcomes, and retry amplification separately.
+
 3. **What does a log provide?** A component’s recorded event and context; missing or misleading logs require independent corroboration.
+
+Interview reasoning: For “What does a log provide,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **What does a trace provide?** Timing and causal context across instrumented spans, provided propagation and clocks are usable.
+
+Interview reasoning: For “What does a trace provide,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **When is a packet capture decisive?** When the relevant event is visible at that vantage point, such as retransmission or a TLS alert; it cannot prove unseen traffic.
+
+Interview reasoning: For “When is a packet capture decisive,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why can CPU be green during an outage?** The bottleneck may be ports, queues, database connections, certificates, routing, or a small saturated component.
+
+Interview reasoning: For “Why can CPU be green during an outage,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **How do you investigate a 504?** Correlate proxy queue/connect/response timing, member state, retries, SNAT, and origin logs by request ID.
+
+Interview reasoning: For “How do you investigate a 504,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **How do you separate DNS from application failure?** Compare authoritative and recursive answers, TTL and resolver behavior, then test the returned endpoint independently.
+
+Interview reasoning: For “How do you separate DNS from application failure,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 9. **Why avoid global retries?** A timeout may follow a committed operation; retries can duplicate side effects and amplify overload.
+
+Interview reasoning: For “Why avoid global retries,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 10. **What makes a runbook safe?** Read-only first steps, explicit evidence, narrow reversible changes, approvals, rollback, and post-incident learning.
+
+Interview reasoning: For “What makes a runbook safe,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [OpenTelemetry observability primer](https://opentelemetry.io/docs/concepts/observability-primer/), [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293), [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446), [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), and [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457). **Fact/inference ledger:** protocol and telemetry definitions are facts; SLO design, evidence correlation, monitor depth, capture scope, and remediation sequencing are engineering inferences to validate for the service.

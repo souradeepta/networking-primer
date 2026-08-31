@@ -79,12 +79,35 @@ sequenceDiagram
 ## Questions and answers
 
 1. **What does TLS 1.3 change conceptually?** It streamlines negotiation, removes many legacy algorithms, and encrypts more handshake messages while retaining certificate-based authentication when configured.
+
+Interview reasoning: For “What does TLS 1.3 change conceptually,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 2. **Is a certificate signature encryption?** No. It authenticates a binding made by an issuer; negotiated traffic keys protect application records.
+
+Interview reasoning: For “Is a certificate signature encryption,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 3. **Why is SAN more important than Common Name?** Modern hostname verification evaluates the SAN extension; a Common Name alone is not a reliable modern identity field.
+
+Interview reasoning: For “Why is SAN more important than Common Name,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **What is SNI?** It is a ClientHello hostname hint used by a server or proxy to select a virtual-host configuration and certificate.
+
+Interview reasoning: For “What is SNI,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 5. **Why can a complete chain still fail?** The root may not be trusted, the name may not match, time may be invalid, or key usage and policy may reject the path.
+
+Interview reasoning: For “Why can a complete chain still fail,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **What does mTLS add?** The server requests and validates a client certificate and proof of its private key, enabling client identity and authorization decisions.
+
+Interview reasoning: For “What does mTLS add,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 7. **Does front-end mTLS authenticate the application?** Not automatically. TLS termination creates a new hop; the upstream needs its own TLS and identity design.
+
+Interview reasoning: For “Does front-end mTLS authenticate the application,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 8. **What is a safe rotation pattern?** Inventory, issue, stage, validate, overlap, atomically switch references, monitor, then retire the old material according to policy.
+
+Interview reasoning: For “What is a safe rotation pattern,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446), [RFC 5246](https://www.rfc-editor.org/rfc/rfc5246), [RFC 5280](https://www.rfc-editor.org/rfc/rfc5280), and [RFC 6066](https://www.rfc-editor.org/rfc/rfc6066). **Fact/inference note:** protocol and certificate semantics are standards facts; operational advice about F5 boundaries, overlap, and evidence is engineering guidance.

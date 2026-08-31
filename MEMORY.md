@@ -13,8 +13,11 @@
   WAF/API security/zero trust, observability/SLOs, network testing/chaos, and
   capacity/performance engineering. `docs/10-platform-networking.md` bridges
   those topics into the quick-start path.
-- Next handoff: run Terra review of the edition-5 expansion, fix any findings,
-  then commit and push the public branch.
+- Current work: numbered interview answers have been expanded with mechanisms,
+  trade-offs, diagnostics, examples, and caveats across the book, topics,
+  case studies, and quick-start interview bank. The edition-6 validator
+  enforces minimum answer word counts and heading integrity.
+- Next handoff: run the final checks, commit, and push the public branch.
 
 ## Verification
 

@@ -72,10 +72,33 @@ The dotted relationship represents neighbor resolution, while the solid path rep
 ## Questions and answers
 
 1. **What does a switch learn?** It learns a source MAC, ingress port, and VLAN association from observed frames; it does not learn an IP route from ordinary MAC learning.
+
+Interview reasoning: For “What does a switch learn,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Why does a remote packet use the gateway MAC?** Ethernet is local-hop delivery. The IP destination remains remote, while the frame targets the next hop on the local link.
+
+Interview reasoning: For “Why does a remote packet use the gateway MAC,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Is ARP used by IPv6?** No. IPv6 uses ICMPv6 Neighbor Discovery, including Neighbor Solicitation and Advertisement.
+
+Interview reasoning: For “Is ARP used by IPv6,” connect the IP next hop to the local Ethernet decision: ARP/ND supplies the neighbor mapping and VLAN membership determines whether that neighbor is on-link. Compare host cache, switch MAC table, gateway, and captures before clearing state. Duplicate or stale mappings can mimic an application outage, while indiscriminate cache clearing destroys useful evidence.
+
 4. **What is an access port?** It is an endpoint-facing port assigned to one VLAN, commonly transmitting endpoint frames untagged.
+
+Interview reasoning: For “What is an access port,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What is a trunk?** It is a link carrying multiple VLAN contexts, commonly represented with 802.1Q tags. The allowed set still must be checked.
+
+Interview reasoning: For “What is a trunk,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why are native VLAN mismatches risky?** An untagged frame can be assigned to different VLANs at each end, causing leakage or loss and sometimes confusing control-plane behavior.
+
+Interview reasoning: For “Why are native VLAN mismatches risky,” connect the IP next hop to the local Ethernet decision: ARP/ND supplies the neighbor mapping and VLAN membership determines whether that neighbor is on-link. Compare host cache, switch MAC table, gateway, and captures before clearing state. Duplicate or stale mappings can mimic an application outage, while indiscriminate cache clearing destroys useful evidence.
+
 7. **Why can small packets work when large packets fail?** The path may have a lower effective MTU, and the mechanism that should communicate that fact may be blocked or mishandled.
+
+Interview reasoning: For “Why can small packets work when large packets fail,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **What does MAC flapping suggest?** A source MAC is being observed on changing ports, which can indicate a loop, mobility, teaming issue, spoofing, or a topology/configuration error. [Inference: Correlate the timestamps and VLAN before declaring an attack.]
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.

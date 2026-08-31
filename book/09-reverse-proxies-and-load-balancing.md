@@ -84,12 +84,35 @@ flowchart LR
 ## Questions and answers
 
 1. **What is the main L4/L7 distinction?** L4 uses transport and addressing information; L7 understands application protocol fields and can route or retry per request.
+
+Interview reasoning: For “What is the main L4/L7 distinction,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Why is a 200 health check insufficient?** The endpoint may not exercise critical dependencies or user authorization. Health depth must match the availability contract and safe cost.
+
+Interview reasoning: For “Why is a 200 health check insufficient,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 3. **When is least-connections misleading?** Long-lived connections may consume slots without representing work, while short expensive requests can make a seemingly lightly connected member busy.
+
+Interview reasoning: For “When is least-connections misleading,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **What problem does persistence solve?** It keeps related requests on one member for state locality, at the cost of hotspots, failover complexity, and slower rebalancing.
+
+Interview reasoning: For “What problem does persistence solve,” explain the persistence key and lifetime, then inspect key cardinality, member skew, table pressure, expiry, and failover behavior. A shared NAT address can concentrate many users on one member. Persistence preserves session continuity but weakens distribution and can retain a bad mapping; shared application state may allow a shorter timeout.
+
 5. **Why use SNAT?** It makes return traffic naturally traverse the proxy when origin routing would otherwise be asymmetric, but consumes source ports and hides the network source.
+
+Interview reasoning: For “Why use SNAT,” show the two tuples and the return route: SNAT changes the source seen by the backend so replies return through the stateful LTM. Verify the self IP, backend ACL view, translated-port utilization, and client identity headers. It solves asymmetry but hides the original source and has finite port capacity, so scale translation addresses deliberately.
+
 6. **Should every timeout be retried?** No. A request may have reached and changed the origin. Retry only within a bounded budget and with safe or explicitly idempotent semantics.
+
+Interview reasoning: For “Should every timeout be retried,” correlate packet direction, timer values, MSS/MTU, firewall state, and application timing across both sides of the boundary. A timeout can be a silent drop, an expired state entry, or a black-hole path, while an RST is explicit evidence. Change one boundary at a time and verify recovery without masking the underlying capacity or policy fault.
+
 7. **What is a failure domain?** A set of components likely to fail together, such as a zone, NAT gateway, certificate store, or shared database.
+
+Interview reasoning: For “What is a failure domain,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **How do you investigate a 504?** Correlate listener timing, proxy queue and timeout, origin connect/response timing, retries, SNAT state, and origin logs using one request identifier.
+
+Interview reasoning: For “How do you investigate a 504,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293), [F5 virtual server reference](https://clouddocs.f5.com/cli/tmsh-reference/v14/modules/ltm/ltm_virtual.html), and [F5 pool reference](https://clouddocs.f5.com/cli/tmsh-reference/latest/modules/ltm/ltm_pool.html). **Fact/inference note:** protocol definitions and F5 object terminology are referenced facts; monitor depth, algorithm choice, retry limits, and capacity reasoning are engineering inferences to validate in the target environment.

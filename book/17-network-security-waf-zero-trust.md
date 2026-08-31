@@ -41,10 +41,13 @@ Use four questions for every hop:
 
 1. **Can packets reach the listener?** Routes, ACLs, firewalls, security
    groups, and NetworkPolicies answer this.
+
 2. **Can a transport connection be created?** TCP state, listener ports,
    proxies, NAT, and resource limits answer this.
+
 3. **Is the peer who it claims to be?** TLS certificate validation, SNI,
    hostname verification, and mTLS client authentication answer this.
+
 4. **Is this action allowed?** WAF rules, identity, authorization, rate
    limits, and application policy answer this.
 
@@ -281,40 +284,78 @@ rejects only a sensitive route.
 1. **Does a firewall replace a WAF?** No. A firewall usually reasons about
    network flows; a WAF reasons about application requests. They address
    different layers and failure modes.
+
+Interview reasoning: For “Does a firewall replace a WAF,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 2. **Does TLS provide authorization?** No. It can authenticate a server or
    client and protect bytes, while IAM and application policy decide actions.
+
+Interview reasoning: For “Does TLS provide authorization,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 3. **What is mTLS?** Mutual TLS authenticates both endpoints with certificates
    during the TLS handshake. It is useful for workload identity but still needs
    authorization and rotation operations.
+
+Interview reasoning: For “What is mTLS,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 4. **Where should a public certificate be installed?** On the endpoint that
    terminates public TLS, such as an F5 client SSL profile. Internal hops need
    their own server certificates and trust policy when re-encrypted.
+
+Interview reasoning: For “Where should a public certificate be installed,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 5. **Why keep separate CA trust bundles?** Separation limits blast radius and
    prevents a certificate valid for one environment or role from being trusted
    everywhere.
+
+Interview reasoning: For “Why keep separate CA trust bundles,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 6. **Can a WAF stop all attacks?** No. It can reduce selected classes of
    malicious traffic and provide visibility, but secure code, authentication,
    authorization, patching, and data controls remain necessary.
+
+Interview reasoning: For “Can a WAF stop all attacks,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 7. **What is zero trust in one sentence?** Make each request prove the relevant
    identity and authorization instead of granting implicit trust from location.
+
+Interview reasoning: For “What is zero trust in one sentence,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 8. **Why strip security headers at the proxy?** A client can send a header that
    claims an identity. The proxy should remove untrusted copies and add a
    canonical value only across a constrained, authenticated hop.
+
+Interview reasoning: For “Why strip security headers at the proxy,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.
+
 9. **Why can a valid certificate still fail?** Hostname SAN, SNI selection,
    EKU, chain completeness, trust store, validity clock, or protocol policy can
    be wrong even when the date is current.
+
+Interview reasoning: For “Why can a valid certificate still fail,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 10. **What is a safe WAF rollout?** Validate rule scope in a test environment,
     observe representative traffic, stage blocking with an exception owner,
     monitor false positives, and retain a tested narrow rollback.
+
+Interview reasoning: For “What is a safe WAF rollout,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 11. **How should an SSH host-key warning be handled?** Verify the expected key
     through an independent trusted channel. Do not disable host-key checking
     globally to make automation pass.
+
+Interview reasoning: For “How should an SSH host-key warning be handled,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 12. **How does F5 GTM relate to security?** It can steer names toward eligible
     regional VIPs and reduce exposure to an unhealthy site, but it does not
     authenticate HTTP requests or replace LTM/WAF policy.
+
+Interview reasoning: For “How does F5 GTM relate to security,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 13. **What should an incident log contain?** Timestamp, request ID, source
     zone, VIP, WAF decision/rule, TLS and mTLS identities, backend status,
     authorization result, and the policy versions involved.
+
+Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
 ## Further practice
 

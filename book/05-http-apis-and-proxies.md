@@ -72,13 +72,39 @@ flowchart LR
 ## Questions and answers
 
 1. **What changed between HTTP/1.1, HTTP/2, and HTTP/3?** Framing and transport changed: text-oriented persistent messaging, binary multiplexed streams over TCP, and HTTP over QUIC respectively. Core request semantics remain recognizable.
+
+Interview reasoning: For “What changed between HTTP/1.1, HTTP/2, and HTTP/3,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.
+
 2. **Is GET always safe to cache?** No. A response can be personalized or have unsafe operational effects. Cache directives, authorization context, validators, and key design determine safety.
+
+Interview reasoning: For “Is GET always safe to cache,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 3. **What is idempotency?** Repeating an operation has the same intended resource effect after the first successful application. It is a semantic property and may need an idempotency key for retries.
+
+Interview reasoning: For “What is idempotency,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 4. **When should a client retry 503?** Only when the operation is safe or deduplicated, the server’s guidance and client budget allow it, and backoff with jitter prevents a retry storm.
+
+Interview reasoning: For “When should a client retry 503,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 5. **Why can a proxy return 502?** It may be unable to establish or correctly speak to an upstream, or it may receive an invalid upstream response. Inspect both sides and the proxy’s reason code.
+
+Interview reasoning: For “Why can a proxy return 502,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.
+
 6. **What does `Vary` do?** It tells caches which request headers affect representation selection. Omitting a relevant header can cause one representation to be served to the wrong request.
+
+Interview reasoning: For “What does `Vary` do,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **Why preserve the original scheme?** An origin may need to generate correct redirects, secure cookies, and absolute URLs. Forwarded metadata must be authenticated or rewritten by a trusted proxy.
+
+Interview reasoning: For “Why preserve the original scheme,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **Can a 200 response be an application failure?** Yes. HTTP only reports message-level status; an API can encode a business error in a 200 body. Contracts and metrics should make that distinction visible.
+
+Interview reasoning: For “Can a 200 response be an application failure,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 9. **Where should authorization live?** At the service owning the resource, with gateway checks as defense in depth. A gateway-only check is risky when traffic can reach the service through another path.
+
+Interview reasoning: For “Where should authorization live,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111), [RFC 9113](https://www.rfc-editor.org/rfc/rfc9113), and [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114). **Fact** marks standards-derived behavior; **Inference** marks design guidance.

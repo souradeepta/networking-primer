@@ -94,14 +94,43 @@ flowchart TD
 ## Questions and answers
 
 1. **What is idempotency?** It is the property that repeating an operation reaches the same intended state. Explain it at the resource and API-action level; a POST action may still need a read-before-retry guard.
+
+Interview reasoning: For “What is idempotency,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 2. **Why separate plan from apply?** A plan exposes the proposed diff for review and policy checks without granting mutation authority. It also makes an unexpected state change visible before a write.
+
+Interview reasoning: For “Why separate plan from apply,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 3. **Is the F5 SDK a separate control plane?** No. It is a client abstraction over BIG-IP management interfaces, so endpoint, version, permissions, and device behavior still matter.
+
+Interview reasoning: For “Is the F5 SDK a separate control plane,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 4. **Does a 2xx response prove success?** No. It may indicate acceptance. Read the response, poll documented tasks, read back state, and verify an appropriate behavioral signal.
+
+Interview reasoning: For “Does a 2xx response prove success,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **How should secrets enter a job?** Use a protected short-lived identity or secret injection mechanism, never source files, command arguments, Git, or unredacted logs.
+
+Interview reasoning: For “How should secrets enter a job,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why validate TLS certificates in automation?** Without endpoint authentication, credentials and configuration can be sent to an impostor even though the channel is encrypted.
+
+Interview reasoning: For “Why validate TLS certificates in automation,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 7. **What does a host key verify?** It binds a server identity to a key known through a trusted process. It does not prove that commands on the server are safe.
+
+Interview reasoning: For “What does a host key verify,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **When is SSH preferable to REST?** For narrow diagnostics or systems that lack a suitable API. Prefer structured output and tightly constrained commands; do not use SSH as an excuse to bypass change control.
+
+Interview reasoning: For “When is SSH preferable to REST,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 9. **How should an ambiguous timeout be handled?** Stop blind retries, query state, use the correlation ID, and classify the result as committed, not committed, or unknown before deciding.
+
+Interview reasoning: For “How should an ambiguous timeout be handled,” correlate packet direction, timer values, MSS/MTU, firewall state, and application timing across both sides of the boundary. A timeout can be a silent drop, an expired state entry, or a black-hole path, while an RST is explicit evidence. Change one boundary at a time and verify recovery without masking the underlying capacity or policy fault.
+
 10. **What belongs in CI?** Tests, linting, secret scans, plan review, destructive-operation policy, host-key checks, compatibility checks, and a proof that dry-run cannot mutate.
+
+Interview reasoning: For “What belongs in CI,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Primary references: [F5 Python SDK documentation](https://clouddocs.f5.com/sdk/f5-sdk-python/), [F5 iControl REST API documentation](https://clouddocs.f5.com/api/icontrol-rest/), [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110), [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446), and [OpenSSH manual](https://man.openbsd.org/ssh). **Fact/inference ledger:** HTTP, TLS, and SSH protocol behavior and the existence of F5 interfaces are facts from primary references; phase separation, normalization, deletion policy, retry classification, bastion controls, and CI gates are engineering inferences that must be adapted and tested for a specific estate.

@@ -125,20 +125,38 @@ upstream-observed latency so a boundary is diagnosable.
 
 1. **What is the key difference between L4 and L7?** L4 uses transport
    metadata and connection state; L7 understands application messages.
+
+Interview reasoning: For “What is the key difference between L4 and L7,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **When is passthrough useful?** When end-to-end payload privacy or backend
    certificate ownership matters more than edge L7 inspection.
+
+Interview reasoning: For “When is passthrough useful,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Why re-encrypt after termination?** To create a protected, authenticated
    second hop rather than leaving internal traffic clear.
+
+Interview reasoning: For “Why re-encrypt after termination,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Can every POST be retried?** No. A retry can duplicate side effects unless
    the application makes the operation safely idempotent.
+
+Interview reasoning: For “Can every POST be retried,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **Who should set X-Forwarded-For?** A trusted boundary should sanitize and
    set it; applications should distrust arbitrary client input.
+
+Interview reasoning: For “Who should set X-Forwarded-For,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why use a total deadline?** Independent hop timers can exceed the client
    budget and continue work after the caller has gone away.
+
+Interview reasoning: For “Why use a total deadline,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What does a client 504 prove?** Only that the client-facing boundary
    returned a gateway timeout; inspect upstream evidence to find the cause.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “What does a client 504 prove,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) defines HTTP semantics,
 including methods and intermediaries. Fact: [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446)

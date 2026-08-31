@@ -117,20 +117,38 @@ the application’s session behavior and user impact are understood.
 
 1. **Does an up monitor guarantee a working service?** No; it proves only the
    probe’s narrow request and expected response succeeded.
+
+Interview reasoning: For “Does an up monitor guarantee a working service,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 2. **Why can a healthy member receive no traffic?** Persistence, priority,
    policy, connection reuse, or a disabled state can bypass normal selection.
+
+Interview reasoning: For “Why can a healthy member receive no traffic,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **What is a receive string?** A match condition in a monitor response, such
    as `ready`; its syntax and matching rules depend on the monitor type.
+
+Interview reasoning: For “What is a receive string,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Why is source persistence risky behind NAT?** Many clients can share one
    observed source and become pinned to one member.
+
+Interview reasoning: For “Why is source persistence risky behind NAT,” explain the persistence key and lifetime, then inspect key cardinality, member skew, table pressure, expiry, and failover behavior. A shared NAT address can concentrate many users on one member. Persistence preserves session continuity but weakens distribution and can retain a bad mapping; shared application state may allow a shorter timeout.
+
 5. **How should a monitor endpoint be designed?** Make it cheap, authenticated
    as appropriate, deterministic, and representative of the stated failure.
+
+Interview reasoning: For “How should a monitor endpoint be designed,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 6. **What evidence distinguishes a monitor failure?** Probe status/reason,
    packet or server logs, and an equivalent controlled request.
+
+Interview reasoning: For “What evidence distinguishes a monitor failure,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 7. **Why retain pre-change state?** It makes review, comparison, and rollback
    possible when a monitoring change has broad effects.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “Why retain pre-change state,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110) defines HTTP response
 semantics and [RFC 6265](https://www.rfc-editor.org/rfc/rfc6265) cookie behavior.

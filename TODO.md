@@ -9,4 +9,6 @@
 - [x] Add and validate shell/Python demos, Docker lab scaffolding, and browser animations.
 - [x] Expand the book with cloud/Kubernetes, BGP/anycast, WAF/zero-trust, observability,
       testing, and capacity topics.
-- [ ] Run Terra review of the edition-5 expansion, then commit and push.
+- [x] Expand all numbered Q&A answers to interview-grade explanations.
+- [x] Run Terra review of the Q&A expansion, fix formatting and depth issues,
+      then commit and push.

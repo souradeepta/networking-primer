@@ -153,22 +153,43 @@ captures, tokens, and test data even when the target is non-production.
 
 1. **What makes chaos safe?** A bounded target, hypothesis, expected result,
    stop condition, approval, and verified restoration.
+
+Interview reasoning: For “What makes chaos safe,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Why test monitor and user paths separately?** They may use different
    Host headers, ports, TLS profiles, routes, or dependencies.
+
+Interview reasoning: For “Why test monitor and user paths separately,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 3. **Does DNS failover instantly move all users?** No. Resolver and client
    caches can retain old answers for the TTL or longer due to implementation.
+
+Interview reasoning: For “Does DNS failover instantly move all users,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 4. **Why test fresh and persistent connections?** Load balancers and proxies
    may handle existing flows differently from new selections.
+
+Interview reasoning: For “Why test fresh and persistent connections,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What should a F5 SDK integration test assert?** The desired object graph,
    read-back state, no unintended objects, and an empty second-run diff.
+
+Interview reasoning: For “What should a F5 SDK integration test assert,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 6. **Is `tc netem` safe anywhere?** No. It changes the selected interface and
    must be limited to an explicitly verified lab namespace or host.
+
+Interview reasoning: For “Is `tc netem` safe anywhere,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **Why use a test CA for mTLS?** It isolates trust and prevents a lab client
    or key from being accepted by a real service.
+
+Interview reasoning: For “Why use a test CA for mTLS,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 8. **What is a useful chaos output?** A measured comparison of expected and
    actual behavior plus a durable corrective action, not a dramatic screenshot.
 
-## References and fact-inference notes
+Interview reasoning: For “What is a useful chaos output,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: Linux documents traffic control in its [tc manual](https://man7.org/linux/man-pages/man8/tc.8.html),
 and Kubernetes describes [service networking](https://kubernetes.io/docs/concepts/services-networking/).

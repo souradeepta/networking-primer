@@ -246,38 +246,73 @@ state avoids pretending that a single control signal describes global health.
 
 1. **Is anycast the same as load balancing?** No. Anycast influences which
    site receives a flow through routing. LTM still load-balances within a site.
+
+Interview reasoning: For “Is anycast the same as load balancing,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 2. **Does BGP choose the geographically nearest site?** Not necessarily. It
    chooses according to policy and path attributes; topology and policy may
    prefer a farther site.
+
+Interview reasoning: For “Does BGP choose the geographically nearest site,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 3. **Why not use only GTM?** DNS is often sufficient and simpler, but caches,
    resolver location, and long-lived connections limit how quickly all clients
    move.
+
+Interview reasoning: For “Why not use only GTM,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 4. **Why not use only anycast?** It reduces dependence on DNS steering but
    increases routing and stateful-edge complexity. A bad advertisement can
    attract traffic at Internet scale.
+
+Interview reasoning: For “Why not use only anycast,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 5. **What does a BGP withdrawal do to existing TCP sessions?** It changes the
    preferred route for future packets; sessions are not migrated, and packets
    can be dropped or reset during convergence.
+
+Interview reasoning: For “What does a BGP withdrawal do to existing TCP sessions,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 6. **Can GTM health automatically withdraw BGP?** It can be connected through
    automation, but that is not implicit. The coupling needs authorization,
    freshness checks, route filters, and rollback.
+
+Interview reasoning: For “Can GTM health automatically withdraw BGP,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 7. **What is RPKI useful for?** It helps validate whether an origin is
    authorized for a prefix. It does not test an HTTP endpoint or guarantee
    route correctness.
+
+Interview reasoning: For “What is RPKI useful for,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **Why use a /32 or /128 service route?** A precise service prefix can be
    withdrawn independently, but prefix filters and provider policies may limit
    what is accepted. Use only an approved allocation and policy.
+
+Interview reasoning: For “Why use a /32 or /128 service route,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 9. **What should a runbook compare first?** Compare DNS answer, selected route,
    VIP/LTM state, and return path for the same timestamp and client vantage.
+
+Interview reasoning: For “What should a runbook compare first,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 10. **How does DDI matter to anycast?** IPAM must record prefix ownership,
     announcement authority, VIP purpose, and site mapping. DNS must agree with
     the routing plan or operators will troubleshoot the wrong layer.
+
+Interview reasoning: For “How does DDI matter to anycast,” identify the advertised prefix, path attributes, selected route, convergence or withdrawal, and application health signal. Compare views from multiple locations with fresh and long-lived probes. BGP reachability is not an HTTP check; anycast movement can expose state, capacity, or asymmetric-return problems, so drain and replication behavior must be part of the design.
+
 11. **Why can a route be healthy but HTTP be broken?** BGP tests reachability
     to a prefix, not listener, TLS, WAF, pool, dependency, or application
     behavior.
+
+Interview reasoning: For “Why can a route be healthy but HTTP be broken,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 12. **What is a safe first rollback?** Stop the unhealthy advertisement or
     restore the last known-good route policy, then verify route visibility and
     new connections from several vantage points.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
 
 ## Further practice
 

@@ -191,27 +191,48 @@ all traffic to one pool member.
 1. **Why are metrics not enough?** Metrics show aggregate behavior but often
    hide a single handshake, route, or request-level failure. Logs, traces, and
    packet evidence fill different gaps.
+
+Interview reasoning: For “Why are metrics not enough,” define the SLO numerator, denominator, threshold, window, and exclusions, then decompose the symptom into DNS, connect, TLS, queue, origin, and retry time. Use request IDs and tail percentiles rather than averages. Retries may improve apparent success while consuming capacity, so report attempts, outcomes, and retry amplification separately.
+
 2. **Should a DNS failure count against an HTTP SLO?** It depends on the
    declared service boundary. Decide explicitly; otherwise teams can exclude
    the most user-visible failure.
+
+Interview reasoning: For “Should a DNS failure count against an HTTP SLO,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 3. **What does an F5 health monitor prove?** It proves that the configured
    probe received its expected result along its probe path at that time.
+
+Interview reasoning: For “What does an F5 health monitor prove,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 4. **Why use percentiles instead of averages?** Averages hide tail latency,
    while p95 or p99 exposes the experience of slower requests. Choose a
    percentile that matches user impact and sample size.
+
+Interview reasoning: For “Why use percentiles instead of averages,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What is an error budget?** It is the tolerated unreliability implied by
    the SLO, such as 0.1% for a 99.9% target; it guides release and reliability
    trade-offs.
+
+Interview reasoning: For “What is an error budget,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **How can a trace cross an F5 proxy?** Preserve or generate a correlation
    header under an approved policy and record both client-side and
    server-side spans; do not trust arbitrary external IDs blindly.
+
+Interview reasoning: For “How can a trace cross an F5 proxy,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.
+
 7. **Why normalize time?** Without synchronized clocks, event order and
    latency calculations can be wrong even when every individual log is valid.
+
+Interview reasoning: For “Why normalize time,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 8. **When is a packet capture appropriate?** When counters and transaction
    logs cannot distinguish TCP, TLS, MTU, or retransmission hypotheses and the
    capture scope and handling are approved.
 
-## References and fact-inference notes
+Interview reasoning: For “When is a packet capture appropriate,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [OpenTelemetry concepts](https://opentelemetry.io/docs/concepts/) define
 common telemetry signal roles, and [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339)

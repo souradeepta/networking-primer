@@ -70,10 +70,33 @@ The diagram separates the host's on-link test from the router's route choice. [F
 ## Questions and answers
 
 1. **What does `/24` mean?** It means 24 leading bits are the network prefix and eight bits remain for addresses. The dotted mask is usually `255.255.255.0`.
+
+Interview reasoning: For “What does `/24` mean,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Why is `/26` not simply four times smaller than `/24` in every sense?** It has one quarter as many addresses, 64 instead of 256, because two additional prefix bits leave four times fewer host combinations.
+
+Interview reasoning: For “Why is `/26` not simply four times smaller than `/24` in every sense,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **What is longest-prefix matching?** It chooses the matching route with the greatest prefix length, which represents the narrowest destination range.
+
+Interview reasoning: For “What is longest-prefix matching,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 4. **What is a default route?** IPv4 `0.0.0.0/0` and IPv6 `::/0` match destinations not covered by a more specific route. They are useful exits, not proof that the destination is reachable.
+
+Interview reasoning: For “What is a default route,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 5. **Does NAT route packets?** A NAT device must route or bridge traffic as appropriate, but translation itself rewrites addresses or ports; it is not a route-distribution protocol.
+
+Interview reasoning: For “Does NAT route packets,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 6. **Why does IPv6 need Neighbor Discovery?** Nodes use ICMPv6 ND to discover link-layer neighbors, routers, and prefixes because IPv6 has no ARP broadcast mechanism.
+
+Interview reasoning: For “Why does IPv6 need Neighbor Discovery,” connect the IP next hop to the local Ethernet decision: ARP/ND supplies the neighbor mapping and VLAN membership determines whether that neighbor is on-link. Compare host cache, switch MAC table, gateway, and captures before clearing state. Duplicate or stale mappings can mimic an application outage, while indiscriminate cache clearing destroys useful evidence.
+
 7. **Why can a more specific bad route be dangerous?** It wins over a correct aggregate or default route, so traffic can be consistently diverted without an obvious missing-route error.
+
+Interview reasoning: For “Why can a more specific bad route be dangerous,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
+
 8. **What evidence distinguishes a host problem from a router problem?** The host route table, interface counters, and local ARP/ND state show the host decision; router tables and captures on both interfaces show forwarding beyond it. [Inference: Correlating both sides is stronger than relying on a single ping.]
+
+Interview reasoning: A strong answer names the source and destination prefixes, the longest-prefix decision, the next hop, and the return route. In practice, verify both directions with route-table lookups and a narrowly scoped flow trace, because policy routing, NAT, VRFs, and asymmetric paths can invalidate a simple diagram. The caveat is that a route being present does not prove that ACLs, MTU, ARP/ND, or the receiving process will accept the packet.

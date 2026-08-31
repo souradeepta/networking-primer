@@ -258,40 +258,75 @@ verification must inspect both control-plane status and an actual request.
 1. **Is a Kubernetes Ingress itself a load balancer?** No. It is an API object
    describing HTTP routing. The controller or external integration implements
    the data plane and may provision a load balancer.
+
+Interview reasoning: For “Is a Kubernetes Ingress itself a load balancer,” trace declarative intent to the rendered data plane: API object, controller event, listener, endpoint set, target health, and real request. Readiness should control eligibility while liveness controls restart; conflating them causes restart storms. Cloud and controller implementations vary, so verify effective routes, policies, and generated configuration instead of relying on the manifest alone.
+
 2. **Why can a service have endpoints while traffic still fails?** Endpoint
    existence does not prove routes, firewall rules, readiness behavior, port
    translation, TLS, or application response correctness.
+
+Interview reasoning: For “Why can a service have endpoints while traffic still fails,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **What does `externalTrafficPolicy` change?** It can influence source-address
    preservation and node selection, but the exact behavior depends on service
    implementation and cluster networking. Verify the resulting tuples.
+
+Interview reasoning: For “What does `externalTrafficPolicy` change,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Where should TLS terminate?** At the edge when centralized inspection
    and certificate operations are desired; again at the backend when hop
    confidentiality or workload identity requires it. Many designs use both.
+
+Interview reasoning: For “Where should TLS terminate,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 5. **Why is SNAT sometimes required?** It makes the return path point back
    through the proxy when the backend lacks a route to the original client.
    The trade-off is loss of source-IP visibility unless trusted metadata is
    added.
+
+Interview reasoning: For “Why is SNAT sometimes required,” show the two tuples and the return route: SNAT changes the source seen by the backend so replies return through the stateful LTM. Verify the self IP, backend ACL view, translated-port utilization, and client identity headers. It solves asymmetry but hides the original source and has finite port capacity, so scale translation addresses deliberately.
+
 6. **How does F5 LTM fit Kubernetes?** It can be the external VIP and proxy,
    while a controller synchronizes Kubernetes routes and endpoints into BIG-IP
    objects. Treat synchronization lag and permissions as failure modes.
+
+Interview reasoning: For “How does F5 LTM fit Kubernetes,” trace declarative intent to the rendered data plane: API object, controller event, listener, endpoint set, target health, and real request. Readiness should control eligibility while liveness controls restart; conflating them causes restart storms. Cloud and controller implementations vary, so verify effective routes, policies, and generated configuration instead of relying on the manifest alone.
+
 7. **How does GTM or BIG-IP DNS fit?** It can steer the client to a regional
    edge VIP using health, topology, or other policy. It does not replace
    per-request L7 routing inside the selected region.
+
+Interview reasoning: For “How does GTM or BIG-IP DNS fit,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 8. **What is the first check for a 404?** Confirm the request host and path at
    the edge and ingress logs. A default route, wrong DNS name, or missing host
    rule can produce a valid HTTP response from the wrong application.
+
+Interview reasoning: For “What is the first check for a 404,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 9. **Does a pod IP belong in public IPAM?** Usually no. Pod addresses are
    ephemeral cluster inventory; public VIPs, node ranges, and service ranges
    need explicit ownership and collision controls. Record the boundary in DDI.
+
+Interview reasoning: For “Does a pod IP belong in public IPAM,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 10. **Why can a health check pass while users fail?** A shallow check may
     verify a process but not dependencies, routing, TLS, authorization, or the
     real host/path. Use layered checks with carefully bounded cost.
+
+Interview reasoning: For “Why can a health check pass while users fail,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 11. **What should a CI policy reject?** Duplicate host/path ownership, an
     absent certificate or secret reference, an unapproved public listener, an
     impossible service port, and a change without rollback and owner metadata.
+
+Interview reasoning: For “What should a CI policy reject,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 12. **How should cloud limits be handled?** Treat addresses, listeners, NAT
     ports, routes, interfaces, and load-balancer quotas as capacity resources;
     monitor them and test quota behavior before a scale event.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.
 
 ## Further practice
 

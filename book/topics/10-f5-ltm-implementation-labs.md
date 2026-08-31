@@ -246,31 +246,66 @@ evidence, not a checklist of automatic causes.
 1. **Is LTM the same as BIG-IP?** No. LTM is a BIG-IP module/service; BIG-IP
    names the platform. This distinction identifies the correct configuration
    and telemetry surface.
+
+Interview reasoning: For “Is LTM the same as BIG-IP,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **What is a VIP?** It is the client-facing address and service binding of a
    virtual server. A VIP alone does not select a healthy application member.
+
+Interview reasoning: For “What is a VIP,” distinguish the address from the LTM listener contract: the virtual server owns profiles, policies, pool selection, SNAT, and persistence. Trace a client tuple to the VIP and a second tuple to the member, then compare direct-member and VIP tests. The caveat is that a reachable VIP can still have no eligible pool member or an incorrect route domain.
+
 3. **What is a node versus a member?** A node is a host object; a member is a
    node plus a service port in a pool. One node may provide several members.
+
+Interview reasoning: For “What is a node versus a member,” a node is an address object, while a member binds that address to a service port and monitor context. Check node state, member state, inherited monitor, and pool selection independently; a healthy host can expose a failed 443 member while 8443 works. Port-specific health is why the distinction matters operationally.
+
 4. **Does an up monitor prove the application works?** No. It proves only that
    the configured synthetic exchange met its criteria at that time.
+
+Interview reasoning: For “Does an up monitor prove the application works,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 5. **Why can the app see a BIG-IP address?** SNAT deliberately replaces the
    client source on the server leg to make return routing predictable.
+
+Interview reasoning: For “Why can the app see a BIG-IP address,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Does X-Forwarded-For undo SNAT?** No. It conveys an HTTP identity header;
    it does not change the IP-layer tuple or make the header inherently trusted.
+
+Interview reasoning: For “Does X-Forwarded-For undo SNAT,” show the two tuples and the return route: SNAT changes the source seen by the backend so replies return through the stateful LTM. Verify the self IP, backend ACL view, translated-port utilization, and client identity headers. It solves asymmetry but hides the original source and has finite port capacity, so scale translation addresses deliberately.
+
 7. **Where does TLS terminate?** At every profile boundary configured to
    terminate TLS. Re-encryption creates a second, independent TLS handshake.
+
+Interview reasoning: For “Where does TLS terminate,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 8. **Can persistence override load balancing?** Yes. A valid persistence
    record can keep selecting one member until timeout, deletion, or failure.
+
+Interview reasoning: For “Can persistence override load balancing,” explain the persistence key and lifetime, then inspect key cardinality, member skew, table pressure, expiry, and failover behavior. A shared NAT address can concentrate many users on one member. Persistence preserves session continuity but weakens distribution and can retain a bad mapping; shared application state may allow a shorter timeout.
+
 9. **Why might a 503 occur with healthy servers?** The pool may be unavailable
    to this VIP, a policy may reject the request, or the monitor may not model
    the real transaction.
+
+Interview reasoning: For “Why might a 503 occur with healthy servers,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 10. **What tuple should a capture show?** The client leg targets the VIP; the
     server leg targets the selected member. Compare ports and sources rather
     than expecting one end-to-end TCP flow.
+
+Interview reasoning: For “What tuple should a capture show,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 11. **What should be checked first for a TLS alert?** Identify the failing leg,
     then inspect SNI, certificate chain, protocol policy, and server profile.
+
+Interview reasoning: For “What should be checked first for a TLS alert,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 12. **When is an iRule appropriate?** When a reviewed, tested event-driven rule
     is necessary. Prefer a simpler profile or policy when it expresses the
     same behavior, because custom code increases review and failure surface.
+
+Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
 ## Primary references
 

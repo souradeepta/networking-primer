@@ -189,22 +189,43 @@ or fail over; a silent timeout is usually the least controllable outcome.
 
 1. **What does Little’s Law tell us?** It estimates average in-flight work as
    arrival rate times average time, under stable conditions.
+
+Interview reasoning: For “What does Little’s Law tell us,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 2. **Why is CPU below 70% not an SLO?** Users care about successful and timely
    journeys; CPU is only one possible constraint indicator.
+
+Interview reasoning: For “Why is CPU below 70% not an SLO,” define the SLO numerator, denominator, threshold, window, and exclusions, then decompose the symptom into DNS, connect, TLS, queue, origin, and retry time. Use request IDs and tail percentiles rather than averages. Retries may improve apparent success while consuming capacity, so report attempts, outcomes, and retry amplification separately.
+
 3. **Can adding pool members solve all capacity problems?** No. DNS, F5,
    SNAT, TLS, firewall, database, or a shared dependency may saturate first.
+
+Interview reasoning: For “Can adding pool members solve all capacity problems,” turn the answer into budgets for concurrent flows, new connections, requests, bytes, TLS handshakes, SNAT ports, queues, and policy cost. Measure representative packet sizes and failure concentration, including retries and health checks. Nominal device throughput is not application capacity; a site failover can concentrate traffic and exhaust per-member or per-translation limits.
+
 4. **Why separate request rate and connection rate?** Keep-alive and HTTP/2
    multiplexing make them materially different loads.
+
+Interview reasoning: For “Why separate request rate and connection rate,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
+
 5. **How does GTM affect capacity planning?** It chooses answers and sites,
    while TTL and cache behavior delay distribution changes.
+
+Interview reasoning: For “How does GTM affect capacity planning,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 6. **Why can retries cause an outage?** Slower responses cause clients or
    proxies to add work, increasing load and making responses slower still.
+
+Interview reasoning: For “Why can retries cause an outage,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What should a capacity automation report include?** Units, timestamp,
    source, aggregation, assumptions, saturation indicators, and confidence.
+
+Interview reasoning: For “What should a capacity automation report include,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
+
 8. **How do certificates affect capacity?** Handshakes, chain size, renewal,
    trust validation, and session reuse all consume resources or bandwidth.
 
-## References and fact-inference notes
+Interview reasoning: For “How do certificates affect capacity,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
 Fact: [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293) describes TCP, and
 [RFC 9114](https://www.rfc-editor.org/rfc/rfc9114) describes HTTP/3. F5

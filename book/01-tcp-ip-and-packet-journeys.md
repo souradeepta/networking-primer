@@ -199,45 +199,65 @@ flowchart LR
    protocol and addressing state. A listening socket can accept many connected
    sockets that share one server port but have different client tuples.
 
+Interview reasoning: For “What is the difference between a socket and a port,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 2. **Does a TCP segment equal an IP packet?** No. A segment is TCP data and
    header; IP encapsulates it as a packet. The packet can be fragmented or
    carried by different link frames, so captures must name the layer.
 
+Interview reasoning: For “Does a TCP segment equal an IP packet,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **Why does the destination MAC change at every router?** Each router emits
    a new local-link frame. The IP destination normally remains the service
    address, while the next-hop MAC identifies the recipient on that link.
+
+Interview reasoning: For “Why does the destination MAC change at every router,” name the source and destination prefixes, longest-match decision, next hop, VRF or policy table, and return route. Verify both directions with route lookups and a narrow flow trace. A present route is not proof of ARP/ND, ACL, MTU, or listener success; NAT and proxies can also make endpoint evidence differ from the original client.
 
 4. **What does a successful SYN-ACK establish?** It establishes that a TCP
    listener and a return path completed the handshake. It does not establish
    that TLS negotiation, authorization, HTTP, or the application dependency
    succeeded.
 
+Interview reasoning: For “What does a successful SYN-ACK establish,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **Why can a small curl work while a large response hangs?** A path MTU or
    PMTUD problem may discard larger packets. Small packets fit, while a needed
    ICMP signal is filtered or a tunnel's overhead was overlooked. Compare MSS,
    packet sizes, and retransmissions.
+
+Interview reasoning: For “Why can a small curl work while a large response hangs,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 6. **How can NAT cause a misleading server log?** SNAT rewrites the source
    before forwarding, so the server records the translator's address unless a
    trusted proxy supplies a separate forwarding field. The field must be
    authenticated; it is not automatically proof of client identity.
 
+Interview reasoning: For “How can NAT cause a misleading server log,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What does repeated SYN retransmission indicate?** The client has not
    observed an acceptable SYN-ACK. Causes include filtering, a wrong route,
    an unavailable listener, asymmetric return traffic, or loss. A client-only
    capture narrows the fault but cannot distinguish all causes.
+
+Interview reasoning: For “What does repeated SYN retransmission indicate,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 8. **Why can a packet capture show a bad checksum on a healthy flow?** NIC
    checksum offload may leave checksum work to hardware after the capture hook.
    Validate with a capture from another boundary or temporarily account for
    offload settings before declaring corruption.
 
+Interview reasoning: For “Why can a packet capture show a bad checksum on a healthy flow,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 9. **Why is a timeout different from connection refused?** Refused usually
    means an explicit RST reached the client, whereas timeout means no required
    response arrived before retry or application deadlines. The distinction
    points investigation toward policy/path loss versus an active rejection.
 
+Interview reasoning: For “Why is a timeout different from connection refused,” correlate packet direction, timer values, MSS/MTU, firewall state, and application timing across both sides of the boundary. A timeout can be a silent drop, an expired state entry, or a black-hole path, while an RST is explicit evidence. Change one boundary at a time and verify recovery without masking the underlying capacity or policy fault.
+
 10. **What is the most useful first correlation key?** Use the timestamp plus
     the five-tuple and interface or network namespace. This joins process logs,
     socket state, captures, NAT records, and server evidence while avoiding a
     false match with another client using the same destination port.
+
+Interview reasoning: Treat DNS, DHCP, and IPAM as one ownership and lifecycle system: DHCP leases allocate addresses, DNS publishes names, and IPAM records intent and authority. For an incident, compare the lease database, authoritative records, address reservations, conflict events, and the actual ARP/ND table before editing anything. The caveat is that a successful allocation or DNS lookup can still be stale or contradictory; reconciliation must be scoped, auditable, and safe for active clients.

@@ -120,20 +120,38 @@ boundary; an arbitrary client-supplied identity header is not authentication.
 
 1. **Why does SNI matter?** It lets one address select among hostname-specific
    certificates and policies before HTTP headers are available.
+
+Interview reasoning: For “Why does SNI matter,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 2. **Does a valid leaf prove trust?** No. The client also needs a trusted chain,
    correct dates, and acceptable usage and algorithms.
+
+Interview reasoning: For “Does a valid leaf prove trust,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 3. **What does termination mean?** The endpoint decrypts and completes one TLS
    session; a later re-encrypted session is a separate security decision.
+
+Interview reasoning: For “What does termination mean,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 4. **Why test with `--resolve`?** It preserves hostname and SNI while choosing
    a controlled address, separating DNS from endpoint behavior.
+
+Interview reasoning: For “Why test with `--resolve`,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 5. **What is a chain error?** The peer may omit an intermediate or present an
    order the client cannot build to a trusted root.
+
+Interview reasoning: For “What is a chain error,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Does mTLS authenticate authorization?** A client certificate authenticates
    a certificate holder; application policy still decides what it may do.
+
+Interview reasoning: For “Does mTLS authenticate authorization,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
+
 7. **Why avoid a verification bypass?** It removes an intended identity check
    and can hide the actual trust or naming defect.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “Why avoid a verification bypass,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 8446 TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446), [RFC 6066
 SNI](https://www.rfc-editor.org/rfc/rfc6066), and [RFC 5280 PKI](https://www.rfc-editor.org/rfc/rfc5280)

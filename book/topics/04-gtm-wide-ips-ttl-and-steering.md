@@ -109,20 +109,38 @@ queries, never a production cache flush without owner approval.
 
 1. **Does Wide IP answer every DNS query?** It is a logical application object;
    authoritative server configuration and delegation determine who answers.
+
+Interview reasoning: For “Does Wide IP answer every DNS query,” separate the DNS decision from the later LTM connection. BIG-IP DNS evaluates Wide IP pool state, monitors, topology or other steering, and returns an address; recursive caches can serve it until TTL expiry. Compare authoritative and recursive answers and then test the selected VIP. DNS steering cannot revoke an already cached answer or repair data consistency.
+
 2. **Does a low TTL force immediate failover?** No; caches and clients may keep
    answers, and existing connections do not perform DNS again.
+
+Interview reasoning: For “Does a low TTL force immediate failover,” treat TTL as a normal cache-freshness bound, not a synchronized switch. Lower it ahead of a migration, wait through the old maximum, change authority, and watch both destinations with fresh and cached queries. Existing sessions and local overrides may outlive TTL, so keep the old endpoint safe until measured convergence and define rollback.
+
 3. **What does a monitor prove?** Only the configured probe’s view of one
    virtual server at its observation time.
+
+Interview reasoning: For “What does a monitor prove,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
+
 4. **Why query authority and resolver separately?** The authority shows current
    policy; the resolver reveals cache and delegation effects.
+
+Interview reasoning: For “Why query authority and resolver separately,” record resolver identity, A/AAAA/CNAME data, flags, response code, authority, and TTL, then compare the recursive answer with an authoritative query. Split-horizon DNS, `/etc/hosts`, and service discovery can produce different views. A correct DNS answer proves only name resolution; route, VIP, TLS, policy, and application health still require separate probes.
+
 5. **What is fallback?** The rule used when preferred pools or targets cannot
    satisfy availability or steering criteria.
+
+Interview reasoning: For “What is fallback,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 6. **Why can users in two regions differ?** Their recursive resolvers, cached
    TTLs, topology inputs, or network paths can differ.
+
+Interview reasoning: For “Why can users in two regions differ,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
+
 7. **What is a safe incident artifact?** Timestamped `dig` output, policy
    state, monitor reasons, and endpoint evidence with no credentials.
 
-## Primary references and fact-inference labels
+Interview reasoning: For “What is a safe incident artifact,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
 Fact: [RFC 1034](https://www.rfc-editor.org/rfc/rfc1034), [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035),
 and [RFC 2181](https://www.rfc-editor.org/rfc/rfc2181) describe DNS operation,
