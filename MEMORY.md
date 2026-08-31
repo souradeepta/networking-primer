@@ -6,7 +6,7 @@
   is complete at commit `b9fb612`.
 - The content target is SDE1/SDE2 networking, focused on F5 LTM and GTM
   (BIG-IP DNS).
-- GitHub remote creation and push are intentionally deferred.
+- Public GitHub remote: https://github.com/souradeepta/networking-primer
 
 ## Verification
 
