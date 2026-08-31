@@ -1,4 +1,4 @@
-# Networking Primer for SDE1 and SDE2
+# Networking Primer
 
 Learn enough networking to follow a request from a browser to a service,
 debug common failures, and explain how F5 BIG-IP LTM and GTM/BIG-IP DNS steer
