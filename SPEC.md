@@ -37,3 +37,27 @@ Traffic Manager (GTM).
 
 `./scripts/validate.sh` passes, internal Markdown links resolve, and
 `python3 examples/request_path.py` emits a successful request-path trace.
+
+## Book-depth expansion (edition 2)
+
+The compact primer is being expanded into a book-style reference. The expanded
+edition must contain at least 12 chapters, with every chapter including:
+
+- 1,200 or more prose words (excluding tables, code, and diagrams).
+- Learning objectives, prerequisites, a mental model, and a “when this breaks”
+  section.
+- At least one worked example, one operational checklist, and one detailed
+  ASCII-only Mermaid diagram.
+- At least 8 chapter-specific questions with answers and explanations.
+
+Required chapter coverage: OSI/TCP-IP and packet journeys; IPv4/IPv6 and
+subnetting; Ethernet/ARP/ND/VLAN/routing; TCP/UDP/QUIC; HTTP and APIs; DNS;
+DHCP/IPAM/DDI; TLS/certificates/mTLS/PKI; reverse proxies and load balancing;
+F5 LTM; F5 GTM/BIG-IP DNS; observability/troubleshooting; and automation,
+SSH, and safe change management. Chapters may combine adjacent topics only if
+the acceptance checks remain satisfied.
+
+The validator must check chapter count, required headings, approximate prose
+minimums, Q&A counts, Mermaid presence, and local-link integrity. All claims
+that depend on protocol standards or vendor behavior must be represented in a
+fact/inference ledger with primary references.

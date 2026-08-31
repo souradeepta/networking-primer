@@ -30,6 +30,10 @@ Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 [interview questions](docs/interview-questions.md), and run the small
 [request-path simulator](examples/request_path.py).
 
+For book-depth study, use the [Book Edition](book/README.md), which expands the
+topics into 14 chapters with worked examples, diagrams, operational checklists,
+and chapter-level Q&A.
+
 ## Start locally
 
 ```bash
