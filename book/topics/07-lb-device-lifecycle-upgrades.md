@@ -26,6 +26,8 @@ identical mechanisms. A peer can have matching configuration while not having
 all connection state. Inference: an upgrade plan must state what happens to
 long-lived connections instead of promising zero interruption by default.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

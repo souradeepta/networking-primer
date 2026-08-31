@@ -28,6 +28,8 @@ VIP must work. A listener may have the wrong profile, no eligible members, a
 policy rejection, or a route/SNAT problem even when the member answers a
 direct probe.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

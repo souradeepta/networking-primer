@@ -1,6 +1,6 @@
 # Networking interview bank
 
-This bank targets SDE1, SDE2, and network-automation roles. Every scenario uses
+This bank targets SDE1, SDE2, Staff, and network-automation roles. Every scenario uses
 reserved or fictional names. Answers distinguish protocol facts from engineering
 inferences and identify evidence before a change.
 
@@ -10,6 +10,7 @@ inferences and identify evidence before a change.
 | --- | --- | --- |
 | SDE1 | Trace request through DNS, TCP, TLS, and HTTP | Tuple, timestamp, status |
 | SDE2 | Reason about failure domains and capacity | Competing hypotheses |
+| Staff | Frame platform strategy and migration across teams | Ownership, cost, adoption, and durable outcomes |
 | Automation | Encode desired state safely | Diff, test, rollback |
 
 ## Architecture diagram

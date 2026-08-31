@@ -25,6 +25,8 @@ This allows a reviewer to answer what changed, why, and how to undo it without
 searching shell history. Reads should be the default mode, and production
 credentials should come from an approved secret mechanism outside source code.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart TD

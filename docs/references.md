@@ -53,3 +53,10 @@
 | GTM/BIG-IP DNS does not provide instantaneous universal failover. | Engineering inference | DNS caching and existing connection behavior; test in the target environment |
 | Deep health checks are always better than TCP checks. | Rejected oversimplification | Probe depth trades detection fidelity against dependencies, load, and flapping |
 | The included F5 SDK example is production-ready for every BIG-IP release. | Not claimed | Validate installed BIG-IP/SDK versions and team interface standards |
+## Cloud interview track evidence index
+
+The standalone [Cloud Networking Interview Track](../cloud-networking-interview/README.md)
+contains its own ordered modules and local [fact/terminology/inference ledger](../cloud-networking-interview/references.md).
+Use the AWS and Google Cloud links there for provider-specific claims; verify
+service, region, account/project policy, release, quota, and pricing boundaries
+before applying a claim to a real design.

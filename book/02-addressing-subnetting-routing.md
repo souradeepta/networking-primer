@@ -23,13 +23,39 @@ In IPv4, a subnet mask is another way to write the prefix. `/26` has 26 network 
 
 The local decision is separate from the router's decision. A host compares a destination with its connected prefixes. If no connected prefix matches, it selects a route through a gateway. A router compares the destination against every candidate route and chooses the most specific matching prefix: `/32` beats `/24`, which beats `/0`. This is longest-prefix matching. The selected route can then have a metric or administrative preference that chooses among equally specific candidates. [Fact: Longest-prefix matching is the core forwarding rule.] [Inference: when two routes appear contradictory, first compare prefix length before comparing metrics.]
 
+There are two related but different route views. The control plane learns routes
+from connected interfaces, static configuration, or routing protocols and selects
+the best route for each prefix in its routing information base (RIB). It then
+programs the forwarding information base (FIB), the data-plane lookup structure.
+The FIB performs the per-packet longest-prefix lookup; it does not run a routing
+protocol or reconsider every rejected control-plane candidate. A route can
+therefore be visible in control-plane output but absent from the FIB because of
+policy, recursion, hardware limits, or programming lag. [Fact: RIB/FIB names and
+the split between route computation and packet forwarding are common networking
+concepts; exact commands and failure states vary by platform.] [Inference: check
+the installed FIB and a packet trace, not only the control-plane route list.]
+
 Private IPv4 ranges, such as RFC 1918 space, are not globally routed. NAT translates one address or address-and-port tuple to another at a boundary. Port address translation lets many internal flows share one public IPv4 address, but it changes the apparent endpoint and complicates inbound reachability, logging, and protocols that embed addresses. [Fact: NAT is an implementation behavior, not a replacement for a routing protocol or a complete security policy.] IPv6 generally restores end-to-end address space, but firewalls and routing policy are still required. [Inference: “IPv6 means no firewall” is as unsafe as “NAT is a firewall.”]
 
 ## Worked example
 
 Suppose an application tier is allocated `10.20.8.0/26`. The mask has 26 one bits, leaving six host bits and 64 total addresses. The network is `10.20.8.0`; the conventional broadcast is `10.20.8.63`; ordinary host assignments are `10.20.8.1` through `10.20.8.62`. A web host at `10.20.8.10` wants `10.20.9.40`. Comparing the first 26 bits shows the destination is outside the local prefix, so the host sends an Ethernet frame to its gateway, perhaps `10.20.8.1`, while retaining `10.20.9.40` as the IP destination.
 
-The router has these entries: `10.20.9.0/24` via router B, `10.20.0.0/16` via router C, and `0.0.0.0/0` via an upstream firewall. `10.20.9.40` matches all three, but `/24` is longest, so router B wins. If an additional `10.20.9.40/32` route appears, that host route wins instead. If the packet crosses a NAT gateway, the translated source may become `198.51.100.27:41000`; the destination route still has to exist from the translated gateway's perspective. [Fact: `198.51.100.0/24` is documentation space reserved by RFC 5737.] [Inference: In a real incident, inspect both pre-NAT and post-NAT route and connection views because each describes a different forwarding context.]
+The control plane has learned these routes and installed the best route for each
+prefix in its RIB: `10.20.9.0/24` via router B, `10.20.0.0/16` via router C,
+and `0.0.0.0/0` via an upstream firewall. Assume the next hops resolve and
+all three entries are programmed into the FIB. For destination `10.20.9.40`,
+the FIB lookup matches all three entries, but `/24` is longest, so the packet is
+sent to router B. If the control plane later installs an eligible
+`10.20.9.40/32` host route and programs it into the FIB, `/32` wins. A metric
+does not make the `/16` beat the `/24`; metrics select among routes of the same
+prefix after the control plane has chosen what to install. If the `/24` is
+present in the RIB but missing from the FIB, the data plane may use the `/16` or
+default instead, depending on what was successfully programmed. [Fact:
+`198.51.100.0/24` is documentation space reserved by RFC 5737.] [Inference: In
+a real incident, compare control-plane/RIB state, FIB state, next-hop
+resolution, and pre/post-NAT captures because each describes a different
+forwarding context.]
 
 For IPv6, write `2001:db8:1234:10::25/64`. The first four groups are the prefix in this example and the interface identifier occupies the rest. `2001:db8::/32` is documentation space, not production space. A destination on another `/64` goes to a router learned through Router Advertisements or configured statically. A neighbor on the same link is resolved with Neighbor Solicitation and Advertisement, not ARP. [Fact: `2001:db8::/32` is reserved for documentation by RFC 3849.]
 

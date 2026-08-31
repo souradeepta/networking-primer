@@ -94,19 +94,19 @@ flowchart LR
     User[User or client]
     DNS[DNS or GTM]
     Edge[F5 LTM VIP]
-    WAF[WAF policy]
-    TLS1[Client TLS terminates\nserver certificate]
+    TLS1[Client TLS terminates at edge\nserver certificate]
+    WAF[WAF inspects decrypted HTTP]
     Gateway[Internal API gateway]
-    TLS2[Server TLS starts\nmTLS client certificate]
+    TLS2[Server TLS starts at edge\nmTLS client certificate]
     Pay[Payment service]
     Ledger[Ledger service]
     Auth[Identity provider]
     DDI[DDI and certificate inventory]
     User --> DNS
     DNS --> Edge
-    Edge --> WAF
-    WAF --> TLS1
-    TLS1 --> TLS2
+    Edge --> TLS1
+    TLS1 --> WAF
+    WAF --> TLS2
     TLS2 --> Gateway
     Gateway --> Auth
     Gateway --> Pay
@@ -115,9 +115,11 @@ flowchart LR
     DDI -. trust bundle owner .-> Gateway
 ```
 
-There are two distinct TLS sessions. The first proves the public hostname to
-the client. The second proves the gateway is talking to an authorized edge
-identity and encrypts the internal hop. If the gateway merely disables
+There are two distinct TLS sessions. The first terminates at the edge and
+proves the public hostname to the client; only after that termination can the
+WAF inspect the decrypted, canonical HTTP request. If the WAF allows it, the
+edge starts the second session to prove an authorized edge identity to the
+gateway and encrypt the internal hop. If the gateway merely disables
 certificate verification, the diagram looks secure while the trust boundary
 is absent. If it verifies only a CA but not a specific identity or SAN, an
 unintended certificate issued by that CA may be accepted. The exact policy
@@ -262,7 +264,7 @@ sequenceDiagram
     participant I as Identity provider
     participant P as Payment service
     C->>L: TCP and client TLS with SNI
-    L->>W: Canonical HTTP request
+    L->>W: Decrypted canonical HTTP request
     W-->>L: Block or allow decision
     L->>G: Server TLS with mTLS
     G->>I: Validate token or claims
@@ -273,9 +275,11 @@ sequenceDiagram
     L-->>C: Client TLS response
 ```
 
-The sequence makes two boundaries visible: WAF inspection happens before the
-backend, and mTLS authenticates the proxy-to-gateway hop. Authorization is a
-separate decision from either. If a control is unavailable, the runbook must
+The sequence makes the ordering explicit: client TLS terminates at the edge,
+then the WAF inspects the decrypted canonical request, and only an allowed
+request proceeds over a separate server-side TLS/mTLS session. mTLS authenticates
+the proxy-to-gateway hop; authorization is a separate decision from either. If
+a control is unavailable, the learning design should
 state whether the system fails closed, serves a bounded degraded mode, or
 rejects only a sensitive route.
 

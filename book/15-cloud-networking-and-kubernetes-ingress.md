@@ -65,6 +65,19 @@ integration, or an F5 Container Ingress Services-style control-plane adapter
 that programs BIG-IP objects. Gateway API provides a more expressive,
 role-oriented set of resources, but the same data-plane questions remain.
 
+`NetworkPolicy` is an API for declaring ingress and egress isolation; its
+enforcement is CNI-dependent. The Kubernetes API object alone does not guarantee
+that packets are filtered, and supported fields, host-network behavior, and
+external traffic handling vary by the selected CNI and its version. Policy is
+also directional: a connection can require an egress allow at the source and
+an ingress allow at the destination. A default-deny policy is not complete until
+required egress is restored deliberately. In particular, default-deny egress
+can block cluster DNS (usually access to CoreDNS/kube-dns on UDP and sometimes
+TCP port 53), so allow the cluster's actual DNS path and verify it from the
+workload. [Fact: Kubernetes defines NetworkPolicy semantics while a network
+plugin implements enforcement.] [Inference: Treat CNI capability, DNS rules,
+and default-deny exceptions as deployment evidence, not assumptions from YAML.]
+
 | Layer | Typical object | Key question | F5 or DDI relationship |
 | --- | --- | --- | --- |
 | Name | `api.harbor.example` | Which resolver answered, and with what TTL? | GTM/Wide IP or authoritative DNS |
@@ -135,6 +148,11 @@ the YAML alone; inspect proxy logs, conntrack, packet capture, and controller
 documentation. If the pod must enforce client identity, use authenticated
 metadata or end-to-end mTLS rather than relying on an easily forged source IP.
 
+The same caution applies to `NetworkPolicy`: confirm that the selected CNI
+enforces the policy features used by the manifest. If egress is default-deny,
+test name resolution explicitly and allow the namespace's actual DNS service
+and transport before diagnosing an application dependency as unavailable.
+
 A safe, read-only inspection sequence is:
 
 ```sh
@@ -200,8 +218,11 @@ Cloud incidents often look like one failure because a browser shows only
   match. The default backend may return a misleading 404.
 - **Service endpoint failure:** selectors do not match labels, readiness gates
   remove all endpoints, or the service target port differs from the pod port.
-- **Return-path or SNAT failure:** the pod reply follows a route that bypasses
-  the stateful edge, or a network policy allows ingress but denies egress.
+- **Return-path, SNAT, or policy failure:** the pod reply follows a route that
+  bypasses the stateful edge, a CNI does not enforce the expected
+  `NetworkPolicy` feature, or policy allows ingress but denies egress. A
+  default-deny egress policy can also deny CoreDNS/kube-dns and make service
+  names fail even when the application endpoint is healthy.
 - **TLS failure:** the edge certificate lacks the host, the backend trust
   bundle is stale, or an mTLS client certificate is rejected at the wrong hop.
 - **Capacity failure:** conntrack, NAT ports, node interfaces, ingress workers,
@@ -220,7 +241,9 @@ Before a cloud ingress change, record the owner, scope, rollback, and expected
 propagation time. Confirm the public and private DNS views, certificate SANs,
 listener ports, health-check path, backend protocol, and source identity
 behavior. Verify that cloud routes, firewall rules, security groups, and
-Kubernetes NetworkPolicies cover both directions. Confirm the service selector
+CNI-enforced Kubernetes NetworkPolicies cover both directions. For default-deny
+policies, verify explicit DNS egress to the cluster resolver as well as required
+external dependencies. Confirm the service selector
 and ready endpoints. Check that the ingress controller has observed the
 resource and that its rendered configuration is valid. Apply through a
 reviewed plan, then test DNS, TCP, TLS, HTTP status, and a known application

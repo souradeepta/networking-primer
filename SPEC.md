@@ -3,8 +3,9 @@
 ## Audience and outcome
 
 This repository teaches the networking knowledge an SDE1 needs to debug an
-application request and the additional SDE2 knowledge needed to reason about
-availability, traffic policy, and operational failure modes. It emphasizes F5
+application request, the additional SDE2 knowledge needed to reason about
+availability and traffic policy, and Staff-level skills for platform strategy,
+ownership, migration, and cross-team technical leadership. It emphasizes F5
 BIG-IP Local Traffic Manager (LTM) and BIG-IP DNS, historically called Global
 Traffic Manager (GTM).
 

@@ -1,5 +1,10 @@
 # Interview study plan
 
+Use this plan with the [Staff rubric](staff-interview-rubric.md), [Staff design
+review pack](staff-design-review-pack.md), and [Staff behavioral exercises](staff-behavioral-exercises.md).
+Choose the SDE2 or Staff gate before starting; the same topic can be practiced
+at different depths.
+
 ## Four-week plan
 
 Week 1: Ethernet, IPv4/IPv6, routing, TCP/UDP/QUIC, DNS and DDI. Draw one
@@ -42,3 +47,22 @@ as the weekly sources. A week is complete only when its answer, timed-drill,
 lab, and self-score targets are recorded with dates and evidence. Do not move
 to the next track if safety is below 3 or if the candidate cannot name a
 falsifier for two consecutive scenarios.
+
+## Role gates
+
+| Gate | SDE2 | Staff |
+| --- | --- | --- |
+| Technical answers | Average 3/4; mechanism, evidence, safety, trade-off, verification | Average 3.5/4; add framing, ownership, quantification, and evolution |
+| Design | Three timed designs with failure domains and rollback | Two designs with cost, migration, adoption, ownership, and failback |
+| Implementation | Two tested Python exercises and one safe reconciliation exercise | Two reconciliation/design-oriented exercises with complexity and ambiguous-outcome handling |
+| Incident | One evidence-led simulation with a falsifier | One ambiguous incident with stakeholder communication and durable prevention |
+| Behavioral | Clear scope, action, and result | Influence across teams, dissent, measurable outcome, and durable change |
+
+Record each attempt in a small log:
+
+```text
+date | role | prompt | assumptions | score by dimension | missed concept | next experiment
+```
+
+Do not claim readiness from reading completion alone. The exit gate requires
+the relevant timed artifacts and a second attempt on an unfamiliar scenario.

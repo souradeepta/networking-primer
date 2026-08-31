@@ -6,6 +6,22 @@ For every design state request path, capacity assumptions, failure domains,
 security boundaries, observability, rollout, and rollback. Label protocol facts
 and engineering inferences. Use reserved addresses and authorized tests.
 
+## Senior design method
+
+For SDE2, make the request path and failure evidence concrete. For Staff,
+extend the same design with *ownership, migration, cost, and adoption*:
+
+1. **Frame:** clarify users, business impact, SLO/RTO/RPO, scale, and authority.
+2. **Model:** separate data plane, control plane, state ownership, and trust boundaries.
+3. **Quantify:** estimate RPS/CPS, concurrency, failure load, headroom, and the dominant cost.
+4. **Compare:** present two viable options, then state the rejected trade-off.
+5. **Evolve:** define teams, compatibility, canary, rollback, failback, and adoption metrics.
+6. **Verify:** name dashboards, a falsifier, and the evidence required to expand rollout.
+
+The [Staff design review pack](staff-design-review-pack.md) supplies twelve
+prompts using this method. A design answer is incomplete if it has a polished
+topology but no state owner, migration boundary, or recovery decision.
+
 1. **Multi-site checkout:** Requirements: DNS/GTM site choice, LTM pools, TLS, drain, and stale-cache tolerance. Request path: LDNS to Wide IP to VIP to pool. Capacity: model peak connections and SNAT. Failures: site, DNS, member, certificate. Security: mTLS and RBAC. Observe SLO, TTL, health, and traces. Roll out one site first. Follow-ups: how handle cached answers? How test failover?
 2. **Private service discovery:** Requirements: registry leases, readiness, config versions, retries. Path: client to resolver/registry to service. Capacity: registry and endpoint churn. Failures: partition and stale data. Security: identity and secret references. Observe effective version and endpoint. Canary configuration. Follow-ups: liveness versus readiness? Idempotent retry?
 3. **CDN API edge:** Requirements: cache privacy and purge. Path: client to edge to origin LTM. Capacity: hit/miss and origin shield. Failures: stale object and origin overload. Security: key isolation and TLS. Observe age, status, origin timing. Version assets before rollout. Follow-ups: cache key? emergency correction?

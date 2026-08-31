@@ -25,6 +25,8 @@ Inference: model each request as two decisions: “is this member eligible?” a
 round-robin appears fair in a small test while persistence sends one user to a
 single node for hours.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart TD

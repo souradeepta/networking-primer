@@ -18,6 +18,8 @@ metadata. A gateway is an edge policy point; a sidecar is a local proxy near
 one workload. The labels describe placement and responsibility, not a promise
 that every product implements every feature.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

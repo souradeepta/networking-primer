@@ -3,11 +3,11 @@
 set -euo pipefail
 
 required=(
-  README.md SPEC.md AGENTS.md MEMORY.md TODO.md
+  README.md SPEC.md AGENTS.md MEMORY.md TODO.md LICENSE DISCLOSURES.md docs/README.md docs/markdown-style-guide.md docs/infra-engineer-toolkit.md docs/unix-debugging-sessions.md docs/networking-tools-and-commands.md docs/networking-issue-cheatsheets.md docs/infra-engineer-runbooks-and-exercises.md
   docs/01-foundations.md docs/02-request-path.md docs/03-f5-ltm.md
   docs/04-f5-gtm.md docs/05-troubleshooting.md docs/06-ddi.md
   docs/07-automation.md docs/08-transport-security.md docs/architecture.md
-  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/interview-dialogue-exercises.md docs/interview-rubric.md docs/interview-simulation-pack.md docs/interview-whiteboard-drills.md docs/network-system-design-exercises.md docs/interview-study-plan.md docs/glossary.md docs/references.md
+  docs/09-hands-on-labs.md docs/interview-questions.md docs/f5-interview-bank.md docs/networking-interview-bank.md docs/interview-dialogue-exercises.md docs/interview-rubric.md docs/interview-simulation-pack.md docs/interview-whiteboard-drills.md docs/network-system-design-exercises.md docs/interview-study-plan.md docs/staff-interview-rubric.md docs/staff-design-review-pack.md docs/staff-behavioral-exercises.md docs/glossary.md docs/references.md
   book/README.md book/FACT-INFERENCE-LEDGER.md
   examples/request_path.py examples/f5_pool_audit.py
   scripts/check_internal_links.py
@@ -95,8 +95,15 @@ from pathlib import Path
 import re
 
 topics = sorted(p for p in Path("book/topics").glob("*.md") if p.name != "README.md")
-if len(topics) < 33:
-    raise SystemExit(f"Need 33 focused topic files; found {len(topics)}")
+if len(topics) < 37:
+    raise SystemExit(f"Need 37 focused topic files; found {len(topics)}")
+index = Path("book/topics/README.md").read_text(encoding="utf-8")
+indexed = set(re.findall(r"\((\d{2}-[^)]+\.md)\)", index))
+actual = {p.name for p in topics}
+if indexed != actual:
+    missing = sorted(actual - indexed)
+    stale = sorted(indexed - actual)
+    raise SystemExit(f"Focused topic index mismatch; missing={missing}, stale={stale}")
 for path in topics:
     text = path.read_text(encoding="utf-8")
     required = ["Learning objectives", "Worked example", "When this breaks",
@@ -133,7 +140,7 @@ def check_answers(paths, minimum, label):
         entries = re.split(r"^\s*(?:\d+\.\s+\*\*.*?\*\*|###\s+\d+\..*)", section, flags=re.MULTILINE)
         for answer in entries[1:]:
             words = re.findall(r"\b[\w'-]+\b", answer)
-            required_words = 16 if path.name.startswith(("22-", "23-", "24-", "25-", "26-", "27-", "28-", "29-", "30-", "31-", "32-", "33-")) else minimum
+            required_words = 24 if path.name.startswith(("34-", "35-", "36-", "37-")) else (16 if path.name.startswith(("22-", "23-", "24-", "25-", "26-", "27-", "28-", "29-", "30-", "31-", "32-", "33-")) else minimum)
             if len(words) < required_words:
                 raise SystemExit(f"{path}: interview answer has {len(words)} words; needs {required_words}")
             checked += 1
@@ -227,6 +234,29 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 
+required = {
+    "docs/staff-interview-rubric.md": ("## Scorecard", "## Staff answer shape", "## Readiness gate"),
+    "docs/staff-design-review-pack.md": ("## Design prompts", "## Required review artifact"),
+    "docs/staff-behavioral-exercises.md": ("## Review checklist",),
+}
+for filename, markers in required.items():
+    text = Path(filename).read_text(encoding="utf-8")
+    for marker in markers:
+        if marker not in text:
+            raise SystemExit(f"{filename}: missing {marker}")
+pack = Path("docs/staff-design-review-pack.md").read_text(encoding="utf-8")
+behavioral = Path("docs/staff-behavioral-exercises.md").read_text(encoding="utf-8")
+if len(re.findall(r"^\d+\.\s+\*\*", pack, flags=re.MULTILINE)) < 12:
+    raise SystemExit("Staff design pack needs 12 prompts")
+if len(re.findall(r"^\d+\.\s+", behavioral, flags=re.MULTILINE)) < 12:
+    raise SystemExit("Staff behavioral pack needs 12 prompts")
+print("Staff curriculum checks passed: rubric, design, and behavioral packs.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
 path = Path("docs/interview-dialogue-exercises.md")
 text = path.read_text(encoding="utf-8")
 scenarios = re.findall(r"^## \d+\.", text, flags=re.MULTILINE)
@@ -238,3 +268,123 @@ print(f"Dialogue exercise checks passed: {len(scenarios)} scenarios.")
 PY
 
 python3 scripts/check_internal_links.py
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+docs = {path.name for path in Path('docs').glob('*.md') if path.name != 'README.md'}
+index = Path('docs/README.md').read_text(encoding='utf-8')
+indexed = {
+    Path(target).name
+    for target in re.findall(r'\[[^]]+\]\(([^)]+\.md)\)', index)
+    if '/' not in target and not target.startswith('#')
+}
+missing = sorted(docs - indexed)
+if missing:
+    raise SystemExit(f'docs/README.md has orphaned Markdown files: {missing}')
+print(f'Documentation index checks passed: {len(docs)} docs files indexed.')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+failures = []
+for path in sorted(Path('.').rglob('*.md')):
+    if '.git' in path.parts:
+        continue
+    in_fence = False
+    headings = []
+    for line_number, line in enumerate(path.read_text(encoding='utf-8').splitlines(), 1):
+        if line.startswith('```'):
+            in_fence = not in_fence
+            continue
+        if in_fence:
+            continue
+        match = re.match(r'^(#{1,6})\s+(.+?)\s*$', line)
+        if match:
+            headings.append((line_number, len(match.group(1)), match.group(2)))
+    if not headings:
+        failures.append(f'{path}: no headings')
+        continue
+    if sum(level == 1 for _, level, _ in headings) != 1:
+        failures.append(f'{path}: expected exactly one H1')
+    previous = headings[0][1]
+    if previous != 1:
+        failures.append(f'{path}:{headings[0][0]}: first heading must be H1')
+    for line_number, level, title in headings[1:]:
+        if not title.strip():
+            failures.append(f'{path}:{line_number}: empty heading')
+        if level > previous + 1:
+            failures.append(f'{path}:{line_number}: heading skips H{previous} to H{level}')
+        previous = level
+if failures:
+    raise SystemExit('\n'.join(failures))
+print('Markdown heading hierarchy checks passed for all Markdown files.')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+root = Path('cloud-networking-interview')
+expected = {
+    'README.md', 'references.md',
+    'cloud-network-foundations.md', 'virtual-network-boundaries-and-design.md',
+    'subnet-and-ip-address-planning.md', 'routes-gateways-and-hybrid-connectivity.md',
+    'internet-ingress-nat-and-egress.md', 'firewalls-security-groups-and-network-acls.md',
+    'private-connectivity-and-service-publishing.md', 'dns-and-service-discovery.md',
+    'load-balancing-and-traffic-entry.md', 'iam-and-workload-identity.md',
+    'containers-kubernetes-and-network-policy.md', 'observability-troubleshooting-and-slos.md',
+    'quotas-capacity-and-network-cost.md', 'multi-region-disaster-recovery-and-failover.md',
+    'cloud-network-migration-and-modernization.md', 'cloud-interview-synthesis-and-mock-loops.md',
+}
+actual = {p.name for p in root.glob('*.md')}
+if actual != expected:
+    raise SystemExit(f'Cloud track file set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}')
+index = (root / 'README.md').read_text(encoding='utf-8')
+ordered = re.findall(r'\]\(([^)]+\.md)\)', index)
+topic_order = [name for name in ordered if not name.startswith('../')]
+expected_topics = [
+    'cloud-network-foundations.md', 'virtual-network-boundaries-and-design.md',
+    'subnet-and-ip-address-planning.md', 'routes-gateways-and-hybrid-connectivity.md',
+    'internet-ingress-nat-and-egress.md', 'firewalls-security-groups-and-network-acls.md',
+    'private-connectivity-and-service-publishing.md', 'dns-and-service-discovery.md',
+    'load-balancing-and-traffic-entry.md', 'iam-and-workload-identity.md',
+    'containers-kubernetes-and-network-policy.md', 'observability-troubleshooting-and-slos.md',
+    'quotas-capacity-and-network-cost.md', 'multi-region-disaster-recovery-and-failover.md',
+    'cloud-network-migration-and-modernization.md', 'cloud-interview-synthesis-and-mock-loops.md',
+]
+if topic_order[:len(expected_topics)] != expected_topics:
+    raise SystemExit('Cloud track README must list every topic in its ordered learning path')
+for path in sorted(root.glob('*.md')):
+    if path.name in {'README.md', 'references.md'}:
+        continue
+    text = path.read_text(encoding='utf-8')
+    for marker in ('Learning objectives', 'Prerequisites', 'AWS and GCP', 'References'):
+        if marker.lower() not in text.lower():
+            raise SystemExit(f'{path}: missing required curriculum marker {marker!r}')
+    if path.name == 'cloud-interview-synthesis-and-mock-loops.md':
+        for marker in ('Mock loop', 'Self-scoring'):
+            if marker.lower() not in text.lower():
+                raise SystemExit(f'{path}: missing synthesis marker {marker!r}')
+    else:
+        for marker in ('Worked', 'exercise'):
+            if marker.lower() not in text.lower():
+                raise SystemExit(f'{path}: missing required curriculum marker {marker!r}')
+    prose = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
+    words = re.findall(r"\b[\w'-]+\b", prose)
+    if len(words) < 850:
+        raise SystemExit(f'{path}: needs at least 850 words; found {len(words)}')
+    if len(re.findall(r'^\s*(?:\d+\.\s+\*\*|###\s+(?:[A-Z]\.)?\d+(?:\.|\s))', text, flags=re.MULTILINE)) < 6:
+        raise SystemExit(f'{path}: needs at least 6 numbered interview Q&A entries')
+    if text.count('```mermaid') < 2:
+        raise SystemExit(f'{path}: needs two Mermaid diagrams')
+    if not re.search(r'^\|\s*:?-{3,}:?\s*\|', text, flags=re.MULTILINE):
+        raise SystemExit(f'{path}: needs a Markdown evidence/comparison table')
+    for block in re.findall(r'```mermaid\n(.*?)```', text, flags=re.DOTALL):
+        if not block.isascii():
+            raise SystemExit(f'{path}: Mermaid diagram contains non-ASCII characters')
+print(f'Cloud networking interview track checks passed: {len(expected)-2} topics, exact index, depth, exercises, Q&A, tables, and diagrams.')
+PY

@@ -33,7 +33,9 @@ documentation or local addresses unless an authorized lab target is supplied.
 17. Network security, WAF, and zero trust
 
 The original `docs/` files remain the quick-start edition; these chapters are
-the elaborated treatment.
+the elaborated treatment. Use the [documentation index](../docs/README.md) for
+the logical order of quick-start, interview, infra-engineer, and governance
+material.
 
 See the [book fact and inference ledger](FACT-INFERENCE-LEDGER.md) for the
 chapter-level evidence map.

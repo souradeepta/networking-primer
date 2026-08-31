@@ -1,4 +1,4 @@
-# Platform networking: cloud ingress, routing, security, and SLOs
+# 10. Platform networking: cloud ingress, routing, security, and SLOs
 
 This bridge module connects the core request path to the platform concerns that
 appear in an SDE2 on-call rotation. The long-form treatment is in the new

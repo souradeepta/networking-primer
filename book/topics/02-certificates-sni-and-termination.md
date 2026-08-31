@@ -24,6 +24,8 @@ is incomplete unless it identifies which connection, hostname, trust store,
 and clock were tested. A certificate can be valid for the front door while the
 proxy-to-server certificate is expired, or vice versa.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

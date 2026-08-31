@@ -19,6 +19,8 @@ REST endpoints. Exact classes, fields, and supported operations depend on SDK
 and BIG-IP versions. A successful Python import does not prove that a target
 device supports the requested resource.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart TD

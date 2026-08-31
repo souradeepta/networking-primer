@@ -22,6 +22,8 @@ source. A reconciliation process should report conflicts before it changes
 anything. “The database says free” and “the network is unused” are different
 claims requiring different observations.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

@@ -1,6 +1,6 @@
 # F5 role interview bank
 
-This bank is a study aid for SDE1, SDE2, and network-automation interviews.
+This bank is a study aid for SDE1, SDE2, Staff, and network-automation interviews.
 Names and addresses are fictional. BIG-IP DNS is the current product name;
 GTM remains common historical terminology. AS3, DO, TS, FAST, and the BIG-IP
 SDK are versioned toolchain components: consult the deployed release and
@@ -12,6 +12,7 @@ SDK are versioned toolchain components: consult the deployed release and
 | --- | --- | --- |
 | SDE1 | Trace DNS, TCP, TLS, HTTP, VIP, pool, and monitor symptoms | Capture tuple, time, status |
 | SDE2 | Explain failure domains, capacity, HA, policy, and safe change | Compare hypotheses and rollback |
+| Staff | Lead portable edge-platform strategy and migrations | Decision record, ownership, cost, and adoption metrics |
 | Automation engineer | Model APIs, RBAC, declarations, retries, and tests | Diff desired/effective state |
 
 ## Interview questions and answers

@@ -9,7 +9,7 @@ is sound mental models and safe debugging questions, not device administration.
 
 | Directory | Best for |
 | --- | --- |
-| [`docs/`](docs/01-foundations.md) | Quick concepts, runbooks, glossary, interview Q&A, and compact labs |
+| [`docs/`](docs/README.md) | Quick concepts, runbooks, glossary, interview Q&A, and compact labs |
 | [`book/`](book/README.md) | Long-form chapters, focused F5 topics, and 19 infrastructure case studies |
 | [`demos/`](demos/README.md) | Python/shell experiments, Docker/Wireshark workflows, and browser animations |
 | [`exercises/`](exercises/README.md) | Implementation assignments with testable edge cases |
@@ -24,6 +24,15 @@ evidence, diagrams, and decision context.
   with the right layer and evidence.
 - **SDE2:** design for failure domains, reason about load-balancing policy,
   caching, health checks, and multi-site traffic steering.
+- **Staff:** frame ambiguous platform problems, quantify capacity and cost,
+  choose ownership boundaries, lead migrations, and defend trade-offs across
+  teams.
+
+Start with the [SDE2 and Staff curriculum improvement spec](docs/interview-curriculum-improvement-spec.md)
+to choose the appropriate depth. SDE2 preparation emphasizes mechanism,
+evidence, implementation, and safe diagnosis. Staff preparation adds
+multi-region state, overload governance, platform strategy, migration,
+ownership, cost, and influence.
 
 ## Four-session path
 
@@ -40,6 +49,10 @@ Supporting modules: [DDI](docs/06-ddi.md), [architecture diagrams](docs/architec
 [troubleshooting runbook](docs/05-troubleshooting.md), plus the
 [platform networking bridge](docs/10-platform-networking.md).
 
+Infra-engineer practice: use the [Unix and network debugging toolkit](docs/infra-engineer-toolkit.md)
+for debugging sessions, safe tools and commands, issue cheatsheets, training
+runbooks, and evidence-based exercises.
+
 For F5-focused interview preparation, use the [dedicated F5 role interview
 bank](docs/f5-interview-bank.md), which includes LTM, GTM/BIG-IP DNS, TLS/mTLS,
 HA, SDK/REST/declarative automation, observability, and symptom-driven debug
@@ -48,11 +61,21 @@ exercises.
 Additional practice: [interview rubric](docs/interview-rubric.md), [simulation
 pack](docs/interview-simulation-pack.md), [whiteboard drills](docs/interview-whiteboard-drills.md),
 [system-design exercises](docs/network-system-design-exercises.md), and the
-[interview study plan](docs/interview-study-plan.md).
+[interview study plan](docs/interview-study-plan.md). The planned SDE2/Staff
+coverage gaps and implementation roadmap are captured in the [interview
+curriculum improvement spec](docs/interview-curriculum-improvement-spec.md).
+The full Terra review of book and focused-topic material is tracked in the
+[book material review plan](docs/book-material-review-plan.md).
 
 For broad networking interview preparation, use the [networking interview
 bank](docs/networking-interview-bank.md), covering protocols, cloud,
 Kubernetes, observability, security, and automation.
+
+For a dedicated cloud track with its own ordered modules, use the [Cloud
+Networking Interview Track](cloud-networking-interview/README.md). It covers
+AWS and Google Cloud as explicit comparisons across routing, private services,
+identity, Kubernetes, observability, capacity, disaster recovery, migration,
+and Staff-level mock interviews.
 
 Practice evidence-led conversations with the [interview dialogue
 exercises](docs/interview-dialogue-exercises.md), including DNS, TCP, TLS, F5,
@@ -110,3 +133,11 @@ Protocol sources, F5 documentation, and a fact/inference ledger are in
 [references](docs/references.md). BIG-IP behavior can vary by version,
 license, and local policy; validate against the deployed platform and team
 standards before changing traffic.
+
+## License and disclosures
+
+This repository is released under the [MIT License](LICENSE). Read the
+[repository disclosures](DISCLOSURES.md) for educational scope, vendor and
+version boundaries, authorization and privacy requirements, no-warranty terms,
+and generated-content guidance. Formatting conventions are documented in the
+[Markdown style guide](docs/markdown-style-guide.md).

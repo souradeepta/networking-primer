@@ -24,6 +24,8 @@ an endpoint change has two timelines—authoritative decision time and cache
 convergence time—so a failover can be correct at the authority while users
 continue to reach the old address.
 
+## Diagram
+
 ```mermaid
 %%{init: {"theme":"base", "themeVariables":{"primaryColor":"#eef6ff","primaryTextColor":"#111111","lineColor":"#333333"}}}%%
 flowchart LR

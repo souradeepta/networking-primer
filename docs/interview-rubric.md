@@ -51,13 +51,13 @@ from RFCs or F5 documentation separately from inferences.
 
 ## Role-specific scorecards
 
-| Dimension | SDE1 | SDE2 | Automation |
-| --- | --- | --- | --- |
-| Mechanism | Correct layer and protocol | State transitions and failure domains | API/resource semantics and convergence |
-| Evidence | Useful command or capture | Correlated multi-hop evidence | Redacted plan, status, and read-back |
-| Trade-off | Practical operational risk | Design and capacity comparison | Retries, drift, and ownership |
-| Safety | Avoids blind mutation | Defines blast radius and rollback | Least privilege and unknown-state handling |
-| Communication | Clear concise close | Decision record and escalation | Reproducible artifact and audit |
+| Dimension | SDE1 | SDE2 | Staff | Automation |
+| --- | --- | --- | --- | --- |
+| Mechanism | Correct layer and protocol | State transitions and failure domains | Portable abstraction, state ownership, and system evolution | API/resource semantics and convergence |
+| Evidence | Useful command or capture | Correlated multi-hop evidence | Decision evidence, falsifier, and success metric | Redacted plan, status, and read-back |
+| Trade-off | Practical operational risk | Design and capacity comparison | Cost, adoption, migration, and long-term operability | Retries, drift, and ownership |
+| Safety | Avoids blind mutation | Defines blast radius and rollback | Makes authorization, blast radius, and rollback explicit across teams | Least privilege and unknown-state handling |
+| Communication | Clear concise close | Decision record and escalation | Aligns stakeholders, handles dissent, and records durable ownership | Reproducible artifact and audit |
 
 ## Detailed exemplar explanations
 

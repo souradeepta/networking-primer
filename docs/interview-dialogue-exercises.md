@@ -207,3 +207,293 @@ should be increased gradually because models and safeguards need validation.
 | Hypothesis | Mechanism, not conclusion |
 | Authorization | Owner, window, stop condition |
 | Resolution | Verified change and rollback |
+
+## Dedicated SDE2 and Staff dialogue practice
+
+The short scenarios above are prompts. This section is the detailed answer key.
+Use it only after attempting the conversation. The interviewer should reveal
+one new fact at a time and challenge assumptions rather than reward memorized
+commands.
+
+### A. Conversation protocol
+
+Every candidate response should move through six beats:
+
+1. **Frame:** clarify impact, scope, timestamp, authority, and success criteria.
+2. **Model:** draw the request path, control path, state owner, and trust boundary.
+3. **Evidence:** name the smallest read-only observation that separates hypotheses.
+4. **Falsifier:** state what result would change the leading hypothesis.
+5. **Decision:** propose a bounded action, owner, trade-off, and rollback boundary.
+6. **Verification:** define the metric, probe, or state read that proves recovery.
+
+An SDE2 answer must be technically correct, evidence-led, and safe. A Staff
+answer must additionally expose ambiguity, coordinate ownership, quantify risk
+or capacity, compare alternatives, and explain how the fix becomes durable.
+
+### B. Scenario 1 — logs contain credentials
+
+**Strong opening:** “I confirm the affected service, time window, log locations,
+access scope, and whether the credentials are active. I restrict access and
+preserve a protected copy before cleanup.”
+
+The SDE2 candidate identifies the logging change, obtains a redacted sample,
+checks index and backup replication, rotates exposed secrets through the owner,
+and removes the logging defect. Useful evidence includes a bounded
+`journalctl` query, commit/config diff, log ACL audit, secret-rotation record,
+and timestamps. They do not copy logs to a personal workstation or replay a
+credential to test it.
+
+The Staff candidate assigns incident, security, service, and compliance owners;
+defines whether exposure is confirmed or only suspected; estimates blast radius
+from retention and access history; and chooses between access revocation,
+rotation, and temporary feature disablement. **Falsifier:** a protected sample
+from the same version and time window contains no secret, but that does not
+close the case until indexes and backups are checked.
+
+**Follow-ups:** Who can approve deletion? What evidence must be retained? How
+will you prevent recurrence—structured redaction, secret-scanning CI, log
+schema review, or a policy that forbids sensitive fields?
+
+### C. Scenario 2 — system unresponsive
+
+**Strong opening:** “I establish whether one host, one service, or a whole
+failure domain is affected, when it began, and whether console or out-of-band
+access exists. I do not reboot before preserving the best available evidence.”
+
+The SDE2 candidate compares last-known `uptime`, `vmstat`, memory, disk, socket
+counts, kernel/service logs, and dependency health. They distinguish CPU
+starvation, memory pressure, full disk/inodes, network loss, filesystem failure,
+and a process deadlock. A console restart is an escalation with blast radius,
+owner, and verification—not a diagnosis.
+
+The Staff candidate asks whether traffic can be drained to a healthy instance,
+whether data integrity or quorum is at risk, and whether the recovery action
+changes evidence. They select containment based on customer impact and RTO,
+then plan durable capacity, alerting, or ownership changes. **Falsifier:** a
+healthy console and process state with only SSH failing shifts attention to the
+management path, not necessarily the data plane.
+
+**Follow-ups:** What if memory is exhausted? What if the host is a stateful
+leader? Which action is reversible, and how do you prove the replacement is
+healthy before expanding traffic?
+
+### D. Scenario 3 — certificate expired
+
+**Strong opening:** “I identify the exact hostname, VIP, port, SNI, client
+population, terminating hop, and current time before calling this expiry.”
+
+The SDE2 candidate uses an authorized `openssl s_client` or platform read-only
+inspection to capture the served leaf and chain, then checks SAN, issuer,
+validity, EKU, trust store, clock, ALPN, and backend TLS. They distinguish wrong
+SNI/default certificate, expired intermediate, trust failure, hostname mismatch,
+and client-certificate rejection. They never ask for a private key or disable
+verification.
+
+The Staff candidate inventories unknown consumers, defines overlap between old
+and new trust material, assigns certificate and service owners, and chooses a
+canary population. **Falsifier:** a valid served certificate with correct time
+means expiry is not the primary explanation; trust, SNI, backend TLS, or client
+authentication remain candidates.
+
+**Follow-ups:** How do you handle an unknown client population? What is the
+rollback if the old certificate has already expired? Which expiry, chain, and
+handshake metrics become a platform SLO?
+
+### E. Scenario 4 — vulnerability finding
+
+**Strong opening:** “I verify the asset, scanner version, exact finding, scope,
+authorization, and effective TLS profile before changing policy.”
+
+The SDE2 candidate safely reproduces the negotiated protocol or cipher against
+an approved endpoint, identifies the terminating profile, checks release and
+client compatibility, and proposes a canary policy update. They record scanner
+output, SNI, certificate, protocol, cipher, client error rate, and rollback
+version. A scanner result is evidence of a finding, not permission to exploit.
+
+The Staff candidate weighs exposure, legacy-client revenue, compliance deadline,
+exception ownership, and migration cost. They compare immediate block, staged
+deprecation, and a time-bounded exception with compensating controls.
+**Falsifier:** the effective profile rejects the reported algorithm from the
+actual endpoint; then investigate scanner targeting, a different VIP, or stale
+inventory.
+
+**Follow-ups:** Who accepts residual risk? How will you measure legacy-client
+migration? What stop condition protects customers during the profile change?
+
+### F. Scenario 5 — suspected breach
+
+**Strong opening:** “I confirm incident authority, time window, affected
+identities, and containment options. I preserve volatile and audit evidence
+before taking a disruptive action where feasible.”
+
+The SDE2 candidate correlates DNS queries, proxy/flow logs, API identities,
+maintenance events, process/network state, and secret use. They isolate or block
+only within incident-command authority, rotate affected credentials, preserve
+hashes and chain of custody, and avoid broad scanning or live exploitation.
+
+The Staff candidate establishes a decision cadence, separates confirmed facts
+from threat hypotheses, assigns security/service/legal/comms owners, and chooses
+containment that protects customers without destroying evidence. They define
+criteria for returning the workload and a durable control improvement.
+**Falsifier:** known approved maintenance from the same identity and source may
+explain the traffic, but it must be reconciled with authentication and payload-
+safe evidence rather than accepted as proof of innocence.
+
+**Follow-ups:** What if isolation breaks a critical dependency? How do you
+communicate uncertainty? When do you rotate credentials versus revoke access?
+
+### G. Scenario 6 — DNS wrong answer
+
+**Strong opening:** “I compare the exact name and type at authoritative,
+recursive, local, and application-resolver viewpoints, with TTL and timestamps.”
+
+The SDE2 candidate inspects delegation, Wide IP or steering state, monitor and
+iQuery freshness when applicable, answer distribution, negative caching, and
+existing connections. They distinguish stale cache, wrong authoritative data,
+topology policy, resolver locality, and client reuse. **Falsifier:** multiple
+fresh recursive answers agree with authority, while the client still reaches
+the old site; then inspect local cache, connection reuse, or another name.
+
+The Staff candidate adds data ownership and failover authority: who can change
+DNS, who can fence writes, what RTO DNS can realistically provide, and how
+resolver behavior affects customer communication. Lowering TTL during the
+incident is not an instant flush.
+
+**Follow-ups:** How do you test six resolver populations? What if the new site
+has insufficient capacity? How do you roll back without reintroducing a fenced
+writer?
+
+### H. Scenario 7 — TCP timeout
+
+**Strong opening:** “I record the five-tuple, namespace, interface, timestamp,
+and whether the failure is new connection, established traffic, or one proxy
+leg.”
+
+The SDE2 candidate compares client SYN, listener receipt, SYN-ACK, final ACK,
+server-side SYN, route, ACL, NAT, member state, and socket pressure. They treat
+silence, reset, and retransmission as distinct observations and identify the
+sender of a reset. A single laptop ping cannot falsify an asymmetric or
+VIP-specific failure.
+
+The Staff candidate asks whether the fault is zonal, tenant-specific, or a
+capacity event; defines an error-budget response; and prevents a retry storm
+while the path is repaired. **Falsifier:** a completed handshake at the same
+listener shifts the investigation to TLS, HTTP, queueing, or application policy.
+
+**Follow-ups:** What if only new flows fail? What does SNAT change? When is a
+packet capture justified, and how do you protect payload privacy?
+
+### I. Scenario 8 — MTU black hole
+
+**Strong opening:** “I compare small and large payload behavior on the same
+inner and outer path, with explicit MTU and fragmentation assumptions.”
+
+The SDE2 candidate checks PMTU, ICMP errors, MSS, retransmissions, VXLAN/VTEP
+encapsulation, underlay route, and both directions. They explain why a TCP
+handshake can succeed before larger data stalls. A bounded lab probe or capture
+is safer than changing production MTU.
+
+The Staff candidate quantifies affected protocols and regions, chooses between
+MSS adjustment, underlay MTU change, or a staged application workaround, and
+assigns network and platform owners. **Falsifier:** large do-not-fragment
+traffic succeeds across the exact path while application framing fails; then
+inspect protocol or proxy behavior.
+
+**Follow-ups:** What if ICMP is filtered? How do you calculate inner payload
+budget? What rollback restores service if a tunnel change affects other tenants?
+
+### J. Scenario 9 — F5 pool or monitor issue
+
+**Strong opening:** “A green monitor proves only its configured source, protocol,
+Host/SNI, URI, expected response, and route; I compare it with the user path.”
+
+The SDE2 candidate identifies who emitted the 503, then reads virtual server,
+profiles, policy/iRules, pool eligibility, member port, monitor source/result,
+route domain, SNAT, and selected-member evidence. They compare direct member
+success with VIP failure without disabling the monitor blindly. **Falsifier:** an
+equivalent probe from the monitor source succeeds with the same headers and
+TLS while user requests fail, shifting attention to selection, policy, or
+capacity.
+
+The Staff candidate defines the contract between application and edge teams,
+chooses shallow versus deep health checks based on dependency cost, and stages a
+monitor correction with a canary and rollback. They make clear whether the
+monitor should represent readiness, liveness, or business availability.
+
+**Follow-ups:** How do you prevent a dependency outage from ejecting every
+member? How do you handle persistence during recovery? What evidence supports
+changing the monitor timeout?
+
+### K. Scenario 10 — SNAT exhaustion
+
+**Strong opening:** “I model concurrent translated flows per destination tuple,
+not only requests per second, and compare allocation errors with member health.”
+
+The SDE2 candidate reads translated tuples, port utilization, connection age,
+TIME-WAIT/idle retention, source identity, and return route. They distinguish
+SNAT exhaustion from ACL, backend, and listener failures. Adding addresses may
+increase capacity but changes source identity and requires policy and logging
+review.
+
+The Staff candidate quantifies peak and failure-mode demand, headroom, tenant
+fairness, cost, and the effect of long-lived protocols. They compare connection
+reuse, pool sizing, translation addresses, and load shedding. **Falsifier:** new
+flows fail with abundant translation capacity but an ACL denies the translated
+source; then SNAT is an enabler, not the root cause.
+
+**Follow-ups:** What happens during regional failover? Would clearing flows make
+the incident worse? Which alert threshold gives enough time to act?
+
+### L. Scenario 11 — penetration-test planning
+
+**Strong opening:** “Before discussing a technique, I need written scope,
+targets, source addresses, dates, rate, methods, data handling, stop conditions,
+contacts, and recovery ownership.”
+
+The SDE2 candidate proposes a non-destructive test that directly answers the
+finding, preserves evidence, and stays within the approved boundary. They reject
+credential guessing, persistence, destructive exploitation, lateral movement,
+and broad scans. A result includes reproducibility, impact, evidence, severity,
+mitigation owner, and retest criteria.
+
+The Staff candidate also coordinates provider notification, legal/security
+review, customer-impact thresholds, communication cadence, and learning goals.
+They choose a lab or canary when production realism is not required.
+**Falsifier:** the reported behavior disappears on the exact approved endpoint
+with the correct SNI and profile; then reconcile scanner scope and inventory.
+
+**Follow-ups:** Who can stop the test? What if the test hits a shared tenant?
+How do you preserve chain of custody without collecting unnecessary payloads?
+
+### M. Scenario 12 — network load or chaos testing
+
+**Strong opening:** “I define a baseline, experiment hypothesis, disposable
+scope, rate, abort threshold, owner, and restoration proof before injecting any
+failure.”
+
+The SDE2 candidate changes one variable at a time, starts below the expected
+failure magnitude, observes client/LB/origin/dependency SLOs, and stops on the
+first guardrail breach. They record experiment ID, start/stop, condition,
+affected scope, recovery, and evidence. A lab result is not automatically a
+production guarantee.
+
+The Staff candidate connects the experiment to a decision: capacity purchase,
+retry policy, failover design, or degraded mode. They secure stakeholder
+authorization, communicate risk, and ensure the result becomes a backlog item
+with an owner. **Falsifier:** the baseline already violates the SLO, so injected
+loss cannot isolate the proposed mechanism until the baseline is repaired.
+
+**Follow-ups:** Why not begin at peak loss? What if abort automation fails? How
+will you distinguish customer impact from expected synthetic errors?
+
+## Scoring each dialogue
+
+Score **0–4** for framing, mechanism, evidence, falsifier, safety, trade-off,
+communication, and verification. For SDE2, require a mean of **3** with no
+safety score below **3**. For Staff, require a mean of **3.5**, plus explicit
+ownership, quantification, migration or adoption, and durable prevention.
+
+The interviewer should ask at least two follow-ups: one that changes the
+evidence and one that changes the organizational or business constraint. A
+candidate who changes their hypothesis when new evidence arrives demonstrates
+stronger engineering judgment than one who confidently repeats the first model.
