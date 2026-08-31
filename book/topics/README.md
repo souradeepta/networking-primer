@@ -26,6 +26,16 @@ notes; a recommendation is not the same thing as a product guarantee.
 14. [WAF, API security, and rate limits](14-waf-api-security-and-rate-limits.md)
 15. [Network testing and controlled chaos](15-network-testing-and-chaos.md)
 16. [Capacity, performance, and SLO engineering](16-capacity-performance-and-slo-engineering.md)
+17. [HTTP/2, HTTP/3, and QUIC](17-http2-http3-quic.md)
+18. [VXLAN and network overlays](18-vxlan-network-overlays.md)
+19. [Firewalls, security groups, and NACLs](19-firewalls-security-groups-nacls.md)
+20. [Service discovery and configuration](20-service-discovery-configuration.md)
+21. [NTP and time synchronization](21-ntp-time-synchronization.md)
+17. [HTTP/2, HTTP/3, and QUIC](17-http2-http3-quic.md)
+18. [VXLAN and network overlays](18-vxlan-network-overlays.md)
+19. [Firewalls, security groups, and NACLs](19-firewalls-security-groups-nacls.md)
+20. [Service discovery and configuration](20-service-discovery-configuration.md)
+21. [NTP and time synchronization](21-ntp-time-synchronization.md)
 Each topic has objectives, a worked example, a failure section, an operational
 checklist, a diagram, and explained questions and answers. Addresses and names
 are reserved or local: `198.51.100.0/24`, `203.0.113.0/24`, `2001:db8::/32`,

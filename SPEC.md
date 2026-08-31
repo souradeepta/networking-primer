@@ -119,6 +119,20 @@ an observable diagnostic or example, and a relevant caveat. The validator
 checks this minimum so future edits cannot silently regress to one-line
 answers.
 
+## Platform networking additions (edition 7)
+
+Add at least five additional focused references so the curriculum continues
+from classic F5/DDI operations into modern service platforms. Cover HTTP/2 and
+HTTP/3/QUIC, network virtualization and VXLAN overlays,
+firewalls/security groups/NACLs, service discovery and configuration
+distribution, and NTP/time synchronization. Each reference must include
+objectives, a mental model, a worked example, an ASCII-only Mermaid diagram, a
+Markdown table, failure modes, an operational checklist, an implementation
+exercise, and at least six interview questions with answers of at least 35
+words. Connect each topic to F5 LTM/GTM, DDI, automation, and layered
+troubleshooting where relevant, and distinguish measured evidence from
+inference.
+
 ## Focused files and demos (edition 4)
 
 The book must also expose focused topic files rather than hiding all detail in

@@ -94,8 +94,8 @@ from pathlib import Path
 import re
 
 topics = sorted(p for p in Path("book/topics").glob("*.md") if p.name != "README.md")
-if len(topics) < 16:
-    raise SystemExit(f"Need 16 focused topic files; found {len(topics)}")
+if len(topics) < 21:
+    raise SystemExit(f"Need 21 focused topic files; found {len(topics)}")
 for path in topics:
     text = path.read_text(encoding="utf-8")
     required = ["Learning objectives", "Worked example", "When this breaks",
@@ -103,11 +103,13 @@ for path in topics:
     missing = [h for h in required if f"## {h}" not in text]
     if missing:
         raise SystemExit(f"{path}: missing topic headings: {', '.join(missing)}")
-    minimum = 1200 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-")) else 900
+    minimum = 1200 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-", "17-", "18-", "19-", "20-", "21-")) else 900
     if len(re.findall(r"\b[\w'-]+\b", re.sub(r"```.*?```", "", text, flags=re.DOTALL))) < minimum:
         raise SystemExit(f"{path}: needs {minimum} words")
-    qa_minimum = 6 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-")) else 5
-    if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < qa_minimum:
+    qa_minimum = 6 if path.name.startswith(("11-", "12-", "13-", "14-", "15-", "16-", "17-", "18-", "19-", "20-", "21-")) else 5
+    qa_patterns = (r"^\s*\d+\.\s+\*\*", r"^###\s+\d+\.")
+    qa_count = sum(len(re.findall(pattern, text, flags=re.MULTILINE)) for pattern in qa_patterns)
+    if qa_count < qa_minimum:
         raise SystemExit(f"{path}: needs {qa_minimum} numbered Q&A")
     if "```mermaid" not in text or "| --- |" not in text:
         raise SystemExit(f"{path}: needs Mermaid diagram and Markdown table")
@@ -127,7 +129,7 @@ def check_answers(paths, minimum, label):
             continue
         section = text[match.end():]
         section = re.split(r"^## (?!Questions and answers)", section, maxsplit=1, flags=re.MULTILINE)[0]
-        entries = re.split(r"^\s*\d+\.\s+\*\*.*?\*\*", section, flags=re.MULTILINE)
+        entries = re.split(r"^\s*(?:\d+\.\s+\*\*.*?\*\*|###\s+\d+\..*)", section, flags=re.MULTILINE)
         for answer in entries[1:]:
             words = re.findall(r"\b[\w'-]+\b", answer)
             if len(words) < minimum:

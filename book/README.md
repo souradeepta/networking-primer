@@ -45,7 +45,8 @@ Focused references and runnable demos are in [book/topics](topics/README.md)
 and [`demos/`](../demos/README.md). These files deliberately separate VIP,
 certificate, monitor, GTM, DDI, and automation concerns for targeted study.
 
-The edition-5 platform track adds cloud-native ingress, routing policy, WAF
-controls, observability/SLOs, and performance engineering. Treat these as
+The platform track adds cloud-native ingress, routing policy, WAF controls,
+observability/SLOs, performance engineering, modern transports, overlays,
+network policy, service discovery, and time synchronization. Treat these as
 production design material: validate vendor behavior in a lab and preserve a
 tested rollback path before making a change.

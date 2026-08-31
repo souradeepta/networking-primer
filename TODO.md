@@ -12,3 +12,5 @@
 - [x] Expand all numbered Q&A answers to interview-grade explanations.
 - [x] Run Terra review of the Q&A expansion, fix formatting and depth issues,
       then commit and push.
+- [x] Add five modern platform-networking focused topics with exercises,
+      diagrams, tables, and interview-depth Q&A.
