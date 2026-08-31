@@ -1,0 +1,20 @@
+services:
+  server:
+    image: python:3.12-alpine
+    working_dir: /app
+    volumes: ["./server.py:/app/server.py:ro"]
+    command: ["python", "/app/server.py"]
+    expose: ["8080"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health', timeout=1)"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+  client:
+    image: python:3.12-alpine
+    working_dir: /app
+    volumes: ["./client.py:/app/client.py:ro"]
+    command: ["python", "/app/client.py"]
+    depends_on:
+      server:
+        condition: service_healthy

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request journey: DNS to LTM</title>
+<style>
+  :root { color-scheme: light; font: 16px system-ui, sans-serif; }
+  body { color: #111; background: #fff; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+  .track { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin: 2rem 0; }
+  .node { border: 2px solid #222; border-radius: .5rem; padding: .8rem; min-width: 8rem; text-align: center; background: #fff; }
+  .arrow { font-size: 1.5rem; }
+  .active { background: #d9efff; box-shadow: 0 0 0 4px #78bde8; }
+  .packet { color: #075985; font-weight: 700; min-height: 2rem; }
+  button { font: inherit; padding: .5rem .8rem; }
+  @media (prefers-reduced-motion: reduce) { .active { box-shadow: 0 0 0 4px #78bde8; } }
+</style>
+<h1>Fictional checkout request: DNS to LTM</h1>
+<p>Scenario: a client in Phoenix resolves <code>shop.example.test</code>, reaches a West VIP, and LTM selects a healthy member.</p>
+<div class="track" aria-label="Request path">
+  <div class="node" data-step="0">Client</div><span class="arrow">-&gt;</span>
+  <div class="node" data-step="1">Recursive DNS</div><span class="arrow">-&gt;</span>
+  <div class="node" data-step="2">GTM / BIG-IP DNS</div><span class="arrow">-&gt;</span>
+  <div class="node" data-step="3">West VIP</div><span class="arrow">-&gt;</span>
+  <div class="node" data-step="4">LTM pool member</div>
+</div>
+<p class="packet" id="status" aria-live="polite">Press play to trace the request.</p>
+<button id="play" type="button">Play</button> <button id="pause" type="button">Pause</button>
+<script>
+  const labels = ["Client asks for a name", "Resolver checks cache", "GTM returns West VIP with TTL", "TCP/TLS reaches the VIP", "LTM forwards to a healthy member"];
+  const nodes = [...document.querySelectorAll(".node")]; let step = -1; let timer;
+  function advance() { nodes.forEach(n => n.classList.remove("active")); step = (step + 1) % nodes.length; nodes[step].classList.add("active"); document.querySelector("#status").textContent = labels[step]; }
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelector("#play").onclick = () => { if (!timer) { advance(); if (!reducedMotion) timer = setInterval(advance, 1500); } };
+  document.querySelector("#pause").onclick = () => { clearInterval(timer); timer = undefined; };
+</script>
+</html>

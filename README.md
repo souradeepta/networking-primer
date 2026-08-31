@@ -34,6 +34,10 @@ For book-depth study, use the [Book Edition](book/README.md), which expands the
 topics into 14 chapters with worked examples, diagrams, operational checklists,
 and chapter-level Q&A.
 
+Practice with the [implementation exercises](exercises/README.md), and run the
+[local Docker/Wireshark demos](demos/README.md) when you want packet-level
+evidence.
+
 ## Start locally
 
 ```bash

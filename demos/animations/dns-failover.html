@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DNS failover and cache timeline</title>
+<style>
+  :root { color-scheme: light; font: 16px system-ui, sans-serif; }
+  body { color: #111; background: #fff; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+  .timeline { border-left: 4px solid #222; padding-left: 1rem; }
+  .event { margin: 1rem 0; padding: .8rem; border: 2px solid #222; background: #fff; }
+  .current { background: #fff3c4; }
+  button { font: inherit; padding: .5rem .8rem; }
+  @media (prefers-reduced-motion: reduce) { .current { outline: 3px solid #9a6700; } }
+</style>
+<h1>Fictional GTM failover: why clients move gradually</h1>
+<p>East loses application readiness at 12:00. Recursive resolvers still hold the prior answer until its TTL expires.</p>
+<div class="timeline" aria-live="polite">
+  <div class="event" data-step="0"><strong>12:00</strong> East monitor fails; GTM marks East ineligible.</div>
+  <div class="event" data-step="1"><strong>12:01</strong> A cache-miss query receives West.</div>
+  <div class="event" data-step="2"><strong>12:03</strong> Resolver A still serves cached East to some clients.</div>
+  <div class="event" data-step="3"><strong>12:05</strong> Most new lookups use West; existing connections remain separate.</div>
+</div>
+<p id="status" aria-live="polite">Press play to step through the timeline.</p>
+<button id="play" type="button">Play</button> <button id="pause" type="button">Pause</button>
+<script>
+  const events = [...document.querySelectorAll(".event")]; let step = -1; let timer;
+  function advance() { events.forEach(e => e.classList.remove("current")); step = (step + 1) % events.length; events[step].classList.add("current"); document.querySelector("#status").textContent = events[step].textContent; }
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelector("#play").onclick = () => { if (!timer) { advance(); if (!reducedMotion) timer = setInterval(advance, 1800); } };
+  document.querySelector("#pause").onclick = () => { clearInterval(timer); timer = undefined; };
+</script>
+</html>

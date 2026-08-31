@@ -34,3 +34,10 @@ the elaborated treatment.
 
 See the [book fact and inference ledger](FACT-INFERENCE-LEDGER.md) for the
 chapter-level evidence map.
+
+The [infrastructure case studies](case-studies/README.md) apply the concepts to
+fictional but operationally realistic outages and migrations.
+
+Focused references and runnable demos are in [book/topics](topics/README.md)
+and [`demos/`](../demos/README.md). These files deliberately separate VIP,
+certificate, monitor, GTM, DDI, and automation concerns for targeted study.

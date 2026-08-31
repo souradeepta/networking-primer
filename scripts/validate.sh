@@ -11,10 +11,20 @@ required=(
   book/README.md book/FACT-INFERENCE-LEDGER.md
   examples/request_path.py examples/f5_pool_audit.py
   scripts/check_internal_links.py
+  demos/README.md demos/dns_observe.sh demos/tls_inspect.sh
+  demos/vip_ltm_model.py demos/certificate_audit.py
+  demos/animations/request-journey.html demos/animations/dns-failover.html
+  demos/docker/README.md demos/docker/compose.yml demos/docker/server.py demos/docker/client.py
+  demos/wireshark.md exercises/README.md
 )
 
 for path in "${required[@]}"; do
   [[ -f "$path" ]] || { echo "Missing required file: $path" >&2; exit 1; }
+done
+
+for animation in demos/animations/*.html; do
+  rg -q 'Play|Pause' "$animation" || { echo "Animation lacks controls: $animation" >&2; exit 1; }
+  rg -q 'prefers-reduced-motion' "$animation" || { echo "Animation lacks reduced-motion fallback: $animation" >&2; exit 1; }
 done
 
 python3 - <<'PY'
@@ -44,6 +54,59 @@ for path in chapters:
     if "```mermaid" not in text:
         raise SystemExit(f"{path}: missing Mermaid diagram")
 print(f"Book chapter checks passed: {len(chapters)} chapters.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+cases = sorted(Path("book/case-studies").glob("*.md"))
+cases = [p for p in cases if p.name != "README.md"]
+if len(cases) < 4:
+    raise SystemExit(f"Need 4 infrastructure case studies; found {len(cases)}")
+required = ["Context and goals", "Architecture", "Timeline", "Evidence",
+            "Competing hypotheses", "Decision points", "Remediation",
+            "Verification", "Rollback or recovery", "Postmortem lessons",
+            "Questions and answers"]
+for path in cases:
+    text = path.read_text(encoding="utf-8")
+    missing = [h for h in required if f"## {h}" not in text]
+    if missing:
+        raise SystemExit(f"{path}: missing case-study headings: {', '.join(missing)}")
+    prose = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    prose = "\n".join(line for line in prose.splitlines() if not line.startswith(("#", "|", "- ")))
+    if len(re.findall(r"\b[\w'-]+\b", prose)) < 1500:
+        raise SystemExit(f"{path}: needs 1500 prose words")
+    if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < 10:
+        raise SystemExit(f"{path}: needs 10 numbered Q&A")
+    if "```mermaid" not in text:
+        raise SystemExit(f"{path}: missing Mermaid diagram")
+    if "| --- |" not in text:
+        raise SystemExit(f"{path}: needs at least one Markdown table")
+print(f"Infrastructure case-study checks passed: {len(cases)} cases.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+topics = sorted(p for p in Path("book/topics").glob("*.md") if p.name != "README.md")
+if len(topics) < 9:
+    raise SystemExit(f"Need 9 focused topic files; found {len(topics)}")
+for path in topics:
+    text = path.read_text(encoding="utf-8")
+    required = ["Learning objectives", "Worked example", "When this breaks",
+                "Operational checklist", "Questions and answers"]
+    missing = [h for h in required if f"## {h}" not in text]
+    if missing:
+        raise SystemExit(f"{path}: missing topic headings: {', '.join(missing)}")
+    if len(re.findall(r"\b[\w'-]+\b", re.sub(r"```.*?```", "", text, flags=re.DOTALL))) < 900:
+        raise SystemExit(f"{path}: needs 900 words")
+    if len(re.findall(r"^\s*\d+\.\s+\*\*", text, flags=re.MULTILINE)) < 5:
+        raise SystemExit(f"{path}: needs 5 numbered Q&A")
+    if "```mermaid" not in text or "| --- |" not in text:
+        raise SystemExit(f"{path}: needs Mermaid diagram and Markdown table")
+print(f"Focused topic checks passed: {len(topics)} topics.")
 PY
 
 python3 - <<'PY'

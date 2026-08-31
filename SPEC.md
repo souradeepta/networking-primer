@@ -62,3 +62,51 @@ minimums, Q&A counts, Mermaid presence, and local-link integrity. Central claims
 that depend on protocol standards or vendor behavior must be represented in a
 fact/inference ledger with primary references; recommendations must be labeled
 as engineering inferences.
+
+## Infrastructure case-study expansion (edition 3)
+
+Add at least four case studies, each at least 1,500 prose words, using fictional
+addresses and service names. Each case study must contain context and goals,
+architecture/topology, a timestamped incident or change timeline, evidence
+collected, competing hypotheses, decision points and trade-offs, remediation,
+verification, rollback or recovery, postmortem lessons, a detailed ASCII-only
+Mermaid diagram, and at least 10 explained Q&A. Required subjects are (1) an
+LTM VIP and certificate migration, (2) GTM/BIG-IP DNS multi-site failover, (3)
+DDI/IPAM-DHCP-DNS drift causing an outage, and (4) certificate automation and
+F5 change safety. Case studies must distinguish observed facts from inferred
+causes and cite primary protocol/vendor references.
+
+## Focused files and demos (edition 4)
+
+The book must also expose focused topic files rather than hiding all detail in
+combined chapters. Add at least six focused references covering VIPs/virtual
+servers, certificates and SNI, LTM monitors/pools, GTM Wide IPs and TTL,
+DDI/IPAM ownership, SSH/F5 automation, LB device lifecycle/upgrades, proxy
+architecture, and comprehensive F5 SDK usage. Each focused file must include a
+worked configuration or diagnostic example and at least 5 Q&A. Add at least
+four safe demos under `demos/`: shell DNS observation, shell TLS/certificate
+inspection, a Python VIP/LTM decision model, and a Python certificate or F5
+state audit. Demos must use reserved/local targets, fail clearly, avoid secrets,
+and run without modifying production systems.
+
+The demonstration stack is Python for networking models and audits, Linux/macOS
+CLI tools for experiments, Wireshark or tshark for packet inspection, Docker
+for reproducible local client/server environments, and Markdown/Mermaid for
+the teaching material. Docker and packet-capture exercises must be optional,
+local, and clearly separated from production targets.
+
+Include an implementation-exercise track with at least six exercises spanning
+DNS answer parsing, VIP/LTM selection, certificate inventory, request tracing,
+retry budgets, and F5 SDK plan generation. Exercises must specify edge cases,
+tests, and safety boundaries.
+
+Focused topic files and case studies must use Markdown tables when a matrix is
+clearer than prose (for example object mappings, evidence matrices, timelines,
+or decision trade-offs); each file must contain at least one such table.
+
+Add at least two self-contained, dependency-free browser animations under
+`demos/animations/`: one packet/request journey and one DNS/GTM failover
+timeline. They must include play/pause controls, explanatory labels, a reduced-
+motion fallback, and fictionalized real-world context. Case studies should use
+multiple diagrams where sequence, topology, and state transitions materially
+clarify the incident.
