@@ -18,6 +18,7 @@ notes; a recommendation is not the same thing as a product guarantee.
 7. [LB device lifecycle and upgrades](07-lb-device-lifecycle-upgrades.md)
 8. [Proxy architecture and protocol boundaries](08-proxy-architecture-and-boundaries.md)
 9. [Comprehensive F5 SDK](09-f5-sdk-comprehensive.md)
+10. [F5 LTM implementation labs](10-f5-ltm-implementation-labs.md)
 
 Each topic has objectives, a worked example, a failure section, an operational
 checklist, a diagram, and explained questions and answers. Addresses and names

@@ -89,6 +89,13 @@ inspection, a Python VIP/LTM decision model, and a Python certificate or F5
 state audit. Demos must use reserved/local targets, fail clearly, avoid secrets,
 and run without modifying production systems.
 
+The LTM implementation track must include a dedicated lab chapter covering
+self IPs, VLANs, VIPs/virtual servers, pools, members, nodes, monitors,
+profiles, SNAT, persistence, iRules/policies, client/server SSL profiles, and
+the exact source/destination IP:port tuple on both sides of the proxy. It must
+walk through basic balancing, member failure, SNAT, HTTPS offload,
+persistence, and symptom-driven troubleshooting.
+
 The demonstration stack is Python for networking models and audits, Linux/macOS
 CLI tools for experiments, Wireshark or tshark for packet inspection, Docker
 for reproducible local client/server environments, and Markdown/Mermaid for

@@ -91,8 +91,8 @@ from pathlib import Path
 import re
 
 topics = sorted(p for p in Path("book/topics").glob("*.md") if p.name != "README.md")
-if len(topics) < 9:
-    raise SystemExit(f"Need 9 focused topic files; found {len(topics)}")
+if len(topics) < 10:
+    raise SystemExit(f"Need 10 focused topic files; found {len(topics)}")
 for path in topics:
     text = path.read_text(encoding="utf-8")
     required = ["Learning objectives", "Worked example", "When this breaks",
