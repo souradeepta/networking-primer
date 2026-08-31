@@ -37,6 +37,12 @@ notes; a recommendation is not the same thing as a product guarantee.
 25. [CDN edge caching](25-cdn-edge-caching.md)
 26. [gRPC, WebSockets, and RPC](26-grpc-websockets-rpc.md)
 27. [Network automation and testing](27-network-automation-testing.md)
+28. [F5 traffic processing and TMM](28-f5-traffic-processing-and-tmm.md)
+29. [F5 SDK workbench](29-f5-sdk-workbench.md)
+30. [LTM selection, persistence, and capacity](30-ltm-selection-persistence-capacity.md)
+31. [BIG-IP DNS operations and debugging](31-bigip-dns-operations-and-debugging.md)
+32. [BIG-IP read-only troubleshooting](32-bigip-read-only-troubleshooting.md)
+33. [F5 API and automation toolchain](33-f5-api-and-automation-toolchain.md)
 Each topic has objectives, a worked example, a failure section, an operational
 checklist, a diagram, and explained questions and answers. Addresses and names
 are reserved or local: `198.51.100.0/24`, `203.0.113.0/24`, `2001:db8::/32`,

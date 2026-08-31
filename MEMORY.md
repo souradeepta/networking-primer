@@ -27,6 +27,9 @@
   conntrack, CDN edge caching, gRPC/WebSockets/RPC, and network automation.
   Edition 8 records their focused-reference contract and 600-word validator
   floor; deeper expansion remains a future content pass.
+- F5 expansion plan is documented in `docs/f5-expansion-plan.md`. Topics 28–33
+  now cover traffic processing/TMM, SDK workbench, LTM capacity, BIG-IP DNS
+  debugging, read-only troubleshooting, and the API/declarative toolchain.
 
 ## Verification
 

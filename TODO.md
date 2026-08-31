@@ -16,3 +16,6 @@
       diagrams, tables, and interview-depth Q&A.
 - [x] Split modern transport topics and add NAT/conntrack, CDN, RPC, and
       automation/testing focused references (topics 22–27).
+- [x] Map F5 gaps and add traffic-processing, SDK workbench, LTM capacity,
+      BIG-IP DNS operations, troubleshooting, and API-toolchain references
+      (topics 28–33).
