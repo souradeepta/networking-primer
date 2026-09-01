@@ -14,6 +14,17 @@ vendor behavior against the target release before relying on it.
 
 ## Suggested order
 
+Use the route map to jump by interview objective, then follow the numbered
+sequence when studying the whole collection.
+
+| Objective | Topics |
+| --- | --- |
+| Traffic delivery and F5 foundations | 01–10 |
+| Operations, routing, cloud, and security | 11–21 |
+| Protocol and systems deep dives | 22–27 |
+| F5 implementation and automation | 28–33 |
+| Distributed systems and cloud design | 34–37 |
+
 1. [VIPs and virtual servers](01-vips-and-virtual-servers.md)
 2. [Certificates, SNI, and termination](02-certificates-sni-and-termination.md)
 3. [LTM monitors, pools, and persistence](03-ltm-monitors-pools-and-persistence.md)

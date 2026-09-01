@@ -98,3 +98,13 @@ version that must be pinned before applying a claim.
 The ledger does not claim that a citation proves every sentence in a chapter;
 it identifies the central evidence-backed propositions and separates them from
 recommendations that require engineering judgment.
+
+## CCNA-to-Staff expansion evidence map
+
+| Modules | Fact and source boundary | Inference to validate |
+| --- | --- | --- |
+| 01–04 | Ethernet/VLAN: [IEEE 802.1Q](https://standards.ieee.org/ieee/802.1Q/); IPv4: [RFC 791](https://www.rfc-editor.org/rfc/rfc791); IPv6/ND: [RFC 8200](https://www.rfc-editor.org/rfc/rfc8200), [RFC 4861](https://www.rfc-editor.org/rfc/rfc4861) | Physical budgets, MTU, VLAN protections, and address allocation require the lab topology and platform release. |
+| 05–06 | OSPF: [RFC 2328](https://www.rfc-editor.org/rfc/rfc2328); BGP: [RFC 4271](https://www.rfc-editor.org/rfc/rfc4271); BFD: [RFC 5880](https://www.rfc-editor.org/rfc/rfc5880) | Route policy, convergence, redistribution, VRF leaking, and WAN failover need measured RIB/FIB and packet evidence. |
+| 07–10 | DHCP [RFC 2131](https://www.rfc-editor.org/rfc/rfc2131), DNS [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035), NTP [RFC 5905](https://www.rfc-editor.org/rfc/rfc5905), TACACS+ [RFC 8907](https://www.rfc-editor.org/rfc/rfc8907) | Service dependencies, wireless/QoS behavior, multicast scope, and ADC health contracts are deployment-specific. |
+| 11–13 | VXLAN [RFC 7348](https://www.rfc-editor.org/rfc/rfc7348), EVPN [RFC 7432](https://www.rfc-editor.org/rfc/rfc7432); AWS/GCP behavior uses selected provider documentation | Fabric, cloud, hybrid, and migration choices require capacity, ownership, route, policy, and return-path validation. |
+| 14–15 | YANG [RFC 7950](https://www.rfc-editor.org/rfc/rfc7950), NETCONF [RFC 6241](https://www.rfc-editor.org/rfc/rfc6241), RESTCONF [RFC 8040](https://www.rfc-editor.org/rfc/rfc8040) | Tool selection, controller ownership, observability, SLOs, and rollback are engineering decisions, not protocol guarantees. |

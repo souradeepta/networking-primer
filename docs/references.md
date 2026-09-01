@@ -55,8 +55,37 @@
 | The included F5 SDK example is production-ready for every BIG-IP release. | Not claimed | Validate installed BIG-IP/SDK versions and team interface standards |
 ## Cloud interview track evidence index
 
+## CCNA-to-Staff book expansion
+
+The [CCNA-to-Staff networking expansion](../book/ccna-networking/00-README.md)
+uses protocol and vendor evidence for switching, routing, BGP, WAN, security,
+wireless, QoS, multicast, EVPN/VXLAN, cloud, and automation. **Fact:** protocol
+behavior should be checked against the relevant RFC. **Vendor terminology:**
+IOS-XE, NX-OS, A10, F5, NSO, NDFC, AWS, and GCP names and command/API behavior
+are release-specific. **Observed lab result:** only applies to the stated
+simulator or appliance. **Engineering inference:** design, ownership, capacity,
+and rollback guidance must be validated against the target estate.
+
+| Area | Primary evidence | Verification boundary |
+| --- | --- | --- |
+| Routing and addressing | [RFC 791](https://www.rfc-editor.org/rfc/rfc791), [RFC 8200](https://www.rfc-editor.org/rfc/rfc8200), [RFC 4271](https://www.rfc-editor.org/rfc/rfc4271) | Check the correct VRF, RIB/FIB, route policy, and return path. |
+| Switching and fabric | [IEEE 802.1Q](https://standards.ieee.org/ieee/802.1Q/), [RFC 7432](https://www.rfc-editor.org/rfc/rfc7432), [RFC 7348](https://www.rfc-editor.org/rfc/rfc7348) | Check VLAN/VNI, STP/ECMP, VTEP, EVPN routes, MTU, and endpoint state. |
+| Services and security | [RFC 2131](https://www.rfc-editor.org/rfc/rfc2131), [RFC 1035](https://www.rfc-editor.org/rfc/rfc1035), [RFC 8907](https://www.rfc-editor.org/rfc/rfc8907) | Check DNS/DHCP/time, ACL direction, AAA, and device/cloud policy logs. |
+| Automation | [RFC 7950](https://www.rfc-editor.org/rfc/rfc7950), [RFC 6241](https://www.rfc-editor.org/rfc/rfc6241), [RFC 8040](https://www.rfc-editor.org/rfc/rfc8040) | Check schema/version, ownership, idempotency, state, drift, and read-back. |
+
 The standalone [Cloud Networking Interview Track](../cloud-networking-interview/00-README.md)
 contains its own ordered modules and local [fact/terminology/inference ledger](../cloud-networking-interview/17-references.md).
 Use the AWS and Google Cloud links there for provider-specific claims; verify
 service, region, account/project policy, release, quota, and pricing boundaries
 before applying a claim to a real design.
+
+The Terraform track also covers [A10 ADCs, Cisco networking, spine-leaf
+fabrics, and Cisco NSO](../terraform-interview/00-README.md). Those modules
+label product behavior as vendor-specific and require verification against
+the selected A10, IOS-XE/NX-OS, NDFC, or NSO release and licensed capabilities.
+
+The standalone [Terraform Interview Track](../terraform-interview/00-README.md)
+contains Terraform-specific modules and a local [evidence ledger](../terraform-interview/13-references.md).
+Use it for provider version, state, import, F5 AS3, and plan/apply claims, and
+verify the selected Terraform CLI, provider lock entry, account/project, BIG-IP
+release, permissions, quotas, and pricing before use.

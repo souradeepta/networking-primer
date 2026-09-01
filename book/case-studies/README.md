@@ -5,6 +5,17 @@ networking concepts operational. Addresses use documentation ranges and names
 are illustrative. Each case separates observed evidence from inferred cause;
 no scenario authorizes changing a real F5, DNS, DHCP, or certificate system.
 
+## A. Case-study routes
+
+| Failure or design theme | Cases |
+| --- | --- |
+| Traffic delivery, persistence, and HA | 01, 02, 11, 12, 13, 14, 15, 19 |
+| DDI, addressing, and network migration | 03, 07, 09, 10 |
+| Transport, TLS, and security | 05, 06, 08, 16, 17 |
+| Automation, lifecycle, and change safety | 04, 18, 19 |
+
+## B. Complete case index
+
 1. [LTM VIP and certificate migration](01-ltm-vip-certificate-migration.md)
 2. [GTM multi-site failover](02-gtm-multisite-failover.md)
 3. [DDI drift outage](03-ddi-drift-outage.md)

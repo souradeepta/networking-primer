@@ -32,7 +32,7 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 
-chapters = sorted(p for p in Path("book").glob("*.md") if p.name not in {"README.md", "FACT-INFERENCE-LEDGER.md"})
+chapters = sorted(p for p in Path("book").glob("*.md") if p.name not in {"README.md", "FACT-INFERENCE-LEDGER.md", "ccna-networking-expansion-spec.md", "ccna-networking-expansion-todo.md", "ccna-networking-expansion-review.md"})
 if len(chapters) < 17:
     raise SystemExit(f"Book edition needs 17 chapters; found {len(chapters)}")
 required = [
@@ -58,6 +58,61 @@ for path in chapters:
     if path.name.startswith(("15-", "16-", "17-")) and "| --- |" not in text:
         raise SystemExit(f"{path}: edition-5 chapter needs a Markdown table")
 print(f"Book chapter checks passed: {len(chapters)} chapters.")
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+root = Path("book/ccna-networking")
+expected = ["00-README.md"] + [
+    f"{n:02d}-" + name for n, name in enumerate([
+        "network-models-and-physical.md", "ethernet-switching-and-vlans.md",
+        "stp-lacp-and-layer2-resilience.md", "ipv4-subnetting-nat-and-ipv6.md",
+        "routing-static-ospf-and-vrf.md", "bgp-policy-and-hybrid-wan.md",
+        "network-services-and-operations.md", "acls-aaa-and-network-security.md",
+        "wireless-and-qos.md", "multicast-and-service-delivery.md",
+        "data-center-fabrics.md", "cloud-networking-aws-gcp.md",
+        "private-public-hybrid-and-onprem.md", "automation-sdn-and-iac.md",
+        "observability-troubleshooting-and-design.md",
+    ], start=1)
+]
+actual = sorted(p.name for p in root.glob("*.md")) if root.exists() else []
+if actual != sorted(expected):
+    raise SystemExit(f"CCNA expansion exact file set mismatch: {actual}; expected: {sorted(expected)}")
+readme = (root / "00-README.md").read_text(encoding="utf-8")
+if "Atomic concept-to-evidence crosswalk" not in readme:
+    raise SystemExit("CCNA README missing atomic concept-to-evidence crosswalk")
+if readme.count("| ") < 16:
+    raise SystemExit("CCNA README crosswalk is too small")
+for name in expected[1:]:
+    if f"]({name})" not in readme:
+        raise SystemExit(f"CCNA README missing ordered link: {name}")
+for path in [root / name for name in expected[1:]]:
+    text = path.read_text(encoding="utf-8")
+    lowered = text.lower()
+    required = ["learning objectives", "prerequisites", "mental model", "verification", "failure", "exercise", "references"]
+    missing = [h for h in required if h not in lowered]
+    if "questions and answers" not in lowered and "interview q&a" not in lowered:
+        missing.append("questions and answers")
+    if missing:
+        raise SystemExit(f"{path}: missing CCNA contract markers: {', '.join(missing)}")
+    if text.count("```mermaid") < 2 or "| --- |" not in text:
+        raise SystemExit(f"{path}: needs two Mermaid diagrams and a table")
+    if len(re.findall(r"^\s*\d+\.\s+", text, flags=re.MULTILINE)) < 6:
+        raise SystemExit(f"{path}: needs numbered Q&A/exercise entries")
+    for heading in ("## J.", "## K.", "## L."):
+        if heading not in text:
+            raise SystemExit(f"{path}: missing completion heading {heading}")
+    for marker in ("Safety", "Baseline", "Injected fault", "Expected output", "Repair", "Rollback", "Cleanup"):
+        if marker.lower() not in lowered:
+            raise SystemExit(f"{path}: failure lab missing {marker.lower()} field")
+    if "criterion" not in lowered and "score" not in lowered:
+        raise SystemExit(f"{path}: missing criterion-level completion evidence")
+    for label in ("Fact", "Vendor terminology", "Observed lab result", "Engineering inference"):
+        if label not in text:
+            raise SystemExit(f"{path}: missing evidence label {label}")
+print(f"CCNA expansion checks passed: {len(expected)-1} modules and exact index.")
 PY
 
 python3 - <<'PY'
@@ -390,4 +445,86 @@ for path in sorted(root.glob('*.md')):
         if not block.isascii():
             raise SystemExit(f'{path}: Mermaid diagram contains non-ASCII characters')
 print(f'Cloud networking interview track checks passed: {len(expected)-2} topics, exact index, depth, exercises, Q&A, tables, and diagrams.')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+root = Path('terraform-interview')
+expected = {
+    '00-README.md', '13-references.md',
+    '01-terraform-core-and-execution-model.md', '02-providers-versions-and-authentication.md',
+    '03-state-backends-locking-and-workspaces.md', '04-resources-data-modules-and-composition.md',
+    '05-plan-apply-lifecycle-and-safe-change.md', '06-import-moved-blocks-and-drift-recovery.md',
+    '07-aws-networking-with-terraform.md', '08-gcp-networking-with-terraform.md',
+    '09-f5-big-ip-provider-and-as3-boundaries.md', '10-multi-provider-platform-patterns.md',
+    '11-testing-policy-cicd-and-security.md', '12-debugging-rollback-cost-and-interview-loops.md',
+    '14-real-world-terraform-exercises.md', '15-real-world-exercise-answer-key.md',
+    '16-a10-load-balancers-and-terraform.md', '17-cisco-networking-and-terraform.md',
+    '18-spine-leaf-switching-and-fabric-as-code.md', '19-cisco-nso-service-models-and-terraform.md',
+}
+actual = {p.name for p in root.glob('*.md')}
+if actual != expected:
+    raise SystemExit(f'Terraform track file set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}')
+index = (root / '00-README.md').read_text(encoding='utf-8')
+ordered = re.findall(r'\]\(([^)]+\.md)\)', index)
+expected_modules = [f'{i:02d}-' for i in range(1, 13)]
+listed = [Path(name).name for name in ordered if not name.startswith('../')]
+if len(listed) < 14 or any(not listed[i].startswith(expected_modules[i]) for i in range(12)):
+    raise SystemExit('Terraform README must list all 12 modules in order')
+if not listed[12].startswith('14-real-world-') or not listed[13].startswith('15-real-world-'):
+    raise SystemExit('Terraform README must list the real-world exercise pack after the modules')
+if not listed[14].startswith('16-a10-') or not listed[15].startswith('17-cisco-'):
+    raise SystemExit('Terraform README must list A10 and Cisco modules after the exercises')
+if not listed[16].startswith('18-spine-') or not listed[17].startswith('19-cisco-nso-'):
+    raise SystemExit('Terraform README must list spine-leaf and NSO modules after Cisco')
+for path in sorted(root.glob('*.md')):
+    if path.name in {'00-README.md', '13-references.md'}:
+        continue
+    text = path.read_text(encoding='utf-8')
+    if path.name in {'14-real-world-terraform-exercises.md', '15-real-world-exercise-answer-key.md'}:
+        for marker in ('AWS', 'GCP', 'F5', 'Terraform', 'exercise', 'answer', 'rollback'):
+            if marker.lower() not in text.lower():
+                raise SystemExit(f'{path}: missing real-world practice marker {marker!r}')
+        prose = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
+        if len(re.findall(r"\b[\w'-]+\b", prose)) < 2200:
+            raise SystemExit(f'{path}: needs at least 2200 prose words')
+        if text.count('```mermaid') < 4:
+            raise SystemExit(f'{path}: needs at least four architecture diagrams')
+        if not re.search(r'^\|\s*:?-{3,}:?\s*\|', text, flags=re.MULTILINE):
+            raise SystemExit(f'{path}: needs a Markdown exercise/evidence table')
+        continue
+    if path.name in {'16-a10-load-balancers-and-terraform.md', '17-cisco-networking-and-terraform.md', '18-spine-leaf-switching-and-fabric-as-code.md', '19-cisco-nso-service-models-and-terraform.md'}:
+        for marker in ('AWS', 'GCP', 'Terraform', 'exercise', 'answer', 'rollback'):
+            if marker.lower() not in text.lower():
+                raise SystemExit(f'{path}: missing platform-module marker {marker!r}')
+        if path.name.startswith('16-') and 'A10' not in text:
+            raise SystemExit(f'{path}: missing A10 coverage')
+        if path.name.startswith(('17-', '18-', '19-')) and 'Cisco' not in text:
+            raise SystemExit(f'{path}: missing Cisco coverage')
+        prose = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
+        if len(re.findall(r"\b[\w'-]+\b", prose)) < 1500:
+            raise SystemExit(f'{path}: needs at least 1500 prose words')
+        if text.count('```mermaid') < 2:
+            raise SystemExit(f'{path}: needs at least two architecture diagrams')
+        if not re.search(r'^\|\s*:?-{3,}:?\s*\|', text, flags=re.MULTILINE):
+            raise SystemExit(f'{path}: needs a Markdown evidence table')
+        continue
+    for marker in ('Learning objectives', 'Prerequisites', 'AWS', 'GCP', 'F5', 'Terraform', 'Exercises', 'References'):
+        if marker.lower() not in text.lower():
+            raise SystemExit(f'{path}: missing required marker {marker!r}')
+    prose = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
+    if len(re.findall(r"\b[\w'-]+\b", prose)) < 1100:
+        raise SystemExit(f'{path}: needs at least 1100 prose words')
+    if text.count('```mermaid') < 2 or '```hcl' not in text:
+        raise SystemExit(f'{path}: needs two Mermaid diagrams and Terraform HCL')
+    if not re.search(r'^\|\s*:?-{3,}:?\s*\|', text, flags=re.MULTILINE):
+        raise SystemExit(f'{path}: needs an evidence/comparison table')
+    if len(re.findall(r'^\s*(?:\d+\.\s+\*\*|###\s+(?:[A-Z]\.)?\d+(?:\.|\s))', text, flags=re.MULTILINE)) < 6:
+        raise SystemExit(f'{path}: needs at least six interview Q&A entries')
+    for block in re.findall(r'```mermaid\n(.*?)```', text, flags=re.DOTALL):
+        if not block.isascii():
+            raise SystemExit(f'{path}: Mermaid diagram contains non-ASCII characters')
+print('Terraform interview track checks passed: exact 20-file set, ordered index, provider examples, HCL, diagrams, exercises, and Q&A.')
 PY

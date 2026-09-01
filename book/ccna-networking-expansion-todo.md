@@ -1,0 +1,114 @@
+# CCNA-to-Staff Networking Expansion TODO
+
+Use `[ ]` for incomplete, `[~]` for in progress, and `[x]` only after the
+implementation and evidence checks pass. The spec is the source of truth.
+
+## A. Planning and scaffolding
+
+- [x] Create `book/ccna-networking/00-README.md` with ordered index and gates.
+- [x] Create modules `01` through `15` with stable numeric filenames.
+- [x] Add book/docs/root index links and related-track links.
+- [x] Add validator checks for exact files, headings, diagrams, labs, answers,
+  crosswalk terms, and link integrity.
+- [x] Add or update `book/FACT-INFERENCE-LEDGER.md` for new facts and inferences.
+
+## B. Module implementation matrix
+
+For each row, all six boxes must be checked: `[C]` concepts, `[L]` lab,
+`[E]` exercise+answer, `[D]` diagrams, `[Q]` Q&A, `[R]` references.
+
+- [x] 01 Network models/physical: [C] [L] [E] [D] [Q] [R]
+- [x] 02 Ethernet/switching/VLANs: [C] [L] [E] [D] [Q] [R]
+- [x] 03 STP/LACP/L2 resilience: [C] [L] [E] [D] [Q] [R]
+- [x] 04 IPv4/NAT/IPv6: [C] [L] [E] [D] [Q] [R]
+- [x] 05 Routing/OSPF/VRF: [C] [L] [E] [D] [Q] [R]
+- [x] 06 BGP/policy/WAN: [C] [L] [E] [D] [Q] [R]
+- [x] 07 IP services/operations: [C] [L] [E] [D] [Q] [R]
+- [x] 08 ACL/AAA/security: [C] [L] [E] [D] [Q] [R]
+- [x] 09 Wireless/QoS: [C] [L] [E] [D] [Q] [R]
+- [x] 10 Multicast/service delivery: [C] [L] [E] [D] [Q] [R]
+- [x] 11 Data-center fabrics: [C] [L] [E] [D] [Q] [R]
+- [x] 12 AWS/GCP cloud networking: [C] [L] [E] [D] [Q] [R]
+- [x] 13 Private/public/hybrid/on-prem: [C] [L] [E] [D] [Q] [R]
+- [x] 14 SDN/automation/IaC: [C] [L] [E] [D] [Q] [R]
+- [x] 15 Observability/troubleshooting/design: [C] [L] [E] [D] [Q] [R]
+
+## C. Crosswalk completion checks
+
+- [x] Fundamentals, devices, planes, topology, domains, convergence
+- [x] Copper/fiber/optics/PoE/interface errors/MTU
+- [x] Ethernet/MAC/CAM/VLAN/trunk/SVI/L2 security/discovery
+- [x] STP/RSTP/MST/BPDU guards/EtherChannel/LACP/PAgP/MLAG/vPC/FHRP
+- [x] IPv4/subnetting/CIDR/VLSM/IPAM/public-private/overlap/exhaustion
+- [x] NAT/PAT/static/dynamic/pools/hairpin/CGNAT
+- [x] IPv6/GUA/link-local/ULA/multicast/EUI-64/SLAAC/DHCPv6/ND/DAD/transition
+- [x] RIB/FIB/CEF/static/default/PBR/ECMP/redistribution/policy/VRF/BFD
+- [x] OSPF areas/LSAs/DR-BDR/ABR-ASBR/stub-NSSA/auth/mismatch diagnosis
+- [x] BGP attributes/policy/RR/communities/filtering/MP-BGP/EVPN/convergence
+- [x] WAN/MPLS/GRE/IPsec/IKE/DMVPN/SD-WAN/VPN/DX/Interconnect
+- [x] DHCP/DNS/NTP/SNMP/syslog/flows/SPAN/CDP/LLDP/SSH/ZTP
+- [x] ACL/CoPP/AAA/TACACS/RADIUS/RBAC/802.1X/NAC/device hardening
+- [x] Threats/IDS/IPS/NGFW/WAF/DDoS/segmentation/zero trust/SIEM/forensics
+- [x] Wireless RF/channels/interference/AP/WLC/CAPWAP/WPA2/3/roaming
+- [x] QoS classification/marking/DSCP/CoS/trust/policing/shaping/queues/WRED
+- [x] IGMP/PIM/RP/RPF/SSM/ASM/multicast boundaries/BUM
+- [x] Clos/VXLAN/EVPN/VTEP/VNI/route types/anycast/VRF/vPC/border/MTU
+- [x] A10/F5 L4-L7/VIP/pools/health/persistence/SNAT/TLS/WAF/draining
+- [x] AWS complete networking inventory and evidence paths
+- [x] GCP complete networking inventory and evidence paths
+- [x] Private/public/hybrid/on-prem setup, migration, cost, capacity, DR
+- [x] SDN/NFV/controllers/APIs/YANG/NETCONF/RESTCONF/gNMI/OpenConfig
+- [x] Terraform/Ansible/NSO/NDFC/device APIs/idempotency/state/drift/testing
+- [x] Observability, tools, counters, captures, hypothesis/falsifier, incidents
+- [x] SDE2 mechanism and Staff ownership/capacity/migration/system design
+
+## D. Final quality review
+
+- [x] Every module has two compliant Mermaid diagrams.
+- [x] Every lab has starting state, reserved targets, steps, expected evidence,
+  cleanup, and safety boundary.
+- [x] Every exercise has detailed answer, rubric, SDE2 follow-up, and Staff
+  follow-up.
+- [x] Every module has six or more Q&A entries with wrong turns and evidence.
+- [x] Provider/vendor/version claims are labeled and referenced.
+- [x] No duplicate Terraform/controller/device ownership is taught implicitly.
+- [x] AWS/GCP differences are technically explicit, not simple renamings.
+- [x] Links and indexes cover every file exactly once.
+- [x] `./scripts/validate.sh` passes.
+- [x] `python3 examples/request_path.py` passes.
+- [x] `python3 scripts/check_internal_links.py` passes.
+- [x] `git diff --check` passes.
+
+## E. Terra final-review gates
+
+Implementation gates below are complete. The second independent Terra pass is
+pending because the Terra worker hit the platform usage limit during the first
+retry; do not treat the implementation as Terra-approved until those gates are
+checked by a fresh Terra review.
+
+- [ ] Terra checks every section D concept against the rendered book.
+- [ ] Terra checks every module against the content contract.
+- [ ] Terra checks lab realism, networking depth, and answer correctness.
+- [ ] Terra checks AWS/GCP/Terraform examples and ownership boundaries.
+- [ ] Terra checks all diagrams for readability, ASCII, and accurate paths.
+- [ ] Terra checks SDE2 versus Staff progression and missing follow-ups.
+- [ ] Terra reports no high-severity omission or misleading claim.
+- [ ] Owner fixes all Terra findings and requests a second Terra pass.
+- [ ] Terra signs off with a dated coverage report.
+
+## F. Current progress snapshot
+
+Updated 2026-09-01 after the latest Terra audit.
+
+- **Implementation:** Luna has saved the 15-module expansion, atomic concept
+  crosswalk, reproducible-lab records, criterion-level answer scaffolding, and
+  cloud/controller/ADC ownership notes.
+- **Automated quality:** repository validation, the Python request-path example,
+  internal-link checks, Mermaid checks, heading checks, and `git diff --check`
+  pass.
+- **Terra quality gate:** **NOT APPROVED**. Terra still requires real replayable
+  mechanism fixtures, artifact-backed observed outputs for worked submissions,
+  and exclusive field-level request/read-back records with independent data-
+  plane checks for AWS, GCP, Terraform, NSO, NDFC, F5, and A10.
+- **Publication:** commit and push are pending because `.git` is currently
+  mounted read-only; the working tree remains available for further edits.

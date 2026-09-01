@@ -38,3 +38,11 @@ Use [17-references.md](17-references.md) for the local fact, vendor-terminology,
 - Quantify at least one capacity, address, port, RTO/RPO, or cost assumption.
 - Name evidence, a falsifier, rollback point, and owner for a proposed change.
 - Complete the three mock loops in the final module and score yourself against the repository's [interview rubric](../docs/interview-rubric.md).
+
+## F. Related tracks
+
+- [Repository map](../README.md)
+- [Terraform and network automation](../terraform-interview/00-README.md)
+- [Integrated platform labs](../platform-integration-labs/00-README.md)
+- [Book and focused topics](../book/README.md)
+- [Private, public, hybrid, and on-premises models](../cloud-deployment-models/00-README.md)

@@ -7,12 +7,16 @@ is sound mental models and safe debugging questions, not device administration.
 
 ## Choose your depth
 
-| Directory | Best for |
+| Start here | Best for |
 | --- | --- |
-| [`docs/`](docs/README.md) | Quick concepts, runbooks, glossary, interview Q&A, and compact labs |
-| [`book/`](book/README.md) | Long-form chapters, focused F5 topics, and 19 infrastructure case studies |
-| [`demos/`](demos/README.md) | Python/shell experiments, Docker/Wireshark workflows, and browser animations |
-| [`exercises/`](exercises/README.md) | Implementation assignments with testable edge cases |
+| [`docs/`](docs/README.md) | Quick concepts, operations, interviews, references, and study plans |
+| [`book/`](book/README.md) | Long-form chapters, focused topics, and incident case studies |
+| [`cloud-networking-interview/`](cloud-networking-interview/00-README.md) | Ordered AWS/GCP cloud networking preparation |
+| [`cloud-deployment-models/`](cloud-deployment-models/00-README.md) | Networking-focused private, public, hybrid, and on-premises cloud designs |
+| [`terraform-interview/`](terraform-interview/00-README.md) | Terraform, IaC, provider, state, and network automation interviews |
+| [`platform-integration-labs/`](platform-integration-labs/00-README.md) | End-to-end ADC, router, switch, node, cloud, NSO, and Terraform labs |
+| [`demos/`](demos/README.md) | Runnable Python/shell, Docker/Wireshark, and browser experiments |
+| [`exercises/`](exercises/README.md) | Small implementation assignments with testable edge cases |
 
 Use `docs/` for a fast operational refresher and `book/` for deep study or
 design review preparation. The overlap is intentional: each layer adds detail,
@@ -77,6 +81,19 @@ AWS and Google Cloud as explicit comparisons across routing, private services,
 identity, Kubernetes, observability, capacity, disaster recovery, migration,
 and Staff-level mock interviews.
 
+For Terraform and infrastructure-as-code interview preparation, use the
+[Terraform Interview Track](terraform-interview/00-README.md). It covers
+Terraform execution, state, providers, plans, imports, AWS, GCP, F5 BIG-IP,
+multi-provider ownership, testing, policy, CI/CD, rollback, and interview loops.
+The extended platform modules also cover [A10 ADCs, Cisco networking,
+spine-leaf fabrics, and Cisco NSO](terraform-interview/16-a10-load-balancers-and-terraform.md).
+
+For end-to-end practice combining those platforms, use the [integrated network
+platform labs](platform-integration-labs/00-README.md), which includes lab
+contracts, failure exercises, system-design discussions, diagrams, and
+interview prompts spanning ADCs, routers, switches, nodes, clouds, NSO, and
+Terraform.
+
 Practice evidence-led conversations with the [interview dialogue
 exercises](docs/interview-dialogue-exercises.md), including DNS, TCP, TLS, F5,
 incident response, authorized testing, and chaos-test planning.
@@ -87,7 +104,25 @@ Then use the [troubleshooting runbook](docs/05-troubleshooting.md), answer the
 
 For book-depth study, use the [Book Edition](book/README.md), which expands the
 topics into 17 chapters with worked examples, diagrams, operational checklists,
-and chapter-level Q&A.
+and chapter-level Q&A. The book also includes the [CCNA-to-Staff networking
+expansion](book/ccna-networking/00-README.md), with switching, routing, wireless,
+security, cloud, automation, and troubleshooting modules.
+
+CCNA expansion modules: [01](book/ccna-networking/01-network-models-and-physical.md),
+[02](book/ccna-networking/02-ethernet-switching-and-vlans.md),
+[03](book/ccna-networking/03-stp-lacp-and-layer2-resilience.md),
+[04](book/ccna-networking/04-ipv4-subnetting-nat-and-ipv6.md),
+[05](book/ccna-networking/05-routing-static-ospf-and-vrf.md),
+[06](book/ccna-networking/06-bgp-policy-and-hybrid-wan.md),
+[07](book/ccna-networking/07-network-services-and-operations.md),
+[08](book/ccna-networking/08-acls-aaa-and-network-security.md),
+[09](book/ccna-networking/09-wireless-and-qos.md),
+[10](book/ccna-networking/10-multicast-and-service-delivery.md),
+[11](book/ccna-networking/11-data-center-fabrics.md),
+[12](book/ccna-networking/12-cloud-networking-aws-gcp.md),
+[13](book/ccna-networking/13-private-public-hybrid-and-onprem.md),
+[14](book/ccna-networking/14-automation-sdn-and-iac.md), and
+[15](book/ccna-networking/15-observability-troubleshooting-and-design.md).
 
 Practice with the [implementation exercises](exercises/README.md), and run the
 [local Docker/Wireshark demos](demos/README.md) when you want packet-level

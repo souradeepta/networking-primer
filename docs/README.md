@@ -15,7 +15,12 @@ that track.
 | Become stronger at Unix/network diagnosis | [Toolkit index](infra-engineer-toolkit.md) | Unix sessions -> tools -> cheatsheets -> runbooks/exercises |
 | Learn F5 LTM/GTM | [F5 LTM](03-f5-ltm.md) | [F5 GTM](04-f5-gtm.md), F5 bank, labs, and read-only troubleshooting |
 | Review cloud-native networking | [Platform networking](10-platform-networking.md) | DDI, transport security, Kubernetes, overlays, BGP, and capacity |
+| Study CCNA-to-Staff networking | [CCNA networking expansion](../book/ccna-networking/00-README.md) | Switching, routing, wireless, security, cloud, automation, troubleshooting, and design |
 | Prepare for cloud networking interviews | [Cloud networking interview track](../cloud-networking-interview/00-README.md) | AWS/GCP comparisons, hybrid networking, debugging, capacity, DR, migration, and Staff mock loops |
+| Compare deployment models | [Cloud deployment models](../cloud-deployment-models/00-README.md) | Private, public, hybrid, and on-premises networking, connectivity, challenges, labs, case studies, and Q&A |
+| Prepare for Terraform/IaC interviews | [Terraform interview track](../terraform-interview/00-README.md) | Terraform execution, state, plans, imports, AWS, GCP, F5, CI/CD, rollback, and Staff design loops |
+| Practice network automation platforms | [Terraform platform modules](../terraform-interview/16-a10-load-balancers-and-terraform.md) | A10 ADCs, Cisco automation, spine-leaf fabrics, NDFC, and Cisco NSO service models |
+| Practice integrated platform labs | [Integrated network platform labs](../platform-integration-labs/00-README.md) | End-to-end labs combining ADCs, routers, switches, nodes, clouds, NSO, and Terraform |
 | Practice safely | [Hands-on labs](09-hands-on-labs.md) | Demos, implementation exercises, and case studies |
 
 ## B. Recommended reading sequence
@@ -101,11 +106,14 @@ that track.
 | Safety, privacy, warranty, and generated content | [Repository disclosures](../DISCLOSURES.md) |
 | Repository contract | [SPEC](../SPEC.md) and [AGENTS guidance](../AGENTS.md) |
 
-## E. How the directories fit together
+## E. Repository map
 
 ```text
 docs/       quick concepts, troubleshooting, interviews, labs, and plans
 book/       long-form chapters, focused topics, and case studies
+cloud-*/    ordered AWS/GCP cloud networking interview track
+terraform-*/ ordered Terraform and network automation track
+platform-*/ integrated multi-vendor labs and system design
 demos/      runnable local or fixture-based experiments
 exercises/  implementation assignments and edge cases
 examples/   small dependency-free reference programs
@@ -115,6 +123,36 @@ scripts/    repository validation and link checks
 The numeric prefixes on the original quick-start files are retained for
 backward-compatible links. This index supplies the logical grouping; do not
 infer that a higher filename number is always more advanced.
+
+## F. Discoverability map
+
+| If you want to... | Start here | Next |
+| --- | --- | --- |
+| Learn the request path quickly | [Foundations](01-foundations.md) | [Request path](02-request-path.md) -> [Troubleshooting](05-troubleshooting.md) |
+| Study cloud networking | [Cloud track](../cloud-networking-interview/00-README.md) | AWS/GCP modules -> synthesis and mocks |
+| Study Terraform and IaC | [Terraform track](../terraform-interview/00-README.md) | state -> providers -> cloud -> platform automation |
+| Practice complete platform designs | [Integrated labs](../platform-integration-labs/00-README.md) | topology -> exercises -> system-design discussions |
+| Debug as an infrastructure engineer | [Toolkit](infra-engineer-toolkit.md) | Unix sessions -> tools -> cheatsheets -> runbooks |
+| Prepare for SDE2 | [Study plan](interview-study-plan.md) | question banks -> dialogue -> simulations -> design |
+| Prepare for Staff | [Staff rubric](staff-interview-rubric.md) | design review -> behavioral -> platform labs |
+| Find evidence and terminology | [References](references.md) | [Glossary](glossary.md) -> book ledger |
+
+The [CCNA-to-Staff expansion](../book/ccna-networking/00-README.md) is ordered
+through [01](../book/ccna-networking/01-network-models-and-physical.md),
+[02](../book/ccna-networking/02-ethernet-switching-and-vlans.md),
+[03](../book/ccna-networking/03-stp-lacp-and-layer2-resilience.md),
+[04](../book/ccna-networking/04-ipv4-subnetting-nat-and-ipv6.md),
+[05](../book/ccna-networking/05-routing-static-ospf-and-vrf.md),
+[06](../book/ccna-networking/06-bgp-policy-and-hybrid-wan.md),
+[07](../book/ccna-networking/07-network-services-and-operations.md),
+[08](../book/ccna-networking/08-acls-aaa-and-network-security.md),
+[09](../book/ccna-networking/09-wireless-and-qos.md),
+[10](../book/ccna-networking/10-multicast-and-service-delivery.md),
+[11](../book/ccna-networking/11-data-center-fabrics.md),
+[12](../book/ccna-networking/12-cloud-networking-aws-gcp.md),
+[13](../book/ccna-networking/13-private-public-hybrid-and-onprem.md),
+[14](../book/ccna-networking/14-automation-sdn-and-iac.md), and
+[15](../book/ccna-networking/15-observability-troubleshooting-and-design.md).
 
 ## G. Filename policy
 
