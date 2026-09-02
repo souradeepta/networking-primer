@@ -1,0 +1,274 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+      "_controller.stage": "repair",
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+          "stage": "repair"
+        },
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 3,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-control-only-negative",
+          "stage": "control-only-negative"
+        },
+        "igmp": "joined",
+        "operator_note": "metadata-only control change; no forwarding input changes",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "test": "10",
+        "vip": "healthy"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-10",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "operator_note",
+        "test"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+      "desired_state": {
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 4,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+        "_controller.stage": "repair",
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+          "stage": "repair"
+        },
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      },
+      "effective_state_hash": "eb3d6137962226366e504238692d393721a3513a48512bb24f9027df876fcdc3",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      },
+      "stage": "repair",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+      "timestamp": "2026-09-02T03:15:42.752Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "stage": "repair",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.753Z"
+  },
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 3,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-control-only-negative",
+        "stage": "control-only-negative"
+      },
+      "igmp": "joined",
+      "operator_note": "metadata-only control change; no forwarding input changes",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "test": "10",
+      "vip": "healthy"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-10",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "desired_state": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+      "_controller.stage": "repair",
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 4,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+        "stage": "repair"
+      },
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "effective_state_hash": "eb3d6137962226366e504238692d393721a3513a48512bb24f9027df876fcdc3",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "stage": "repair",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-10-repair",
+    "timestamp": "2026-09-02T03:15:42.752Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "desired_state": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "10-multicast-service-delivery",
+    "operation": "repair",
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.752Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "healthy_backends": 2,
+      "igmp_membership": "joined",
+      "pim_neighbor": "FULL",
+      "rpf_check": "PASS",
+      "rpf_interface": "uplink-a"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-10-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "rpf_check": "PASS"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "client",
+        "L3 tree",
+        "RPF check",
+        "ADC VIP",
+        "backend pool"
+      ],
+      "request": {
+        "healthy_backends": 2
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-10-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "client -- L3 tree -- RPF check -- ADC VIP -- backend pool",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-10-baseline"
+    },
+    "traffic_request": {
+      "healthy_backends": 2
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

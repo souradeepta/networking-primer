@@ -281,3 +281,7 @@ and [NDFC](https://www.cisco.com/c/en/us/products/cloud-systems-management/data-
 **Observed lab result:** UDP 4789 visibility depends on the capture point and
 offload settings. **Engineering inference:** treat underlay, overlay, and
 service insertion as separately owned evidence domains.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`11-vxlan-evpn.json`](fixtures/observed/11-vxlan-evpn.json). The v3 evaluator derives type-2 count, VNI, underlay, and BUM behavior from effective fabric intent and an independent remote-MAC fixture. The negative assertion separates healthy metadata control from evaluator-only underlay loss; task/read-back, repair, rollback, and cleanup remain visible. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#12-b-module-11--11-vxlan-evpn).

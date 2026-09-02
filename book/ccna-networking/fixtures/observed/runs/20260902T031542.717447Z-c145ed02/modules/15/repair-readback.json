@@ -1,0 +1,238 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+      "_controller.stage": "repair",
+      "telemetry_profile": "complete"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+          "stage": "repair"
+        },
+        "telemetry_profile": "complete"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 3,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-control-only-negative",
+          "stage": "control-only-negative"
+        },
+        "operator_note": "metadata-only control change; no forwarding input changes",
+        "telemetry_profile": "complete",
+        "test": "15"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-15",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "operator_note",
+        "test"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+      "desired_state": {
+        "telemetry_profile": "complete"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 4,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+        "_controller.stage": "repair",
+        "telemetry_profile": "complete"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+          "stage": "repair"
+        },
+        "telemetry_profile": "complete"
+      },
+      "effective_state_hash": "c525494b3a68fceb19572bfbf3b6eff1228f43f5b14b0bb03d04f6444d3e06bb",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "telemetry_profile": "complete"
+      },
+      "stage": "repair",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+      "timestamp": "2026-09-02T03:15:42.769Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "telemetry_profile": "complete"
+    },
+    "stage": "repair",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.769Z"
+  },
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 3,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-control-only-negative",
+        "stage": "control-only-negative"
+      },
+      "operator_note": "metadata-only control change; no forwarding input changes",
+      "telemetry_profile": "complete",
+      "test": "15"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-15",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+    "desired_state": {
+      "telemetry_profile": "complete"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+      "_controller.stage": "repair",
+      "telemetry_profile": "complete"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 4,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+        "stage": "repair"
+      },
+      "telemetry_profile": "complete"
+    },
+    "effective_state_hash": "c525494b3a68fceb19572bfbf3b6eff1228f43f5b14b0bb03d04f6444d3e06bb",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "telemetry_profile": "complete"
+    },
+    "stage": "repair",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-15-repair",
+    "timestamp": "2026-09-02T03:15:42.769Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+    "desired_state": {
+      "telemetry_profile": "complete"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "15-observability-design",
+    "operation": "repair",
+    "requested_fields": {
+      "telemetry_profile": "complete"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.769Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "flow_status": 200,
+      "log_event": "ALLOW",
+      "metric_ms": 10,
+      "telemetry_transport": "COMPLETE",
+      "timeline_complete": true
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-15-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "telemetry_transport": "COMPLETE"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "client",
+        "service",
+        "telemetry pipeline",
+        "incident evidence"
+      ],
+      "request": {
+        "signals": {
+          "flow_status": 200,
+          "log_event": "ALLOW",
+          "metric_ms": 10,
+          "timeline_complete": true
+        }
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-15-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "client -- service -- telemetry pipeline -- incident evidence",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-15-baseline"
+    },
+    "traffic_request": {
+      "signals": {
+        "flow_status": 200,
+        "log_event": "ALLOW",
+        "metric_ms": 10,
+        "timeline_complete": true
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

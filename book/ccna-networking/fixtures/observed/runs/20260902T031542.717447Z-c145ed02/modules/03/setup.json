@@ -1,0 +1,59 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "loop_guard_state": "BLOCKED"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "dist-a",
+      "leaf-a",
+      "leaf-b",
+      "dist-a (one edge blocked)"
+    ],
+    "request": {
+      "cycle_possible": true
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-03-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "dist-a -- leaf-a -- leaf-b -- dist-a (one edge blocked)",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-03-baseline"
+  },
+  "config": {
+    "bundle": "po10",
+    "root_bridge": "dist-a"
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-03",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "loop_guard_state": "OPEN"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "dist-a",
+      "leaf-a",
+      "leaf-b",
+      "dist-a (one edge blocked)"
+    ],
+    "request": {
+      "cycle_possible": true
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-03-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "dist-a -- leaf-a -- leaf-b -- dist-a (one edge blocked)",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-03-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "STP loop prevention and bundled uplink state",
+  "module": "03-stp-lacp",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.727Z",
+  "topology": "dist-a -- leaf-a -- leaf-b -- dist-a (one edge blocked)",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "cycle_possible": true
+  }
+}

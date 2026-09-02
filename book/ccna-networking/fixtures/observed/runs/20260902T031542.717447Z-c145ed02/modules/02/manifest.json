@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "6f462c4bf915394893ca8cbc574b43dae657161c31765e6a29efdf1c0bb117fe",
+    "baseline-readback.json": "b5a18a914cc66a0907b99e8237372d8055e597238a2e6de1ebfd294ccde59427",
+    "cleanup.json": "b86cf32f58e5cc654b00dc2805e0ef1c1fb4dfc5f86b790fd1c89996738f9639",
+    "fault.json": "3afbe3d77a0ca116563d12cf668fd07ddf6fe35629dbc03f9625a1b1bc32fa28",
+    "repair-readback.json": "8c27280ca67bf3ea0536891a331ccd42213b84d0f57b21f3572302f81c940a98",
+    "rollback.json": "ef10181be9a2a62c8e8fdf8a8d97a9f8d77d47e3740c467d940d9419664fdfde",
+    "setup.json": "d32dcad83cf09fb5d73bd52ddc28262ce622adb728e6e896faa813cd2bbc169d"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+  "immutable": true,
+  "module": "02-vlan-trunk",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

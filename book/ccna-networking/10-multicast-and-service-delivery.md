@@ -299,3 +299,7 @@ and [RFC 4601](https://www.rfc-editor.org/rfc/rfc4601) defines PIM-SM.
 **Observed lab result:** a capture records only packets reaching the selected
 interface and namespace. **Engineering inference:** membership, tree, RPF,
 and application evidence should be collected as separate claims.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`10-multicast-service-delivery.json`](fixtures/observed/10-multicast-service-delivery.json). The v3 evaluator derives RPF, IGMP/PIM state, and backend evidence from effective control plus a separate traffic fixture. The control fault has no paired plane fault; the assertion separately uses evaluator-only RPF mismatch. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#11-b-module-10--10-multicast-service-delivery).

@@ -1,0 +1,71 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "tag_transit_state": "ADMITTED"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "host",
+      "access-switch",
+      "trunk",
+      "distribution-gateway"
+    ],
+    "request": {
+      "frame": {
+        "gateway_vlan": 20,
+        "vlan": 20
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-02-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "host -- access-switch -- trunk -- distribution-gateway",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-02-baseline"
+  },
+  "config": {
+    "access_vlan": 20,
+    "allowed_vlans": [
+      10,
+      20
+    ]
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "tag_transit_state": "DROPPED"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "host",
+      "access-switch",
+      "trunk",
+      "distribution-gateway"
+    ],
+    "request": {
+      "frame": {
+        "gateway_vlan": 20,
+        "vlan": 20
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-02-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "host -- access-switch -- trunk -- distribution-gateway",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-02-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "802.1Q tag admission across a trunk",
+  "module": "02-vlan-trunk",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.724Z",
+  "topology": "host -- access-switch -- trunk -- distribution-gateway",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "frame": {
+      "gateway_vlan": 20,
+      "vlan": 20
+    }
+  }
+}

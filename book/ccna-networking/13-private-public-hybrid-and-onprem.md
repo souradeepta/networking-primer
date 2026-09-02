@@ -292,3 +292,7 @@ and GCP [hybrid connectivity](https://cloud.google.com/network-connectivity/docs
 **Observed lab result:** a local namespace can demonstrate asymmetric routes,
 but not provider circuit behavior. **Engineering inference:** every migration
 plan needs a tested reverse path and failback, not only a forward cutover.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`13-private-public-hybrid.json`](fixtures/observed/13-private-public-hybrid.json). The v3 evaluator derives selected path, BGP route, listener, and egress policy from effective hybrid control and a separate per-path service fixture. The control fault exposes failover mismatch without a second plane mutation; evaluator-only private-path loss is the negative control. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#14-b-module-13--13-private-public-hybrid).

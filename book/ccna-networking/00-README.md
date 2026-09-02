@@ -106,6 +106,28 @@ interchangeable implementations.
 
 ## G. Cross-track object, field, and read-back contract
 
+The [canonical field-level ownership matrix](fixtures/ownership-matrix.md) is
+the source of truth for single-writer boundaries, approvers, evidence owners,
+rollback owners, request samples, authoritative read-backs, and independent
+data-plane assertions. The shorthand table below is a navigation summary;
+when it differs in detail, the canonical matrix wins.
+
+The [artifact-backed worked submissions](fixtures/worked-submissions.md) and
+the [local fixture runner](fixtures/README.md) provide the saved evidence for
+each module. Run the runner before treating an output as an observed result.
+
+### G.1 Fixture evidence semantics
+
+The local fixture is deliberately bounded. The runner injects only a
+control/configuration change; [`evaluator.py`](fixtures/evaluator.py) derives
+the module-specific forwarding or service observation from the reconciled
+effective state and a separate traffic path. Each module also retains a
+negative test in which a metadata-only control change stays healthy while a
+mechanism-only evaluator fault fails. Read-backs are reconciliation outputs
+with desired state, computed changed fields, status, task ID, effective state,
+and device/service observation. These local results are learning evidence,
+not proof of a real AWS, GCP, NSO, NDFC, F5, or A10 mutation.
+
 Use this table when connecting the primer to the cloud, Terraform, controller,
 and ADC tracks. **Fact** means the named product exposes an object or concept
 of this general kind; exact field names, API versions, permissions, and response

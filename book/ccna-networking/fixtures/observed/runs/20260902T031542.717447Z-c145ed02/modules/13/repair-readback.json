@@ -1,0 +1,269 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+      "_controller.stage": "repair",
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+          "stage": "repair"
+        },
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "primary_path": "up"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 3,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-control-only-negative",
+          "stage": "control-only-negative"
+        },
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "operator_note": "metadata-only control change; no forwarding input changes",
+        "primary_path": "up",
+        "test": "13"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-13",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "operator_note",
+        "test"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+      "desired_state": {
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "primary_path": "up"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 4,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+        "_controller.stage": "repair",
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "primary_path": "up"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+          "stage": "repair"
+        },
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "primary_path": "up"
+      },
+      "effective_state_hash": "3033b7f318451cc21a45416fd1fb824aa3a296be0be3d73394e237c30efb3c5b",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "bgp": "ESTABLISHED",
+        "egress": "CONTROLLED",
+        "primary_path": "up"
+      },
+      "stage": "repair",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+      "timestamp": "2026-09-02T03:15:42.763Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "stage": "repair",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.763Z"
+  },
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 3,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-control-only-negative",
+        "stage": "control-only-negative"
+      },
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "operator_note": "metadata-only control change; no forwarding input changes",
+      "primary_path": "up",
+      "test": "13"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-13",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "operator_note",
+      "test"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+    "desired_state": {
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 4,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+      "_controller.stage": "repair",
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 4,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+        "stage": "repair"
+      },
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "effective_state_hash": "3033b7f318451cc21a45416fd1fb824aa3a296be0be3d73394e237c30efb3c5b",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "stage": "repair",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-13-repair",
+    "timestamp": "2026-09-02T03:15:42.763Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+    "desired_state": {
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "13-private-public-hybrid",
+    "operation": "repair",
+    "requested_fields": {
+      "bgp": "ESTABLISHED",
+      "egress": "CONTROLLED",
+      "primary_path": "up"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.762Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "egress_policy": "CONTROLLED",
+      "private_path_state": "UP",
+      "selected_path": "private-a",
+      "selected_route": "private-a",
+      "service_listener": true
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-13-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "private_path_state": "UP"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "private workload",
+        "HA VPN/Interconnect",
+        "on-prem; controlled public egress"
+      ],
+      "request": {
+        "bgp_routes": {
+          "10.13.0.0/16": "private-a"
+        },
+        "service_listener_by_path": {
+          "private-a": true,
+          "private-b": false
+        }
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-13-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "private workload -- HA VPN/Interconnect -- on-prem; controlled public egress",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-13-baseline"
+    },
+    "traffic_request": {
+      "bgp_routes": {
+        "10.13.0.0/16": "private-a"
+      },
+      "service_listener_by_path": {
+        "private-a": true,
+        "private-b": false
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

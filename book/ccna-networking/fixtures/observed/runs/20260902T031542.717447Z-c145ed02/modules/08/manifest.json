@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "4bf38e3e30fae10cac51f5fdd93f09ed0c2758494ba8502aa42de00cc58c03de",
+    "baseline-readback.json": "d5701cea33eaa4e5dfda6a096cf82f3982a3dcedf9b6b0171dc2b5ff336a367b",
+    "cleanup.json": "807c942cd2989824774b1a0913a8aa53d828c5efb70d71de54a88e972ffc95b1",
+    "fault.json": "f1db33426f92f8f75635914f42b9ccc877f50dedaf0d23510a9fc0144d3cdcfb",
+    "repair-readback.json": "d6ebba7b5e4461caea4eebe1c72214aad1108c6f7d7b01ddc44df94b7da66522",
+    "rollback.json": "6ba7ca46eb6b579b8ed306291d335765e1429f15a58d946b0280815656fa07ab",
+    "setup.json": "f53f7192a6aa2158877459c739605f64a918e670bbb5871642f33c8aa59587d3"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+  "immutable": true,
+  "module": "08-acl-aaa-security",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

@@ -1,0 +1,374 @@
+{
+  "artifacts": [
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/setup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/baseline-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/fault.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/assertion.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/repair-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/rollback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/cleanup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/14/manifest.json"
+  ],
+  "baseline": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "desired_route": "route-allow",
+      "device_apply_state": "APPLIED",
+      "device_route": "route-allow",
+      "fib_next_hop": "transit",
+      "service_probe": true
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+  },
+  "bundle": "runs/20260902T031542.717447Z-c145ed02/modules/14",
+  "cleanup": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+    "ephemeral_workspace": "/tmp/ccna-14-aiav0yhi",
+    "exists_after_cleanup": false,
+    "no_leak": true,
+    "retained_bundle": true,
+    "retained_phase_files": [
+      "setup.json",
+      "baseline-readback.json",
+      "fault.json",
+      "assertion.json",
+      "repair-readback.json",
+      "rollback.json",
+      "cleanup.json"
+    ],
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3",
+    "temporary_workspace_removed": true
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+  "fault": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": false,
+    "observations": {
+      "desired_route": "route-deny",
+      "device_apply_state": "APPLIED",
+      "device_route": "route-deny",
+      "fib_next_hop": "blackhole",
+      "service_probe": false
+    },
+    "result": "DRIFT_DEVICE_READBACK_MISMATCH",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+  },
+  "module": "14-automation-iac",
+  "module_id": "14",
+  "negative_control": {
+    "control_only": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "desired_route": "route-allow",
+        "device_apply_state": "APPLIED",
+        "device_route": "route-allow",
+        "fib_next_hop": "transit",
+        "service_probe": true
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+    },
+    "independent_path": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "desired_route": "route-allow",
+        "device_apply_state": "NOT_APPLIED",
+        "device_route": "route-deny",
+        "fib_next_hop": "blackhole",
+        "service_probe": false
+      },
+      "result": "DRIFT_DEVICE_READBACK_MISMATCH",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-degraded"
+    }
+  },
+  "observed_symptom": "DRIFT_DEVICE_READBACK_MISMATCH",
+  "repair": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "desired_route": "route-allow",
+      "device_apply_state": "APPLIED",
+      "device_route": "route-allow",
+      "fib_next_hop": "transit",
+      "service_probe": true
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+  },
+  "rollback": {
+    "authoritative_readback": {
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+        "_controller.stage": "rollback",
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "effective_state": {
+        "module_control": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+            "stage": "rollback"
+          },
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        }
+      },
+      "kind": "observed local controller-store read-back",
+      "reconciliation": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 4,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-repair",
+            "stage": "repair"
+          },
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-14",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+        "desired_state": {
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 5,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+          "_controller.stage": "rollback",
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+            "stage": "rollback"
+          },
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        },
+        "effective_state_hash": "20a8013a05511f4f56fd2d55ce2ffdb75432aa8c31eef0ffa97a435a0ad666a4",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "intent": "route-allow",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow"
+        },
+        "stage": "rollback",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+        "timestamp": "2026-09-02T03:15:42.766Z",
+        "writer": null
+      },
+      "requested_fields": {
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "stage": "rollback",
+      "status": "ACTIVE",
+      "timestamp": "2026-09-02T03:15:42.766Z"
+    },
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-repair",
+          "stage": "repair"
+        },
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-14",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+      "desired_state": {
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+        "_controller.stage": "rollback",
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 5,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+          "stage": "rollback"
+        },
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "effective_state_hash": "20a8013a05511f4f56fd2d55ce2ffdb75432aa8c31eef0ffa97a435a0ad666a4",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "stage": "rollback",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-14-rollback",
+      "timestamp": "2026-09-02T03:15:42.766Z",
+      "writer": null
+    },
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+    "desired_request": {
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+      "desired_state": {
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "kind": "fictional local emulator desired-state request",
+      "object": "14-automation-iac",
+      "operation": "rollback",
+      "requested_fields": {
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "status": "ACCEPTED",
+      "timestamp": "2026-09-02T03:15:42.766Z"
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "desired_route": "route-allow",
+        "device_apply_state": "APPLIED",
+        "device_route": "route-allow",
+        "fib_next_hop": "transit",
+        "service_probe": true
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+    },
+    "evaluator_input": {
+      "control_source": "authoritative_readback#/effective_state/module_control",
+      "path_trace": {
+        "device_service_state": {
+          "device_apply_state": "APPLIED"
+        },
+        "mode": "baseline",
+        "path_hops": [
+          "operator",
+          "IaC state",
+          "controller",
+          "device/FIB",
+          "service probe"
+        ],
+        "request": {
+          "device_observation": {
+            "device_can_apply": true
+          }
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-baseline",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+      },
+      "traffic_request": {
+        "device_observation": {
+          "device_can_apply": true
+        }
+      }
+    },
+    "restored_control": true,
+    "restored_dataplane": true,
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3"
+  },
+  "runner_version": "4.0.0"
+}

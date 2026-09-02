@@ -1,0 +1,470 @@
+{
+  "control_fault": {
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-baseline",
+          "stage": "baseline"
+        },
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-04",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "nat_rule"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+      "desired_state": {
+        "nat_rule": "disabled",
+        "nd": "enabled"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 2,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-bounded-control-fault",
+        "_controller.stage": "bounded-control-fault",
+        "nat_rule": "disabled",
+        "nd": "enabled"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "nat_rule": "disabled",
+        "nd": "enabled"
+      },
+      "effective_state_hash": "137dbddc4011ac8d176af9d8150b7eb9258f7cadbc4c9e80fe3f16894d56c54a",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "nat_rule": "disabled",
+        "nd": "enabled"
+      },
+      "stage": "bounded-control-fault",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-04-bounded-control-fault",
+      "timestamp": "2026-09-02T03:15:42.731Z",
+      "writer": null
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "inside": "10.4.0.10",
+        "ipv6_neighbor_state": "REACHABLE",
+        "nat_rule": "disabled",
+        "nat_table_state": "POPULATED",
+        "translation": null
+      },
+      "result": "NAT_TRANSLATION_MISSING",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+    }
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+  "negative_control": {
+    "control_only_change": {
+      "authoritative_readback": {
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "nat_rule",
+          "operator_note",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "effective_state": {
+          "module_control": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+            "nd": "enabled",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "test": "04"
+          }
+        },
+        "kind": "observed local controller-store read-back",
+        "reconciliation": {
+          "before_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 2,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-bounded-control-fault",
+              "stage": "bounded-control-fault"
+            },
+            "nat_rule": "disabled",
+            "nd": "enabled"
+          },
+          "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-04",
+          "changed_fields": [
+            "_controller.generation",
+            "_controller.last_task_id",
+            "_controller.stage",
+            "nat_rule",
+            "operator_note",
+            "test"
+          ],
+          "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+          "desired_state": {
+            "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+            "nd": "enabled",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "test": "04"
+          },
+          "effective_fields": {
+            "_controller.controller_source": "bounded-local-controller-store",
+            "_controller.defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "_controller.generation": 3,
+            "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+            "_controller.stage": "control-only-negative",
+            "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+            "nd": "enabled",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "test": "04"
+          },
+          "effective_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+            "nd": "enabled",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "test": "04"
+          },
+          "effective_state_hash": "9f4c200f16fbe3a57693717f7e649f2256ae8f65e8defc6d97d67cdb3c4033ee",
+          "immutable": true,
+          "ownership_key": null,
+          "requested_fields": {
+            "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+            "nd": "enabled",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "test": "04"
+          },
+          "stage": "control-only-negative",
+          "status": "APPLIED",
+          "task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+          "timestamp": "2026-09-02T03:15:42.731Z",
+          "writer": null
+        },
+        "requested_fields": {
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "stage": "control-only-negative",
+        "status": "ACTIVE",
+        "timestamp": "2026-09-02T03:15:42.731Z"
+      },
+      "controller_result": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 2,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-bounded-control-fault",
+            "stage": "bounded-control-fault"
+          },
+          "nat_rule": "disabled",
+          "nd": "enabled"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-04",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "nat_rule",
+          "operator_note",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+        "desired_state": {
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 3,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+            "stage": "control-only-negative"
+          },
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "effective_state_hash": "9f4c200f16fbe3a57693717f7e649f2256ae8f65e8defc6d97d67cdb3c4033ee",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "stage": "control-only-negative",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-04-control-only-negative",
+        "timestamp": "2026-09-02T03:15:42.731Z",
+        "writer": null
+      },
+      "desired_request": {
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+        "desired_state": {
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "kind": "fictional local emulator desired-state request",
+        "object": "04-ipv4-nat-ipv6",
+        "operation": "control-only-negative",
+        "requested_fields": {
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nd": "enabled",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "test": "04"
+        },
+        "status": "ACCEPTED",
+        "timestamp": "2026-09-02T03:15:42.731Z"
+      },
+      "device_service_observation": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "inside": "10.4.0.10",
+          "ipv6_neighbor_state": "REACHABLE",
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nat_table_state": "POPULATED",
+          "translation": "198.51.100.10"
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+      },
+      "evaluator_input": {
+        "control_source": "authoritative_readback#/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "nat_table_state": "POPULATED"
+          },
+          "mode": "baseline",
+          "path_hops": [
+            "dual-stack-host",
+            "edge-router",
+            "public-service"
+          ],
+          "request": {
+            "available_translations": {
+              "10.4.0.10": "198.51.100.10"
+            },
+            "flow": {
+              "inside": "10.4.0.10"
+            },
+            "ipv6_neighbor_state": "REACHABLE"
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-04-baseline",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "dual-stack-host -- edge-router -- public-service",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+        },
+        "traffic_request": {
+          "available_translations": {
+            "10.4.0.10": "198.51.100.10"
+          },
+          "flow": {
+            "inside": "10.4.0.10"
+          },
+          "ipv6_neighbor_state": "REACHABLE"
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "inside": "10.4.0.10",
+          "ipv6_neighbor_state": "REACHABLE",
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nat_table_state": "POPULATED",
+          "translation": "198.51.100.10"
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+      }
+    },
+    "independent_path_change": {
+      "evaluator_input": {
+        "control_source": "baseline-readback.json#/authoritative_readback/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "nat_table_state": "EMPTY"
+          },
+          "mode": "degraded",
+          "path_hops": [
+            "dual-stack-host",
+            "edge-router",
+            "public-service"
+          ],
+          "request": {
+            "available_translations": {
+              "10.4.0.10": "198.51.100.10"
+            },
+            "flow": {
+              "inside": "10.4.0.10"
+            },
+            "ipv6_neighbor_state": "REACHABLE"
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-04-degraded",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "dual-stack-host -- edge-router -- public-service",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-degraded"
+        },
+        "traffic_request": {
+          "available_translations": {
+            "10.4.0.10": "198.51.100.10"
+          },
+          "flow": {
+            "inside": "10.4.0.10"
+          },
+          "ipv6_neighbor_state": "REACHABLE"
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": false,
+        "observations": {
+          "inside": "10.4.0.10",
+          "ipv6_neighbor_state": "REACHABLE",
+          "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+          "nat_table_state": "EMPTY",
+          "translation": null
+        },
+        "result": "NAT_TRANSLATION_MISSING",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-degraded"
+      },
+      "path_trace": {
+        "device_service_state": {
+          "nat_table_state": "EMPTY"
+        },
+        "mode": "degraded",
+        "path_hops": [
+          "dual-stack-host",
+          "edge-router",
+          "public-service"
+        ],
+        "request": {
+          "available_translations": {
+            "10.4.0.10": "198.51.100.10"
+          },
+          "flow": {
+            "inside": "10.4.0.10"
+          },
+          "ipv6_neighbor_state": "REACHABLE"
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-04-degraded",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "dual-stack-host -- edge-router -- public-service",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-degraded"
+      },
+      "readback_reference": "baseline-readback.json#/authoritative_readback",
+      "readback_status": "ACTIVE",
+      "request_status": "ACCEPTED",
+      "traffic_request": {
+        "available_translations": {
+          "10.4.0.10": "198.51.100.10"
+        },
+        "flow": {
+          "inside": "10.4.0.10"
+        },
+        "ipv6_neighbor_state": "REACHABLE"
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "semantic_assertions": {
+    "control_change_can_leave_dataplane_healthy": true,
+    "independent_path_change_can_fail_dataplane": true,
+    "no_direct_outcome_injection": true,
+    "same_control_readback_can_have_different_path_result": true
+  }
+}

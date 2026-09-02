@@ -318,3 +318,7 @@ have different scope and state semantics. **Fact:** [NIST zero trust
 architecture](https://csrc.nist.gov/publications/detail/sp/800-207/final)
 defines the reference model. **Engineering inference:** layered controls and
 independent evidence reduce blast radius but increase policy ownership cost.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`08-acl-aaa-security.json`](fixtures/observed/08-acl-aaa-security.json). The v3 evaluator derives the ordered ACL decision from the effective policy and independent packet path while retaining AAA and boot-chain observations. The assertion shows metadata-only control health versus evaluator-only packet drop; the control transaction has a computed task and effective read-back. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#09-b-module-08--08-acl-aaa-security).

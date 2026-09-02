@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "9fa8955e6acc625a71d21c52d2ff3e2a70b8d4af55bb8f7969e747e5b241bb5a",
+    "baseline-readback.json": "1d19da962e02c0dfe2007c5214981ed74f8ea2d6b07bc0c1c2b21b869d411e1b",
+    "cleanup.json": "e6973302442e07f1a8a1f877ef7daf571174719589e8fe57ad93837b7aaafce9",
+    "fault.json": "67b068f63889d6c9965fd29b689e7f212c87c252f49ddf61ffdeea7c7badb7be",
+    "repair-readback.json": "63b76cf6f23196161a9e4424c829bf94a8dff0ddaadef1bbf775c7cd416d5a7f",
+    "rollback.json": "261eed1542610b2b13a062ff5c5b26fa31d843452a382a91ca9f44af9d3d4468",
+    "setup.json": "a22a34f55c94136fc0f2f0433f65cedabce82af2a91f3a28207163c10a330328"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+  "immutable": true,
+  "module": "05-ospf-vrf",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

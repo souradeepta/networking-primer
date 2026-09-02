@@ -1,0 +1,244 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "aaa",
+      "acl",
+      "secure_boot"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+      "_controller.stage": "baseline",
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+          "stage": "baseline"
+        },
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {},
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-08",
+      "changed_fields": [
+        "_controller.controller_source",
+        "_controller.defaults_applied",
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "aaa",
+        "acl",
+        "secure_boot"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+      "desired_state": {
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 1,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+        "_controller.stage": "baseline",
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+          "stage": "baseline"
+        },
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_state_hash": "818786b125cc42361ad293b7034d5409720bdc3bb429754536bdf0cb5650358a",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "stage": "baseline",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+      "timestamp": "2026-09-02T03:15:42.744Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "stage": "baseline",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.744Z"
+  },
+  "controller_result": {
+    "before_state": {},
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-08",
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "aaa",
+      "acl",
+      "secure_boot"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+    "desired_state": {
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+      "_controller.stage": "baseline",
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 1,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+        "stage": "baseline"
+      },
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "effective_state_hash": "818786b125cc42361ad293b7034d5409720bdc3bb429754536bdf0cb5650358a",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "stage": "baseline",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+    "timestamp": "2026-09-02T03:15:42.744Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+    "desired_state": {
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "08-acl-aaa-security",
+    "operation": "baseline",
+    "requested_fields": {
+      "aaa": "REACHABLE",
+      "acl": "ALLOW-HTTPS",
+      "secure_boot": "VALID"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.744Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "aaa_server": "REACHABLE",
+      "boot_chain": "VALID",
+      "ordered_decision": "ALLOW",
+      "packet": {
+        "port": 443,
+        "protocol": "tcp"
+      },
+      "packet_path": "DELIVERED"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "packet_path": "DELIVERED"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "operator",
+        "management ACL",
+        "device",
+        "protected service"
+      ],
+      "request": {
+        "packet": {
+          "port": 443,
+          "protocol": "tcp"
+        }
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-08-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "operator -- management ACL -- device -- protected service",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+    },
+    "traffic_request": {
+      "packet": {
+        "port": 443,
+        "protocol": "tcp"
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

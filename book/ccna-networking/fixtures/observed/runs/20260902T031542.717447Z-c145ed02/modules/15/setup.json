@@ -1,0 +1,74 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "telemetry_transport": "COMPLETE"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "client",
+      "service",
+      "telemetry pipeline",
+      "incident evidence"
+    ],
+    "request": {
+      "signals": {
+        "flow_status": 200,
+        "log_event": "ALLOW",
+        "metric_ms": 10,
+        "timeline_complete": true
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-15-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "client -- service -- telemetry pipeline -- incident evidence",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-15-baseline"
+  },
+  "config": {
+    "expected_status": 200,
+    "slo_latency_ms": 50
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "telemetry_transport": "PARTIAL"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "client",
+      "service",
+      "telemetry pipeline",
+      "incident evidence"
+    ],
+    "request": {
+      "signals": {
+        "flow_status": 200,
+        "log_event": "ALLOW",
+        "metric_ms": 10,
+        "timeline_complete": true
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-15-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "client -- service -- telemetry pipeline -- incident evidence",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-15-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "Metric, flow, log, and timeline correlation",
+  "module": "15-observability-design",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.767Z",
+  "topology": "client -- service -- telemetry pipeline -- incident evidence",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "signals": {
+      "flow_status": 200,
+      "log_event": "ALLOW",
+      "metric_ms": 10,
+      "timeline_complete": true
+    }
+  }
+}

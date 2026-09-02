@@ -1,0 +1,286 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "dns"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 2,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+      "_controller.stage": "bounded-control-fault",
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "dhcp": "enabled",
+        "dns": "10.7.0.254",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-baseline",
+          "stage": "baseline"
+        },
+        "dhcp": "enabled",
+        "dns": "10.7.0.53",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-07",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "dns"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+      "desired_state": {
+        "dhcp": "enabled",
+        "dns": "10.7.0.254",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 2,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+        "_controller.stage": "bounded-control-fault",
+        "dhcp": "enabled",
+        "dns": "10.7.0.254",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "dhcp": "enabled",
+        "dns": "10.7.0.254",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      },
+      "effective_state_hash": "627465d36be95819fe4419dd6dd0012fe917a6106b3bbdb178555b2dfedc1c90",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "dhcp": "enabled",
+        "dns": "10.7.0.254",
+        "ntp": "10.7.0.123",
+        "syslog": "enabled"
+      },
+      "stage": "bounded-control-fault",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+      "timestamp": "2026-09-02T03:15:42.741Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "stage": "bounded-control-fault",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.741Z"
+  },
+  "changed_fields": [
+    "_controller.generation",
+    "_controller.last_task_id",
+    "_controller.stage",
+    "dns"
+  ],
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 1,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-baseline",
+        "stage": "baseline"
+      },
+      "dhcp": "enabled",
+      "dns": "10.7.0.53",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-07",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "dns"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+    "desired_state": {
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 2,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+      "_controller.stage": "bounded-control-fault",
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 2,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+        "stage": "bounded-control-fault"
+      },
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "effective_state_hash": "627465d36be95819fe4419dd6dd0012fe917a6106b3bbdb178555b2dfedc1c90",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "stage": "bounded-control-fault",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-07-bounded-control-fault",
+    "timestamp": "2026-09-02T03:15:42.741Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+    "desired_state": {
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "07-network-services",
+    "operation": "bounded-control-fault",
+    "requested_fields": {
+      "dhcp": "enabled",
+      "dns": "10.7.0.254",
+      "ntp": "10.7.0.123",
+      "syslog": "enabled"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.741Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": false,
+    "observations": {
+      "dhcp_path": "REACHABLE",
+      "dns_ok": false,
+      "dns_path": "REACHABLE",
+      "lease_ok": true,
+      "ntp_offset_ms": 2,
+      "ntp_server": "10.7.0.123",
+      "syslog_delivered": true
+    },
+    "result": "SERVICE_PLANE_DEGRADED",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-07-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "dhcp_path": "REACHABLE",
+        "dns_path": "REACHABLE",
+        "syslog_path": "DELIVERED"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "client",
+        "access",
+        "shared DNS/DHCP/NTP/logging services"
+      ],
+      "request": {
+        "expected_dns": "10.7.0.53",
+        "expected_ntp": "10.7.0.123",
+        "lease_address": "10.7.0.20",
+        "ntp_offset_ms": 2,
+        "service_path_up": true,
+        "syslog_delivered": true
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-07-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "client -- access -- shared DNS/DHCP/NTP/logging services",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-07-baseline"
+    },
+    "traffic_request": {
+      "expected_dns": "10.7.0.53",
+      "expected_ntp": "10.7.0.123",
+      "lease_address": "10.7.0.20",
+      "ntp_offset_ms": 2,
+      "service_path_up": true,
+      "syslog_delivered": true
+    }
+  },
+  "observed_symptom": "SERVICE_PLANE_DEGRADED",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

@@ -254,3 +254,7 @@ or owner is uncertain. **Cleanup verification:** `rm -f "$LAB_DIR/state.txt"
 "$LAB_DIR/baseline.txt"; rmdir "$LAB_DIR"; test ! -e "$LAB_DIR"`.
 Record the learner-run status as **observed**; expected clean status `0` is
 **illustrative**.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`01-physical-mtu.json`](fixtures/observed/01-physical-mtu.json). The retained v3 record derives `path_mtu` from effective interface MTUs and packet size; it does not inject a second plane fault. Its assertion proves a metadata-only control change remains healthy while an evaluator-only carrier fault fails. Reconciliation retains desired state, task, effective read-back, and observation. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#02-b-module-01--01-physical-mtu).

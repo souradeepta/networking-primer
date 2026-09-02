@@ -1,0 +1,496 @@
+{
+  "control_fault": {
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-baseline",
+          "stage": "baseline"
+        },
+        "intent": "route-allow",
+        "plan": "no-change",
+        "request_status": "ACCEPTED",
+        "state": "route-allow"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-14",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "plan",
+        "state"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+      "desired_state": {
+        "intent": "route-allow",
+        "plan": "change",
+        "request_status": "ACCEPTED",
+        "state": "route-deny"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 2,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-bounded-control-fault",
+        "_controller.stage": "bounded-control-fault",
+        "intent": "route-allow",
+        "plan": "change",
+        "request_status": "ACCEPTED",
+        "state": "route-deny"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "intent": "route-allow",
+        "plan": "change",
+        "request_status": "ACCEPTED",
+        "state": "route-deny"
+      },
+      "effective_state_hash": "1eda50b3d8a8146d268ec1898e431b86ed4c18248d2479a6e1b0659c8a41ce66",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "intent": "route-allow",
+        "plan": "change",
+        "request_status": "ACCEPTED",
+        "state": "route-deny"
+      },
+      "stage": "bounded-control-fault",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-14-bounded-control-fault",
+      "timestamp": "2026-09-02T03:15:42.765Z",
+      "writer": null
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "desired_route": "route-deny",
+        "device_apply_state": "APPLIED",
+        "device_route": "route-deny",
+        "fib_next_hop": "blackhole",
+        "service_probe": false
+      },
+      "result": "DRIFT_DEVICE_READBACK_MISMATCH",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+    }
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+  "negative_control": {
+    "control_only_change": {
+      "authoritative_readback": {
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "operator_note",
+          "plan",
+          "state",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "effective_state": {
+          "module_control": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "intent": "route-allow",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "plan": "no-change",
+            "request_status": "ACCEPTED",
+            "state": "route-allow",
+            "test": "14"
+          }
+        },
+        "kind": "observed local controller-store read-back",
+        "reconciliation": {
+          "before_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 2,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-bounded-control-fault",
+              "stage": "bounded-control-fault"
+            },
+            "intent": "route-allow",
+            "plan": "change",
+            "request_status": "ACCEPTED",
+            "state": "route-deny"
+          },
+          "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-14",
+          "changed_fields": [
+            "_controller.generation",
+            "_controller.last_task_id",
+            "_controller.stage",
+            "operator_note",
+            "plan",
+            "state",
+            "test"
+          ],
+          "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+          "desired_state": {
+            "intent": "route-allow",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "plan": "no-change",
+            "request_status": "ACCEPTED",
+            "state": "route-allow",
+            "test": "14"
+          },
+          "effective_fields": {
+            "_controller.controller_source": "bounded-local-controller-store",
+            "_controller.defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "_controller.generation": 3,
+            "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+            "_controller.stage": "control-only-negative",
+            "intent": "route-allow",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "plan": "no-change",
+            "request_status": "ACCEPTED",
+            "state": "route-allow",
+            "test": "14"
+          },
+          "effective_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "intent": "route-allow",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "plan": "no-change",
+            "request_status": "ACCEPTED",
+            "state": "route-allow",
+            "test": "14"
+          },
+          "effective_state_hash": "c2e988f05b206a149e2b7ce9e08ad427e8995273ad79e0db4ba54a3313843b01",
+          "immutable": true,
+          "ownership_key": null,
+          "requested_fields": {
+            "intent": "route-allow",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "plan": "no-change",
+            "request_status": "ACCEPTED",
+            "state": "route-allow",
+            "test": "14"
+          },
+          "stage": "control-only-negative",
+          "status": "APPLIED",
+          "task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+          "timestamp": "2026-09-02T03:15:42.765Z",
+          "writer": null
+        },
+        "requested_fields": {
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "stage": "control-only-negative",
+        "status": "ACTIVE",
+        "timestamp": "2026-09-02T03:15:42.765Z"
+      },
+      "controller_result": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 2,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-bounded-control-fault",
+            "stage": "bounded-control-fault"
+          },
+          "intent": "route-allow",
+          "plan": "change",
+          "request_status": "ACCEPTED",
+          "state": "route-deny"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-14",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "operator_note",
+          "plan",
+          "state",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+        "desired_state": {
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 3,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+            "stage": "control-only-negative"
+          },
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "effective_state_hash": "c2e988f05b206a149e2b7ce9e08ad427e8995273ad79e0db4ba54a3313843b01",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "stage": "control-only-negative",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-14-control-only-negative",
+        "timestamp": "2026-09-02T03:15:42.765Z",
+        "writer": null
+      },
+      "desired_request": {
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+        "desired_state": {
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "kind": "fictional local emulator desired-state request",
+        "object": "14-automation-iac",
+        "operation": "control-only-negative",
+        "requested_fields": {
+          "intent": "route-allow",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "plan": "no-change",
+          "request_status": "ACCEPTED",
+          "state": "route-allow",
+          "test": "14"
+        },
+        "status": "ACCEPTED",
+        "timestamp": "2026-09-02T03:15:42.765Z"
+      },
+      "device_service_observation": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "desired_route": "route-allow",
+          "device_apply_state": "APPLIED",
+          "device_route": "route-allow",
+          "fib_next_hop": "transit",
+          "service_probe": true
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+      },
+      "evaluator_input": {
+        "control_source": "authoritative_readback#/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "device_apply_state": "APPLIED"
+          },
+          "mode": "baseline",
+          "path_hops": [
+            "operator",
+            "IaC state",
+            "controller",
+            "device/FIB",
+            "service probe"
+          ],
+          "request": {
+            "device_observation": {
+              "device_can_apply": true
+            }
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-baseline",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+        },
+        "traffic_request": {
+          "device_observation": {
+            "device_can_apply": true
+          }
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "desired_route": "route-allow",
+          "device_apply_state": "APPLIED",
+          "device_route": "route-allow",
+          "fib_next_hop": "transit",
+          "service_probe": true
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+      }
+    },
+    "independent_path_change": {
+      "evaluator_input": {
+        "control_source": "baseline-readback.json#/authoritative_readback/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "device_apply_state": "NOT_APPLIED"
+          },
+          "mode": "degraded",
+          "path_hops": [
+            "operator",
+            "IaC state",
+            "controller",
+            "device/FIB",
+            "service probe"
+          ],
+          "request": {
+            "device_observation": {
+              "device_can_apply": true
+            }
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-degraded",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-degraded"
+        },
+        "traffic_request": {
+          "device_observation": {
+            "device_can_apply": true
+          }
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": false,
+        "observations": {
+          "desired_route": "route-allow",
+          "device_apply_state": "NOT_APPLIED",
+          "device_route": "route-deny",
+          "fib_next_hop": "blackhole",
+          "service_probe": false
+        },
+        "result": "DRIFT_DEVICE_READBACK_MISMATCH",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-degraded"
+      },
+      "path_trace": {
+        "device_service_state": {
+          "device_apply_state": "NOT_APPLIED"
+        },
+        "mode": "degraded",
+        "path_hops": [
+          "operator",
+          "IaC state",
+          "controller",
+          "device/FIB",
+          "service probe"
+        ],
+        "request": {
+          "device_observation": {
+            "device_can_apply": true
+          }
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-degraded",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-degraded"
+      },
+      "readback_reference": "baseline-readback.json#/authoritative_readback",
+      "readback_status": "ACTIVE",
+      "request_status": "ACCEPTED",
+      "traffic_request": {
+        "device_observation": {
+          "device_can_apply": true
+        }
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "semantic_assertions": {
+    "control_change_can_leave_dataplane_healthy": true,
+    "independent_path_change_can_fail_dataplane": true,
+    "no_direct_outcome_injection": true,
+    "same_control_readback_can_have_different_path_result": true
+  }
+}

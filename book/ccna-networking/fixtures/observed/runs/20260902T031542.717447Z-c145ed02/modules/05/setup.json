@@ -1,0 +1,70 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "adjacency_transport": "UP"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "vrf-prod edge-a",
+      "OSPF",
+      "edge-b"
+    ],
+    "request": {
+      "neighbor_state": "FULL",
+      "network_type": "broadcast",
+      "route_table": {
+        "10.5.0.0/16": "prod"
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-05-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "vrf-prod edge-a == OSPF == edge-b",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+  },
+  "config": {
+    "area": 0,
+    "network_type": "broadcast",
+    "vrf": "prod"
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "adjacency_transport": "DOWN"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "vrf-prod edge-a",
+      "OSPF",
+      "edge-b"
+    ],
+    "request": {
+      "neighbor_state": "FULL",
+      "network_type": "broadcast",
+      "route_table": {
+        "10.5.0.0/16": "prod"
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-05-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "vrf-prod edge-a == OSPF == edge-b",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "OSPF adjacency, LSDB route installation, and VRF lookup",
+  "module": "05-ospf-vrf",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.733Z",
+  "topology": "vrf-prod edge-a == OSPF == edge-b",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "neighbor_state": "FULL",
+    "network_type": "broadcast",
+    "route_table": {
+      "10.5.0.0/16": "prod"
+    }
+  }
+}

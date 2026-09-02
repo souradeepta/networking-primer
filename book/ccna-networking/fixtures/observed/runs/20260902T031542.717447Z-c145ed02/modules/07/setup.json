@@ -1,0 +1,76 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "dhcp_path": "REACHABLE",
+      "dns_path": "REACHABLE",
+      "syslog_path": "DELIVERED"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "client",
+      "access",
+      "shared DNS/DHCP/NTP/logging services"
+    ],
+    "request": {
+      "expected_dns": "10.7.0.53",
+      "expected_ntp": "10.7.0.123",
+      "lease_address": "10.7.0.20",
+      "ntp_offset_ms": 2,
+      "service_path_up": true,
+      "syslog_delivered": true
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-07-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "client -- access -- shared DNS/DHCP/NTP/logging services",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-07-baseline"
+  },
+  "config": {
+    "dns_zone": "app.example",
+    "lease_pool": "10.7.0.0/24"
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "dhcp_path": "REACHABLE",
+      "dns_path": "UNREACHABLE",
+      "syslog_path": "DELIVERED"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "client",
+      "access",
+      "shared DNS/DHCP/NTP/logging services"
+    ],
+    "request": {
+      "expected_dns": "10.7.0.53",
+      "expected_ntp": "10.7.0.123",
+      "lease_address": "10.7.0.20",
+      "ntp_offset_ms": 2,
+      "service_path_up": true,
+      "syslog_delivered": true
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-07-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "client -- access -- shared DNS/DHCP/NTP/logging services",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-07-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "DNS, DHCP lease, NTP, and syslog service path",
+  "module": "07-network-services",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.741Z",
+  "topology": "client -- access -- shared DNS/DHCP/NTP/logging services",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "expected_dns": "10.7.0.53",
+    "expected_ntp": "10.7.0.123",
+    "lease_address": "10.7.0.20",
+    "ntp_offset_ms": 2,
+    "service_path_up": true,
+    "syslog_delivered": true
+  }
+}

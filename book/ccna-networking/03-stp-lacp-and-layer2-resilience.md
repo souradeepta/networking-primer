@@ -217,3 +217,7 @@ state.txt` if member identity, root, or owner is uncertain. **Cleanup verificati
 `rm -f "$LAB_DIR/state.txt" "$LAB_DIR/baseline.txt"; rmdir
 "$LAB_DIR"; test ! -e "$LAB_DIR"`. Results are **illustrative** until a
 learner runs the fixture; no physical failover is claimed.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`03-stp-lacp.json`](fixtures/observed/03-stp-lacp.json). The v3 evaluator derives `cycle_detected` from the loop-capable topology and effective blocked edges. A metadata-only control mutation remains healthy, while an evaluator-only unblocked-loop fault fails; reconciliation tasks, effective state, rollback, and cleanup are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#04-b-module-03--03-stp-lacp).

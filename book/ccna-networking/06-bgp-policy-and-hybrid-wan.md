@@ -370,3 +370,7 @@ have separate state and route semantics; GCP [Cloud Router](https://cloud.google
 and [Interconnect](https://cloud.google.com/network-connectivity/docs/interconnect/concepts/overview)
 do likewise. **Engineering inference:** layered evidence reduces the chance
 of mistaking control-plane health for application reachability.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`06-bgp-policy.json`](fixtures/observed/06-bgp-policy.json). The v3 evaluator derives `rib_result` from peer state, policy, and the independent prefix path. The control fault filters the prefix without a second plane mutation; the negative assertion separately demonstrates evaluator-only FIB withdrawal. Reconciled policy task/read-back, repair, rollback, and cleanup are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#07-b-module-06--06-bgp-policy).

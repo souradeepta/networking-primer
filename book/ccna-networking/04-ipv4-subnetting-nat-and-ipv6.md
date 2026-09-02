@@ -224,3 +224,7 @@ baseline.txt`. **Rollback:** `cp baseline.txt state.txt` if IPAM ownership or
 the translated tuple is not exact. **Cleanup verification:**
 `rm -f "$LAB_DIR/state.txt" "$LAB_DIR/baseline.txt"; rmdir "$LAB_DIR"; test ! -e "$LAB_DIR"`.
 Numeric output is **illustrative**; only a learner-run fixture is **observed**.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`04-ipv4-nat-ipv6.json`](fixtures/observed/04-ipv4-nat-ipv6.json). The v3 evaluator derives the translation from the effective NAT rule and independent flow fixture, while retaining IPv6 neighbor state. The assertion distinguishes a healthy metadata control change from evaluator-only NAT-table loss; request, reconcile task, effective read-back, repair, and rollback are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#05-b-module-04--04-ipv4-nat-ipv6).

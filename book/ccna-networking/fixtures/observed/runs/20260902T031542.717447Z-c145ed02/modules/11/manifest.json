@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "968c4891e9c7e96ea48643b0301eac08faf8940d7c2ddfd000746a2c1f3a71f6",
+    "baseline-readback.json": "1841290d3f3eb7e2d4576913c1158e79191a006128642fc4998a4a6893d360ca",
+    "cleanup.json": "d7c46e2f04f61effb91144f7f55f666f3ad52616dc57383a935827bc2d8b8835",
+    "fault.json": "86a83a31a3fe5375fe6e97f3ceb574652d8ab696fc544fa8297aaee46357ccbf",
+    "repair-readback.json": "d9bc9f93e840b3f8b55bf9813b713db9b03a3941914e30c2ea808d2141ff036a",
+    "rollback.json": "a1edd3565995c6466d616d7f4896f7c3e412db878dc4f72b9f042c7f07e7d40f",
+    "setup.json": "6ea83a5442a3431ccd36f42d369c0048141b5a4643cf063aea8165dd57ddc0b2"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-11",
+  "immutable": true,
+  "module": "11-vxlan-evpn",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

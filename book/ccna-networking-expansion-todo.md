@@ -79,12 +79,27 @@ For each row, all six boxes must be checked: `[C]` concepts, `[L]` lab,
 - [x] `python3 scripts/check_internal_links.py` passes.
 - [x] `git diff --check` passes.
 
+### D.1 Terra semantic remediation checklist
+
+- [x] Runner injects only control/config faults; no paired plane-fault field is
+  stored for a scenario.
+- [x] Pure module-specific evaluator derives forwarding/service observations
+  from effective control plus a separate traffic fixture.
+- [x] Negative test proves a metadata-only control change can remain healthy
+  while an evaluator-only mechanism fault fails the data plane.
+- [x] Ownership probes are derived from retained read-back and traffic-path
+  inputs; caller-supplied probe status is rejected.
+- [x] Read-backs model desired state -> reconciliation -> effective state with
+  status, changed fields, task ID, and effective-state hash.
+- [x] Completed submissions use module-specific JSON pointers and thresholds;
+  generic health-only pointers are rejected.
+- [x] Stale v2 retained bundles were removed; one v3 tracked run remains.
+
 ## E. Terra final-review gates
 
-Implementation gates below are complete. The second independent Terra pass is
-pending because the Terra worker hit the platform usage limit during the first
-retry; do not treat the implementation as Terra-approved until those gates are
-checked by a fresh Terra review.
+Local implementation gates are now recorded as complete for this pass. Terra
+semantic approval is still pending; do not treat these implementation checks
+as Terra approval.
 
 - [ ] Terra checks every section D concept against the rendered book.
 - [ ] Terra checks every module against the content contract.
@@ -93,22 +108,38 @@ checked by a fresh Terra review.
 - [ ] Terra checks all diagrams for readability, ASCII, and accurate paths.
 - [ ] Terra checks SDE2 versus Staff progression and missing follow-ups.
 - [ ] Terra reports no high-severity omission or misleading claim.
-- [ ] Owner fixes all Terra findings and requests a second Terra pass.
+- [x] Owner implements the latest Terra repairs and records the retained artifacts.
+- [ ] Owner requests a later independent Terra pass.
 - [ ] Terra signs off with a dated coverage report.
 
 ## F. Current progress snapshot
 
-Updated 2026-09-01 after the latest Terra audit.
+Updated 2026-09-01 after the latest Terra audit and semantic remediation pass.
 
-- **Implementation:** Luna has saved the 15-module expansion, atomic concept
-  crosswalk, reproducible-lab records, criterion-level answer scaffolding, and
-  cloud/controller/ADC ownership notes.
+- **Implementation:** The semantic remediation is saved in the fixture runner
+  and evaluator. It includes control-only faults, derived mechanism
+  observations, reconciliation-model read-backs, 15 four-criterion
+  module-specific submissions, and 24 ownership records with derived negative
+  controls.
+- **Retained evidence:** run
+  `20260901T172659.876804Z-b746b7bb`, schema `ccna-fixture-bundle/v3`, with 15
+  module bundles, 24 ownership records, and 15 submission records.
 - **Automated quality:** repository validation, the Python request-path example,
   internal-link checks, Mermaid checks, heading checks, and `git diff --check`
   pass.
-- **Terra quality gate:** **NOT APPROVED**. Terra still requires real replayable
-  mechanism fixtures, artifact-backed observed outputs for worked submissions,
-  and exclusive field-level request/read-back records with independent data-
-  plane checks for AWS, GCP, Terraform, NSO, NDFC, F5, and A10.
-- **Publication:** commit and push are pending because `.git` is currently
-  mounted read-only; the working tree remains available for further edits.
+- **Terra quality gate:** **NOT APPROVED** until Terra verifies the new saved
+  bundles, evaluator semantics, reconciliation model, module-specific
+  thresholds, ownership pairs, and independent negative controls.
+- **Publication:** this repair pass is currently uncommitted. Commit/push only
+  after the full checks below pass and the user requests publication.
+
+## G. Latest remediation handoff
+
+The current implementation is saved in
+[`ccna-terra-remediation-handoff.md`](ccna-terra-remediation-handoff.md).
+The shared fixture runner now covers all 15 modules and produces captured
+JSON evidence under `book/ccna-networking/fixtures/observed/`; the canonical
+field-level ownership matrix and criterion-backed submissions are linked from
+the collection README. These are implementation artifacts, not Terra sign-off.
+The status remains **NOT APPROVED** until Terra independently reruns the
+fixture, validates the evidence, and closes the quality gates in section E.

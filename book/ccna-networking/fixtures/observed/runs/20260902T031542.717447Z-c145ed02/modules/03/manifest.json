@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "16a05b15f0f72b14b8e687eb1581bdefbcf843498ad9a18fdd71fe83766c8e3d",
+    "baseline-readback.json": "572ba71a27fc341881a668c1a37669bd827a95301ad6014954f63e9e57e169f5",
+    "cleanup.json": "141d3e147a4c0a91c790193a6d9501b05e6e5210170e09f5444272f6f06a84da",
+    "fault.json": "aedc4feb2b427c1edf98e7032d69eeafa50630a9eb6b6faf5d7b6c2ab74bb659",
+    "repair-readback.json": "0c9d57cd2f4970d48ecc5b3891bea2c5ceb4eda4302c49811dbd97d28dc03509",
+    "rollback.json": "fd481e84e75195a91c144c794c172a4f1efca53e0cc5ce270b8620a2584662b3",
+    "setup.json": "f6cafef6b526f32ce2613ab0f8e735b0e07af8904fd9c7499815d79b653b4585"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-03",
+  "immutable": true,
+  "module": "03-stp-lacp",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

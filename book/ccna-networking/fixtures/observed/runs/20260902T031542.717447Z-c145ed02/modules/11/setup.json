@@ -1,0 +1,58 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "underlay_reachability": "REACHABLE"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "leaf-vtep-a",
+      "IP underlay",
+      "leaf-vtep-b; VNI 5011"
+    ],
+    "request": {
+      "remote_mac_count": 2
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-11-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "leaf-vtep-a == IP underlay == leaf-vtep-b; VNI 5011",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-11-baseline"
+  },
+  "config": {
+    "route_target": "65000:5011",
+    "tenant": "lab",
+    "vni": 5011
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-11",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "underlay_reachability": "UNREACHABLE"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "leaf-vtep-a",
+      "IP underlay",
+      "leaf-vtep-b; VNI 5011"
+    ],
+    "request": {
+      "remote_mac_count": 2
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-11-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "leaf-vtep-a == IP underlay == leaf-vtep-b; VNI 5011",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-11-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "VXLAN VTEP, EVPN type-2, and BUM replication",
+  "module": "11-vxlan-evpn",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.754Z",
+  "topology": "leaf-vtep-a == IP underlay == leaf-vtep-b; VNI 5011",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "remote_mac_count": 2
+  }
+}

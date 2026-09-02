@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "b838dafb650c32c3d68bc283ad87edfbf7f788afd65a0d33c6c25b1a3e349f40",
+    "baseline-readback.json": "b2742e5e89b7d1e084e79f3d2d61212e2fbec67ed6bb47ca80d634e31b241eda",
+    "cleanup.json": "22cd2faf155a64dfe24cd37de652f418562491a89589950e3d7c19e1e14d6ad3",
+    "fault.json": "30951fb32f0f034abd0cd2c7d647e39e49acd5465c621a2528c04e9a0849274f",
+    "repair-readback.json": "951fa3b26330e96111a1716bf73a254987fd0410cfb7906774c6db1f09e10858",
+    "rollback.json": "84a5419ad7a815785cb98352b8951a940694d232d6e1d51bb81e40107ad0010a",
+    "setup.json": "02f96172e0a5294b73cceb361c5d46e789a1d2e8de1f61bf13c211cf7e07c79a"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-12",
+  "immutable": true,
+  "module": "12-cloud-networking",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

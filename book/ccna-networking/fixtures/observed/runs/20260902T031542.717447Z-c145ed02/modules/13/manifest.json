@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "68095834487bb3f81ce0726f6ca3b4a60343bd9a581a5a8a96ab238bfa6bc887",
+    "baseline-readback.json": "6e9f81daa57cb657cdb33ef23eec57f5061a5da84cec039278abe7c872624970",
+    "cleanup.json": "25ffb1bcb9c252fb5dfe8f6b74181f4332987368bcd616ecec659f8402a8e98d",
+    "fault.json": "16e3276e3f5b203e39a33235bd8f98d36e16e46ad2cd6c2d7a5fc3337209a8ce",
+    "repair-readback.json": "653a6dbf94290d0a8a4dd451c8d29773b92d9fc340fbbea973b2da28c80f852e",
+    "rollback.json": "9afb328c98d32b2291826cfa5a1fbf122c54fcbdca35dc7b802a3f908e3e12c6",
+    "setup.json": "6e32da7cbcd7c26c71a668e10a121f10c7a2b08a26d10eab950ea4c5bb94c4eb"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+  "immutable": true,
+  "module": "13-private-public-hybrid",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

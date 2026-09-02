@@ -225,3 +225,7 @@ A real lab adds tagged capture and CAM read-back. **Repair:** restore
 **Cleanup verification:** `rm -f "$LAB_DIR/state.txt" "$LAB_DIR/baseline.txt";
 rmdir "$LAB_DIR"; test ! -e "$LAB_DIR"`. Only learner-run local status is
 **observed**; sample output is **illustrative**.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`02-vlan-trunk.json`](fixtures/observed/02-vlan-trunk.json). The v3 evaluator derives `hop_admission` from the effective allowed VLANs and tagged-frame path. The assertion separates a healthy metadata control change from an evaluator-only tag-strip fault; reconciled task/read-back records accompany the control fault and repair. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#03-b-module-02--02-vlan-trunk).

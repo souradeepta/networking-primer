@@ -306,3 +306,7 @@ Logs](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html) and
 GCP [VPC Flow Logs](https://cloud.google.com/vpc/docs/flow-logs) are provider
 telemetry products. **Engineering inference:** synchronized clocks are a
 prerequisite for trustworthy distributed incident timelines.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`07-network-services.json`](fixtures/observed/07-network-services.json). The v3 evaluator derives DNS, lease, NTP, and syslog observations from effective service configuration and an independent service path. The negative assertion pairs a healthy metadata-only control change with evaluator-only DNS path loss; reconciliation fields and service observations are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#08-b-module-07--07-network-services).

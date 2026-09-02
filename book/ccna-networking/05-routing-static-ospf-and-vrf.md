@@ -334,3 +334,7 @@ s/fib=installed/fib=missing/' "$LAB_DIR/state.txt"`. **Measurable assertion/samp
 **Cleanup verification:** `rm -f "$LAB_DIR/state.txt" "$LAB_DIR/baseline.txt";
 rmdir "$LAB_DIR"; test ! -e "$LAB_DIR"`. Result is **illustrative** until run;
 no OSPF device execution is claimed.
+
+## O. Artifact-backed submission
+
+Observed bundle: [`05-ospf-vrf.json`](fixtures/observed/05-ospf-vrf.json). The v3 evaluator derives `neighbor_state` and the VRF route from effective area/network type plus an independent adjacency fixture. A metadata-only change stays healthy and evaluator-only adjacency loss fails; reconciliation and route observations remain separate. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#06-b-module-05--05-ospf-vrf).

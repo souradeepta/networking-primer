@@ -1,0 +1,354 @@
+{
+  "artifacts": [
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/setup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/baseline-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/fault.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/assertion.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/repair-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/rollback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/cleanup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/06/manifest.json"
+  ],
+  "baseline": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "forwarding_programming": "PROGRAMMED",
+      "policy_action": "ALLOW",
+      "prefix": "203.0.113.0/24",
+      "rib_result": "FIB",
+      "session": "ESTABLISHED"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+  },
+  "bundle": "runs/20260902T031542.717447Z-c145ed02/modules/06",
+  "cleanup": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+    "ephemeral_workspace": "/tmp/ccna-06-204zjxr2",
+    "exists_after_cleanup": false,
+    "no_leak": true,
+    "retained_bundle": true,
+    "retained_phase_files": [
+      "setup.json",
+      "baseline-readback.json",
+      "fault.json",
+      "assertion.json",
+      "repair-readback.json",
+      "rollback.json",
+      "cleanup.json"
+    ],
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3",
+    "temporary_workspace_removed": true
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+  "fault": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": false,
+    "observations": {
+      "forwarding_programming": "PROGRAMMED",
+      "policy_action": "DENY",
+      "prefix": "203.0.113.0/24",
+      "rib_result": "FILTERED",
+      "session": "ESTABLISHED"
+    },
+    "result": "BGP_PREFIX_FILTERED",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+  },
+  "module": "06-bgp-policy",
+  "module_id": "06",
+  "negative_control": {
+    "control_only": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "forwarding_programming": "PROGRAMMED",
+        "policy_action": "ALLOW",
+        "prefix": "203.0.113.0/24",
+        "rib_result": "FIB",
+        "session": "ESTABLISHED"
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+    },
+    "independent_path": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "forwarding_programming": "WITHDRAWN",
+        "policy_action": "ALLOW",
+        "prefix": "203.0.113.0/24",
+        "rib_result": "FILTERED",
+        "session": "ESTABLISHED"
+      },
+      "result": "BGP_PREFIX_FILTERED",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-degraded"
+    }
+  },
+  "observed_symptom": "BGP_PREFIX_FILTERED",
+  "repair": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "forwarding_programming": "PROGRAMMED",
+      "policy_action": "ALLOW",
+      "prefix": "203.0.113.0/24",
+      "rib_result": "FIB",
+      "session": "ESTABLISHED"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+  },
+  "rollback": {
+    "authoritative_readback": {
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+        "_controller.stage": "rollback",
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_state": {
+        "module_control": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+            "stage": "rollback"
+          },
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        }
+      },
+      "kind": "observed local controller-store read-back",
+      "reconciliation": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 4,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-repair",
+            "stage": "repair"
+          },
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-06",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+        "desired_state": {
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 5,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+          "_controller.stage": "rollback",
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+            "stage": "rollback"
+          },
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        },
+        "effective_state_hash": "09ce1b51e2ddec1be101cc4d33d8c68185b44453c4f6259fcc4d156488dd1577",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "peer": "ESTABLISHED",
+          "policy": "ALLOW",
+          "prefix": "203.0.113.0/24"
+        },
+        "stage": "rollback",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+        "timestamp": "2026-09-02T03:15:42.739Z",
+        "writer": null
+      },
+      "requested_fields": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "stage": "rollback",
+      "status": "ACTIVE",
+      "timestamp": "2026-09-02T03:15:42.739Z"
+    },
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-repair",
+          "stage": "repair"
+        },
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-06",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+      "desired_state": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+        "_controller.stage": "rollback",
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 5,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+          "stage": "rollback"
+        },
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_state_hash": "09ce1b51e2ddec1be101cc4d33d8c68185b44453c4f6259fcc4d156488dd1577",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "stage": "rollback",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-06-rollback",
+      "timestamp": "2026-09-02T03:15:42.739Z",
+      "writer": null
+    },
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+    "desired_request": {
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+      "desired_state": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "kind": "fictional local emulator desired-state request",
+      "object": "06-bgp-policy",
+      "operation": "rollback",
+      "requested_fields": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "status": "ACCEPTED",
+      "timestamp": "2026-09-02T03:15:42.739Z"
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "forwarding_programming": "PROGRAMMED",
+        "policy_action": "ALLOW",
+        "prefix": "203.0.113.0/24",
+        "rib_result": "FIB",
+        "session": "ESTABLISHED"
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+    },
+    "evaluator_input": {
+      "control_source": "authoritative_readback#/effective_state/module_control",
+      "path_trace": {
+        "device_service_state": {
+          "forwarding_programming": "PROGRAMMED"
+        },
+        "mode": "baseline",
+        "path_hops": [
+          "customer-edge",
+          "eBGP",
+          "provider-edge",
+          "transit"
+        ],
+        "request": {
+          "prefix": "203.0.113.0/24"
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-06-baseline",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "customer-edge == eBGP == provider-edge == transit",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+      },
+      "traffic_request": {
+        "prefix": "203.0.113.0/24"
+      }
+    },
+    "restored_control": true,
+    "restored_dataplane": true,
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3"
+  },
+  "runner_version": "4.0.0"
+}

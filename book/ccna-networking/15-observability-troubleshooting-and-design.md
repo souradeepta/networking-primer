@@ -290,3 +290,7 @@ cloud flow logs, and ADC health/access logs have release-specific fields.
 and socket state. **Engineering inference:** diagnosis is strongest when
 independent evidence converges across request, control, forwarding, and
 resource layers.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`15-observability-design.json`](fixtures/observed/15-observability-design.json). The v3 evaluator derives metric, flow, log, and timeline observations from the independent signal fixture and effective telemetry profile. The assertion separates a healthy metadata-only control change from evaluator-only telemetry loss; reconciliation, threshold evidence, repair, rollback, and cleanup are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#16-b-module-15--15-observability-design).

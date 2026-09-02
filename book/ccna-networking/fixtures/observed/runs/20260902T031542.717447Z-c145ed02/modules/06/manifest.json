@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "3aba8cd63fa37b0c3c7002c4fb50acc9b33fcb7423ed60329428a44ea6670a5b",
+    "baseline-readback.json": "963dea8aabdf7bca0e0d8833bceb083caca6474f52f1aa7efbe89ed8d899d000",
+    "cleanup.json": "305c22b6d5769a4e8fee8bd2b2caae19e14b9b57e825e127b8014cb4f00041ea",
+    "fault.json": "940fa0fa76b35874220190322e66cdf0a1f24c0c00c2e76dd9868cd4ceaf8ad2",
+    "repair-readback.json": "fa79a5ef9f8c4500499b8b704bf57babda01735b1c608f478d4c9e6a58200bfd",
+    "rollback.json": "6c0c043642ffc53865c352ce12894c5ebf191a2bb4b6e879fe36f6e99d9170bd",
+    "setup.json": "aaeb8c7c37ce68b4954855cbdab1e30ad9e40061baafae8c483fb46b1e8b035c"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+  "immutable": true,
+  "module": "06-bgp-policy",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

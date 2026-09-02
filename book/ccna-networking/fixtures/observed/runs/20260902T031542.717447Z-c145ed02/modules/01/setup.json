@@ -1,0 +1,63 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "carrier_state": "UP",
+      "negotiation_state": "COMPLETE"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "host-a",
+      "link-a",
+      "link-b",
+      "host-b"
+    ],
+    "request": {
+      "carrier": true,
+      "packet_size": 1400
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-01-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "host-a -- link-a -- link-b -- host-b",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-01-baseline"
+  },
+  "config": {
+    "mtu": 1500
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-01",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "carrier_state": "DOWN",
+      "negotiation_state": "COMPLETE"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "host-a",
+      "link-a",
+      "link-b",
+      "host-b"
+    ],
+    "request": {
+      "carrier": true,
+      "packet_size": 1400
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-01-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "host-a -- link-a -- link-b -- host-b",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-01-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "Ethernet frame admission and MTU",
+  "module": "01-physical-mtu",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.719Z",
+  "topology": "host-a -- link-a -- link-b -- host-b",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "carrier": true,
+    "packet_size": 1400
+  }
+}

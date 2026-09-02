@@ -1,0 +1,76 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "private_path_state": "UP"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "private workload",
+      "HA VPN/Interconnect",
+      "on-prem; controlled public egress"
+    ],
+    "request": {
+      "bgp_routes": {
+        "10.13.0.0/16": "private-a"
+      },
+      "service_listener_by_path": {
+        "private-a": true,
+        "private-b": false
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-13-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "private workload -- HA VPN/Interconnect -- on-prem; controlled public egress",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-13-baseline"
+  },
+  "config": {
+    "backup": "private-b",
+    "egress": "controlled",
+    "primary": "private-a"
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-13",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "private_path_state": "DOWN"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "private workload",
+      "HA VPN/Interconnect",
+      "on-prem; controlled public egress"
+    ],
+    "request": {
+      "bgp_routes": {
+        "10.13.0.0/16": "private-a"
+      },
+      "service_listener_by_path": {
+        "private-a": true,
+        "private-b": false
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-13-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "private workload -- HA VPN/Interconnect -- on-prem; controlled public egress",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-13-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "Hybrid BGP path selection and controlled egress",
+  "module": "13-private-public-hybrid",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.761Z",
+  "topology": "private workload -- HA VPN/Interconnect -- on-prem; controlled public egress",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "bgp_routes": {
+      "10.13.0.0/16": "private-a"
+    },
+    "service_listener_by_path": {
+      "private-a": true,
+      "private-b": false
+    }
+  }
+}

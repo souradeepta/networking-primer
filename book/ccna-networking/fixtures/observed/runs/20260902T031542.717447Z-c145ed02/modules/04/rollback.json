@@ -1,0 +1,246 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 5,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+      "_controller.stage": "rollback",
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 5,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+          "stage": "rollback"
+        },
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-repair",
+          "stage": "repair"
+        },
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-04",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+      "desired_state": {
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+        "_controller.stage": "rollback",
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 5,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+          "stage": "rollback"
+        },
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "effective_state_hash": "450a156751702d33d93e1a923a938eab842a7fa99f49b36c01350754a7468f52",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+        "nd": "enabled"
+      },
+      "stage": "rollback",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+      "timestamp": "2026-09-02T03:15:42.732Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "stage": "rollback",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.732Z"
+  },
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 4,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-repair",
+        "stage": "repair"
+      },
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-04",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+    "desired_state": {
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 5,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+      "_controller.stage": "rollback",
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 5,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+        "stage": "rollback"
+      },
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "effective_state_hash": "450a156751702d33d93e1a923a938eab842a7fa99f49b36c01350754a7468f52",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "stage": "rollback",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-04-rollback",
+    "timestamp": "2026-09-02T03:15:42.732Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-04",
+    "desired_state": {
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "04-ipv4-nat-ipv6",
+    "operation": "rollback",
+    "requested_fields": {
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nd": "enabled"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.732Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "inside": "10.4.0.10",
+      "ipv6_neighbor_state": "REACHABLE",
+      "nat_rule": "10.4.0.0/24->198.51.100.0/24",
+      "nat_table_state": "POPULATED",
+      "translation": "198.51.100.10"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "nat_table_state": "POPULATED"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "dual-stack-host",
+        "edge-router",
+        "public-service"
+      ],
+      "request": {
+        "available_translations": {
+          "10.4.0.10": "198.51.100.10"
+        },
+        "flow": {
+          "inside": "10.4.0.10"
+        },
+        "ipv6_neighbor_state": "REACHABLE"
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-04-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "dual-stack-host -- edge-router -- public-service",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-04-baseline"
+    },
+    "traffic_request": {
+      "available_translations": {
+        "10.4.0.10": "198.51.100.10"
+      },
+      "flow": {
+        "inside": "10.4.0.10"
+      },
+      "ipv6_neighbor_state": "REACHABLE"
+    }
+  },
+  "restored_control": true,
+  "restored_dataplane": true,
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

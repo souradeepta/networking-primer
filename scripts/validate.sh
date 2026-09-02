@@ -32,7 +32,7 @@ python3 - <<'PY'
 from pathlib import Path
 import re
 
-chapters = sorted(p for p in Path("book").glob("*.md") if p.name not in {"README.md", "FACT-INFERENCE-LEDGER.md", "ccna-networking-expansion-spec.md", "ccna-networking-expansion-todo.md", "ccna-networking-expansion-review.md"})
+chapters = sorted(p for p in Path("book").glob("*.md") if p.name not in {"README.md", "FACT-INFERENCE-LEDGER.md", "ccna-networking-expansion-spec.md", "ccna-networking-expansion-todo.md", "ccna-networking-expansion-review.md", "ccna-terra-remediation-plan.md", "ccna-terra-remediation-handoff.md"})
 if len(chapters) < 17:
     raise SystemExit(f"Book edition needs 17 chapters; found {len(chapters)}")
 required = [
@@ -113,6 +113,185 @@ for path in [root / name for name in expected[1:]]:
         if label not in text:
             raise SystemExit(f"{path}: missing evidence label {label}")
 print(f"CCNA expansion checks passed: {len(expected)-1} modules and exact index.")
+PY
+
+python3 - <<'PY'
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+
+
+def pointer(payload, expression):
+    value = payload
+    for part in expression.lstrip("/").split("/"):
+        if part:
+            value = value[int(part)] if isinstance(value, list) else value[part]
+    return value
+
+
+def contains_key(value, names):
+    if isinstance(value, dict):
+        return any(key in names or contains_key(child, names) for key, child in value.items())
+    if isinstance(value, list):
+        return any(contains_key(child, names) for child in value)
+    return False
+
+
+runner = Path("book/ccna-networking/fixtures/runner.py")
+evaluator = Path("book/ccna-networking/fixtures/evaluator.py")
+if not runner.exists() or not evaluator.exists():
+    raise SystemExit("CCNA fixture runner/evaluator is missing")
+source = runner.read_text(encoding="utf-8") + evaluator.read_text(encoding="utf-8")
+if any(token in source for token in ("mechanism_fault", "fault_plane", "probe_healthy")):
+    raise SystemExit("legacy coupled fault or caller-supplied probe pattern remains in fixture code")
+with tempfile.TemporaryDirectory(prefix="ccna-validator-") as temporary:
+    capture = Path(temporary) / "capture"
+    result = subprocess.run([sys.executable, str(runner), "--all", "--artifacts-dir", str(capture)], check=True, capture_output=True, text=True)
+    if "FIXTURE_PASS modules=15" not in result.stdout or "temporary_workspace_removed=True" not in result.stdout or "no_leak=True" not in result.stdout:
+        raise SystemExit("CCNA fixture runner did not prove all modules and cleanup")
+    run = json.loads((capture / "run.json").read_text(encoding="utf-8"))
+    if run.get("schema") != "ccna-fixture-bundle/v3" or run.get("bundle_count") != 15:
+        raise SystemExit("CCNA run record has the wrong schema or module count")
+    contract = run.get("semantic_contract", {})
+    if contract != {"control_faults_only": True, "data_plane_derived": True, "ownership_probes_derived": True, "reconciliation_model": True}:
+        raise SystemExit("CCNA run does not declare the four semantic contracts")
+    run_id = run.get("run_id")
+    modules = run.get("modules", [])
+    if len(modules) != 15 or len({item.get("module_id") for item in modules}) != 15:
+        raise SystemExit("CCNA capture must contain 15 unique module bundles")
+    required_phases = {"setup.json", "baseline-readback.json", "fault.json", "assertion.json", "repair-readback.json", "rollback.json", "cleanup.json", "manifest.json"}
+    for item in modules:
+        bundle = capture / item["bundle"]
+        if not bundle.is_dir() or not item["correlation_id"].endswith(f"module-{item['module_id']}"):
+            raise SystemExit(f"invalid bundle or module correlation ID: {item}")
+        manifest = json.loads((bundle / "manifest.json").read_text(encoding="utf-8"))
+        if manifest.get("schema") != "ccna-fixture-bundle/v3" or manifest.get("immutable") is not True or manifest.get("bundle_complete") is not True:
+            raise SystemExit(f"{bundle}: incomplete immutable v3 manifest")
+        if set(manifest.get("phase_files", [])) != required_phases - {"manifest.json"}:
+            raise SystemExit(f"{bundle}: phase manifest is incomplete")
+        for phase in required_phases:
+            path = bundle / phase
+            if not path.is_file():
+                raise SystemExit(f"{bundle}: missing retained phase {phase}")
+            if phase != "manifest.json" and hashlib.sha256(path.read_bytes()).hexdigest() != manifest["content_sha256"].get(phase):
+                raise SystemExit(f"{path}: content hash mismatch")
+        cleanup = json.loads((bundle / "cleanup.json").read_text(encoding="utf-8"))
+        if cleanup.get("temporary_workspace_removed") is not True or cleanup.get("no_leak") is not True or cleanup.get("exists_after_cleanup") is not False:
+            raise SystemExit(f"{bundle}: cleanup proof failed")
+        phases = {}
+        for phase in required_phases - {"manifest.json", "cleanup.json"}:
+            phase_payload = json.loads((bundle / phase).read_text(encoding="utf-8"))
+            phases[phase] = phase_payload
+            if phase_payload.get("runner_version") != manifest.get("runner_version") or phase_payload.get("correlation_id") != item["correlation_id"]:
+                raise SystemExit(f"{bundle}/{phase}: version or correlation mismatch")
+        for name in ("baseline-readback.json", "fault.json", "repair-readback.json", "rollback.json"):
+            payload = phases[name]
+            for field in ("desired_request", "controller_result", "authoritative_readback", "device_service_observation"):
+                if field not in payload:
+                    raise SystemExit(f"{bundle}/{name}: missing reconciliation field {field}")
+            rb = payload["authoritative_readback"]
+            reconciliation = rb.get("reconciliation", {})
+            if not reconciliation.get("task_id") or reconciliation.get("status") not in {"APPLIED", "NO_CHANGE"} or "changed_fields" not in reconciliation:
+                raise SystemExit(f"{bundle}/{name}: read-back is not a reconciliation result")
+            if not rb.get("requested_fields") or not rb.get("effective_fields") or not reconciliation.get("effective_fields"):
+                raise SystemExit(f"{bundle}/{name}: missing requested/effective reconciliation fields")
+            if rb.get("effective_fields") == rb.get("requested_fields") or rb.get("effective_state") == payload["desired_request"].get("desired_state"):
+                raise SystemExit(f"{bundle}/{name}: read-back is an echo rather than an effective state")
+        assertion = phases["assertion.json"]
+        negative = assertion.get("negative_control", {})
+        if assertion.get("semantic_assertions") != {"control_change_can_leave_dataplane_healthy": True, "independent_path_change_can_fail_dataplane": True, "no_direct_outcome_injection": True, "same_control_readback_can_have_different_path_result": True}:
+            raise SystemExit(f"{bundle}: semantic negative test did not pass")
+        control_only = negative.get("control_only_change", {})
+        independent = negative.get("independent_path_change", {})
+        if (control_only.get("evaluator_output", {}).get("healthy") is not True
+                or independent.get("evaluator_output", {}).get("healthy") is not False
+                or contains_key(independent.get("path_trace", {}), {"healthy", "probe_healthy", "mechanism_fault", "fault_plane"})
+                or independent.get("request_status") != "ACCEPTED"
+                or independent.get("readback_status") != "ACTIVE"):
+            raise SystemExit(f"{bundle}: negative control is not independently derived")
+    submissions = json.loads((capture / "completed-submissions.json").read_text(encoding="utf-8"))
+    if submissions.get("schema") != "ccna-fixture-bundle/v3" or submissions.get("run_id") != run_id or len(submissions.get("records", [])) != 15:
+        raise SystemExit("CCNA capture must contain 15 v3 completed-submission records")
+    for record in submissions["records"]:
+        if record.get("status") != "completed-local-emulator-submission" or len(record.get("criteria", [])) != 4:
+            raise SystemExit(f"{record.get('module_id')}: incomplete submission record")
+        total = 0
+        for criterion in record["criteria"]:
+            pointer_text = criterion.get("json_pointer", "")
+            if "/observations/" not in pointer_text or pointer_text.endswith("/healthy") or "health" in criterion.get("threshold", "").lower():
+                raise SystemExit(f"{criterion.get('criterion_id')}: generic health-only rubric remains")
+            artifact = capture / criterion["artifact_path"]
+            if not artifact.is_file():
+                raise SystemExit(f"{criterion.get('criterion_id')}: missing artifact")
+            observed_value = pointer(json.loads(artifact.read_text(encoding="utf-8")), pointer_text)
+            expected = criterion.get("expected_value")
+            operator = criterion.get("operator")
+            if operator == "eq": computed = observed_value == expected
+            elif operator == "ne": computed = observed_value != expected
+            elif operator == "ge": computed = observed_value >= expected
+            elif operator == "gt": computed = observed_value > expected
+            elif operator == "lt": computed = observed_value < expected
+            elif operator == "present": computed = observed_value is not None
+            elif operator == "missing": computed = observed_value is None
+            else: raise SystemExit(f"{criterion.get('criterion_id')}: unknown scoring operator")
+            awarded = criterion.get("points_possible") if computed else 0
+            if (observed_value != criterion["observed_value"] or computed != criterion.get("pass")
+                    or computed != criterion.get("scoring_inputs", {}).get("predicate_result")
+                    or awarded != criterion.get("points_awarded")
+                    or criterion.get("threshold_decision") != ("PASS" if computed else "FAIL")):
+                raise SystemExit(f"{criterion.get('criterion_id')}: observed criterion does not match record")
+            if criterion.get("scoring_inputs", {}).get("observed_value") != observed_value or criterion.get("scoring_inputs", {}).get("expected_value") != expected or criterion.get("scoring_inputs", {}).get("operator") != operator:
+                raise SystemExit(f"{criterion.get('criterion_id')}: scoring inputs are not reproducible")
+            total += awarded
+        arithmetic = " + ".join(str(item["points_awarded"]) for item in record["criteria"]) + f" = {total}/100"
+        if total != record.get("total_points") or record.get("score_arithmetic") != arithmetic or record.get("score_computed_at_execution") is not True:
+            raise SystemExit(f"{record.get('module_id')}: score arithmetic is not reproducible")
+    ownership = json.loads((capture / "ownership-records.json").read_text(encoding="utf-8"))
+    if ownership.get("schema") != "ccna-fixture-bundle/v3" or ownership.get("run_id") != run_id or len(ownership.get("records", [])) != 24:
+        raise SystemExit("CCNA capture must contain 24 v3 ownership records")
+    for record in ownership["records"]:
+        required = ("owner_id", "object_field_path", "ownership_key", "single_writer_rule", "approver_id", "evidence_owner_id", "rollback_owner_id", "owner_assignment_id", "approver_record_id", "evidence_record_id", "rollback_record_id", "collision_exception_rule", "linked_change_record", "fixture_request", "authoritative_readback", "controller_result", "effective_fields", "traffic_request", "path_trace", "evaluator_output", "collision_result", "negative_control")
+        if any(not record.get(field) for field in required):
+            raise SystemExit(f"{record.get('record_id')}: incomplete ownership record")
+        request, readback = record["fixture_request"], record["authoritative_readback"]
+        if request.get("correlation_id") != readback.get("correlation_id") or request.get("correlation_id") != record.get("correlation_id"):
+            raise SystemExit(f"{record.get('record_id')}: request/read-back correlation mismatch")
+        reconciliation = readback.get("reconciliation", {})
+        if (not request.get("status") == "ACCEPTED" or readback.get("status") != "ACTIVE"
+                or reconciliation.get("status") not in {"APPLIED", "NO_CHANGE"}
+                or not reconciliation.get("task_id") or not reconciliation.get("changed_fields")
+                or readback.get("effective_fields") == readback.get("requested_fields")
+                or record.get("effective_fields") != readback.get("effective_fields")):
+            raise SystemExit(f"{record.get('record_id')}: request/read-back lacks reconciliation evidence")
+        if record["evaluator_output"].get("healthy") is not True or "derived_probe" not in record["evaluator_output"]:
+            raise SystemExit(f"{record.get('record_id')}: positive evaluator is not derived")
+        collision = record["collision_result"]
+        if collision.get("status") != "REJECTED_COLLISION" or collision.get("ownership_key") != record.get("ownership_key") or collision.get("writer") == record.get("owner_id"):
+            raise SystemExit(f"{record.get('record_id')}: ownership collision was not enforced")
+        negative = record["negative_control"]
+        if (negative.get("request_status") != "ACCEPTED" or negative.get("readback_status") != "ACTIVE"
+                or negative.get("evaluator_output", {}).get("healthy") is not False
+                or contains_key(negative.get("path_trace", {}), {"healthy", "probe_healthy", "mechanism_fault", "fault_plane"})):
+            raise SystemExit(f"{record.get('record_id')}: request-success/data-plane-failure negative control is incomplete")
+    observed = Path("book/ccna-networking/fixtures/observed/run.json")
+    if observed.exists() and json.loads(observed.read_text(encoding="utf-8")).get("schema") != "ccna-fixture-bundle/v3":
+        raise SystemExit("CCNA observed artifact is stale; regenerate the retained v3 run")
+    if observed.exists():
+        legacy_tokens = ("ccna-fixture-bundle/v2", "mechanism_fault", "fault_plane", "probe_healthy")
+        for artifact in observed.parent.rglob("*.json"):
+            content = artifact.read_text(encoding="utf-8")
+            if any(token in content for token in legacy_tokens):
+                raise SystemExit(f"{artifact}: stale coupled-fault, echo-readback, or caller-probe pattern")
+for path in sorted(Path("book/ccna-networking").glob("[0-9][0-9]-*.md")):
+    if path.name == "00-README.md":
+        continue
+    text = path.read_text(encoding="utf-8")
+    if "fixtures/observed/" not in text or "fixtures/worked-submissions.md" not in text:
+        raise SystemExit(f"{path}: missing artifact-backed submission links")
+print("CCNA semantic fixture, reconciliation, module-specific rubric, ownership, negative-control, and cleanup checks passed.")
 PY
 
 python3 - <<'PY'

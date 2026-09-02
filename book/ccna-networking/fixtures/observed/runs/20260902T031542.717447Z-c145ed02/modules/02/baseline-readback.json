@@ -1,0 +1,296 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "gateway_vlan",
+      "switch.access_vlan",
+      "switch.trunk_allowed"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+      "_controller.stage": "baseline",
+      "gateway_vlan": 20,
+      "switch.access_vlan": 20,
+      "switch.trunk_allowed": [
+        10,
+        20
+      ]
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+          "stage": "baseline"
+        },
+        "gateway_vlan": 20,
+        "switch": {
+          "access_vlan": 20,
+          "trunk_allowed": [
+            10,
+            20
+          ]
+        }
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {},
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-02",
+      "changed_fields": [
+        "_controller.controller_source",
+        "_controller.defaults_applied",
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "gateway_vlan",
+        "switch.access_vlan",
+        "switch.trunk_allowed"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+      "desired_state": {
+        "gateway_vlan": 20,
+        "switch": {
+          "access_vlan": 20,
+          "trunk_allowed": [
+            10,
+            20
+          ]
+        }
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 1,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+        "_controller.stage": "baseline",
+        "gateway_vlan": 20,
+        "switch.access_vlan": 20,
+        "switch.trunk_allowed": [
+          10,
+          20
+        ]
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+          "stage": "baseline"
+        },
+        "gateway_vlan": 20,
+        "switch": {
+          "access_vlan": 20,
+          "trunk_allowed": [
+            10,
+            20
+          ]
+        }
+      },
+      "effective_state_hash": "2fa852b908044309f10edc9f21acd38749fe11336702650bda390eb6195b99cc",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "gateway_vlan": 20,
+        "switch.access_vlan": 20,
+        "switch.trunk_allowed": [
+          10,
+          20
+        ]
+      },
+      "stage": "baseline",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+      "timestamp": "2026-09-02T03:15:42.724Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "gateway_vlan": 20,
+      "switch.access_vlan": 20,
+      "switch.trunk_allowed": [
+        10,
+        20
+      ]
+    },
+    "stage": "baseline",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.724Z"
+  },
+  "controller_result": {
+    "before_state": {},
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-02",
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "gateway_vlan",
+      "switch.access_vlan",
+      "switch.trunk_allowed"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+    "desired_state": {
+      "gateway_vlan": 20,
+      "switch": {
+        "access_vlan": 20,
+        "trunk_allowed": [
+          10,
+          20
+        ]
+      }
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+      "_controller.stage": "baseline",
+      "gateway_vlan": 20,
+      "switch.access_vlan": 20,
+      "switch.trunk_allowed": [
+        10,
+        20
+      ]
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 1,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+        "stage": "baseline"
+      },
+      "gateway_vlan": 20,
+      "switch": {
+        "access_vlan": 20,
+        "trunk_allowed": [
+          10,
+          20
+        ]
+      }
+    },
+    "effective_state_hash": "2fa852b908044309f10edc9f21acd38749fe11336702650bda390eb6195b99cc",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "gateway_vlan": 20,
+      "switch.access_vlan": 20,
+      "switch.trunk_allowed": [
+        10,
+        20
+      ]
+    },
+    "stage": "baseline",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-02-baseline",
+    "timestamp": "2026-09-02T03:15:42.724Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+    "desired_state": {
+      "gateway_vlan": 20,
+      "switch": {
+        "access_vlan": 20,
+        "trunk_allowed": [
+          10,
+          20
+        ]
+      }
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "02-vlan-trunk",
+    "operation": "baseline",
+    "requested_fields": {
+      "gateway_vlan": 20,
+      "switch.access_vlan": 20,
+      "switch.trunk_allowed": [
+        10,
+        20
+      ]
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.724Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "access_vlan": 20,
+      "gateway_vlan": 20,
+      "hop_admission": true,
+      "tag_transit_state": "ADMITTED",
+      "trunk_allowed": [
+        10,
+        20
+      ],
+      "vlan": 20
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-02-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "tag_transit_state": "ADMITTED"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "host",
+        "access-switch",
+        "trunk",
+        "distribution-gateway"
+      ],
+      "request": {
+        "frame": {
+          "gateway_vlan": 20,
+          "vlan": 20
+        }
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-02-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "host -- access-switch -- trunk -- distribution-gateway",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-02-baseline"
+    },
+    "traffic_request": {
+      "frame": {
+        "gateway_vlan": 20,
+        "vlan": 20
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

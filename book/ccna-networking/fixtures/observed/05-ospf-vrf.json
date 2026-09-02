@@ -1,0 +1,367 @@
+{
+  "artifacts": [
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/setup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/baseline-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/fault.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/assertion.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/repair-readback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/rollback.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/cleanup.json",
+    "runs/20260902T031542.717447Z-c145ed02/modules/05/manifest.json"
+  ],
+  "baseline": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "adjacency_transport": "UP",
+      "area": 0,
+      "neighbor_state": "FULL",
+      "network_type": "broadcast",
+      "route": "prod",
+      "vrf": "prod"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+  },
+  "bundle": "runs/20260902T031542.717447Z-c145ed02/modules/05",
+  "cleanup": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+    "ephemeral_workspace": "/tmp/ccna-05-k7o558tm",
+    "exists_after_cleanup": false,
+    "no_leak": true,
+    "retained_bundle": true,
+    "retained_phase_files": [
+      "setup.json",
+      "baseline-readback.json",
+      "fault.json",
+      "assertion.json",
+      "repair-readback.json",
+      "rollback.json",
+      "cleanup.json"
+    ],
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3",
+    "temporary_workspace_removed": true
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+  "fault": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": false,
+    "observations": {
+      "adjacency_transport": "UP",
+      "area": 1,
+      "neighbor_state": "DOWN",
+      "network_type": "broadcast",
+      "route": null,
+      "vrf": "prod"
+    },
+    "result": "OSPF_AREA_MISMATCH",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+  },
+  "module": "05-ospf-vrf",
+  "module_id": "05",
+  "negative_control": {
+    "control_only": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "adjacency_transport": "UP",
+        "area": 0,
+        "neighbor_state": "FULL",
+        "network_type": "broadcast",
+        "route": "prod",
+        "vrf": "prod"
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+    },
+    "independent_path": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "adjacency_transport": "DOWN",
+        "area": 0,
+        "neighbor_state": "DOWN",
+        "network_type": "broadcast",
+        "route": null,
+        "vrf": "prod"
+      },
+      "result": "OSPF_AREA_MISMATCH",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-degraded"
+    }
+  },
+  "observed_symptom": "OSPF_AREA_MISMATCH",
+  "repair": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "adjacency_transport": "UP",
+      "area": 0,
+      "neighbor_state": "FULL",
+      "network_type": "broadcast",
+      "route": "prod",
+      "vrf": "prod"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+  },
+  "rollback": {
+    "authoritative_readback": {
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+        "_controller.stage": "rollback",
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "effective_state": {
+        "module_control": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+            "stage": "rollback"
+          },
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        }
+      },
+      "kind": "observed local controller-store read-back",
+      "reconciliation": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 4,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-repair",
+            "stage": "repair"
+          },
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-05",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+        "desired_state": {
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 5,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+          "_controller.stage": "rollback",
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 5,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+            "stage": "rollback"
+          },
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        },
+        "effective_state_hash": "9337c6a59af052bfb65893737ecdbef4850713120791ab1dfc4c748a88debcda",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "area": 0,
+          "network_type": "broadcast",
+          "vrf": "prod"
+        },
+        "stage": "rollback",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+        "timestamp": "2026-09-02T03:15:42.736Z",
+        "writer": null
+      },
+      "requested_fields": {
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "stage": "rollback",
+      "status": "ACTIVE",
+      "timestamp": "2026-09-02T03:15:42.736Z"
+    },
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 4,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-repair",
+          "stage": "repair"
+        },
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-05",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+      "desired_state": {
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 5,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+        "_controller.stage": "rollback",
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 5,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+          "stage": "rollback"
+        },
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "effective_state_hash": "9337c6a59af052bfb65893737ecdbef4850713120791ab1dfc4c748a88debcda",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "stage": "rollback",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-05-rollback",
+      "timestamp": "2026-09-02T03:15:42.736Z",
+      "writer": null
+    },
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+    "desired_request": {
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-05",
+      "desired_state": {
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "kind": "fictional local emulator desired-state request",
+      "object": "05-ospf-vrf",
+      "operation": "rollback",
+      "requested_fields": {
+        "area": 0,
+        "network_type": "broadcast",
+        "vrf": "prod"
+      },
+      "status": "ACCEPTED",
+      "timestamp": "2026-09-02T03:15:42.736Z"
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": true,
+      "observations": {
+        "adjacency_transport": "UP",
+        "area": 0,
+        "neighbor_state": "FULL",
+        "network_type": "broadcast",
+        "route": "prod",
+        "vrf": "prod"
+      },
+      "result": "HEALTHY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+    },
+    "evaluator_input": {
+      "control_source": "authoritative_readback#/effective_state/module_control",
+      "path_trace": {
+        "device_service_state": {
+          "adjacency_transport": "UP"
+        },
+        "mode": "baseline",
+        "path_hops": [
+          "vrf-prod edge-a",
+          "OSPF",
+          "edge-b"
+        ],
+        "request": {
+          "neighbor_state": "FULL",
+          "network_type": "broadcast",
+          "route_table": {
+            "10.5.0.0/16": "prod"
+          }
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-05-baseline",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "vrf-prod edge-a == OSPF == edge-b",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-05-baseline"
+      },
+      "traffic_request": {
+        "neighbor_state": "FULL",
+        "network_type": "broadcast",
+        "route_table": {
+          "10.5.0.0/16": "prod"
+        }
+      }
+    },
+    "restored_control": true,
+    "restored_dataplane": true,
+    "runner_version": "4.0.0",
+    "schema": "ccna-fixture-bundle/v3"
+  },
+  "runner_version": "4.0.0"
+}

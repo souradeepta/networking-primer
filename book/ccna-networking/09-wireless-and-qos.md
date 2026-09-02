@@ -310,3 +310,7 @@ terminology:** AWS [VPC traffic mirroring](https://docs.aws.amazon.com/vpc/lates
 and GCP [Packet Mirroring](https://cloud.google.com/vpc/docs/packet-mirroring)
 are observability constructs, not WLAN RF surveys. **Engineering inference:**
 measure RF and queue domains independently before changing either one.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`09-wireless-qos.json`](fixtures/observed/09-wireless-qos.json). The v3 evaluator derives utilization, RSSI, DSCP, and drops from effective controller settings and an independent queue path. Its negative control keeps a metadata-only change healthy and introduces queue loss only in the evaluator input; reconciliation, threshold evidence, repair, and rollback are retained. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#10-b-module-09--09-wireless-qos).

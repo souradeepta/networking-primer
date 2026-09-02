@@ -304,3 +304,7 @@ define the provider models. **Vendor terminology:** [AWS Reachability Analyzer](
 **Observed lab result:** provider logs can lag an induced test by the selected
 retention and delivery path. **Engineering inference:** a cloud mapping is
 complete only when route, policy, health, and return evidence are named.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`12-cloud-networking.json`](fixtures/observed/12-cloud-networking.json). The v3 evaluator derives next hop, policy, listener, and return path from effective cloud control plus a separate workload traffic fixture. The assertion proves accepted control metadata can remain healthy while evaluator-only backend loss fails; the reconciliation task and effective state are retained. AWS/GCP calls remain illustrative. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#13-b-module-12--12-cloud-networking).

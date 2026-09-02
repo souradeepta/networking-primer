@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "4108afed8e5281944164fbf796589b5c4cc94926242e0ff7b26c5eb7b8a5e5dd",
+    "baseline-readback.json": "2bbad1ed8f8b976ae87f9b9f9161fbf57e4b4aacbf2c7462fb8eb56759214acd",
+    "cleanup.json": "fe6254900c273fcb3e000f840e86e9f9a12908d76cbe643153008c1dea4e22ac",
+    "fault.json": "e48166fe0043fe40e744cd9ce3b5c0713d6b54ac1d01f7f580aeab20246301aa",
+    "repair-readback.json": "1457ce3751802cee50cb69962c2becb6b442c258c7aadc779a61cbf49c8117a8",
+    "rollback.json": "52ccd8e8b777c1d0c562652a9e632811c4564b8a6f7b8b40296678d6f6ebdacd",
+    "setup.json": "47985cf6dae1f1685522081395aaba74e9984b025714314167e6462b4534a33d"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-09",
+  "immutable": true,
+  "module": "09-wireless-qos",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

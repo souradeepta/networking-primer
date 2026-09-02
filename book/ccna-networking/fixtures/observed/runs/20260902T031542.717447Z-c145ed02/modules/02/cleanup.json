@@ -1,0 +1,19 @@
+{
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-02",
+  "ephemeral_workspace": "/tmp/ccna-02-11c1ldeg",
+  "exists_after_cleanup": false,
+  "no_leak": true,
+  "retained_bundle": true,
+  "retained_phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "temporary_workspace_removed": true
+}

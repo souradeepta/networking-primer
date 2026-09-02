@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "b23010bbec3466ee4bfe5af7da03fb9d86645a69ea52b1734f4c3f8e89cff569",
+    "baseline-readback.json": "354ce64861a098b54515eb2c4b2621fd6ebdcd4ded1348711ceb745f73841aa8",
+    "cleanup.json": "25fe3d736603a26b6ea19d6a116fe4bfc56188c407a504ee659bcca28602a71b",
+    "fault.json": "bc543610a4505262d06da3fe5ee60b39ac88ae7f7e3e4a61ef1ae5244f4bd4c2",
+    "repair-readback.json": "27998817b859dbfd281c99f3ff30423cfb6ee2396df93abaa9806ce467e83803",
+    "rollback.json": "dbf6033013bec72b6e7b3f79a1700bfa72fdf7ca8966456524a96fb51f7f5b98",
+    "setup.json": "fd9516b79a84bb67a7ad1c230dbe33a1baaf532ddfa8488f92360ab0d28ef470"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-15",
+  "immutable": true,
+  "module": "15-observability-design",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

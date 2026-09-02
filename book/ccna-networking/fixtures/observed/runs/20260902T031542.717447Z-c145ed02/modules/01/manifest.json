@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "3b0e04e0c9106a76ca412b93b5fe2c19cb31fe5130b941fee5acdd3d1acd7b6b",
+    "baseline-readback.json": "4964cceb982fb6a9e22763c994ec95909f89fdc1508a4b5a96ffce277470384f",
+    "cleanup.json": "f3c6b83362c79affa1e5733936c3b7235c02bdc77a2874aae2d50b6fd8e1b5ed",
+    "fault.json": "8348e76761abe0e18f8580d931bd2fd2d42d97030bde28b546ad1f32b742410d",
+    "repair-readback.json": "b93cecaca45941d6191c2078ef141c22b841046a60338a775b920c0a6d589044",
+    "rollback.json": "81b2b7a7645e9d1a5afda3085abb3941d758c082d62366870d1a83b017a9a88a",
+    "setup.json": "4d63e1799d012f74654785b0eaed90a5ef317bfcd6fd58e7409e6ad9c9716670"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-01",
+  "immutable": true,
+  "module": "01-physical-mtu",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

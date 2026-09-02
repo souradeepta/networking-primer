@@ -1,0 +1,274 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "rpf"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 2,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+      "_controller.stage": "bounded-control-fault",
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-b",
+        "vip": "healthy"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-baseline",
+          "stage": "baseline"
+        },
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-a",
+        "vip": "healthy"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-10",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "rpf"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+      "desired_state": {
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-b",
+        "vip": "healthy"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 2,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+        "_controller.stage": "bounded-control-fault",
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-b",
+        "vip": "healthy"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-b",
+        "vip": "healthy"
+      },
+      "effective_state_hash": "576c4a463e2d9ae045c7e4e2783f95e3322fb6e61dbf8138bd7d36db285fb198",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "igmp": "joined",
+        "pim": "FULL",
+        "rpf": "uplink-b",
+        "vip": "healthy"
+      },
+      "stage": "bounded-control-fault",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+      "timestamp": "2026-09-02T03:15:42.751Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "stage": "bounded-control-fault",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.751Z"
+  },
+  "changed_fields": [
+    "_controller.generation",
+    "_controller.last_task_id",
+    "_controller.stage",
+    "rpf"
+  ],
+  "controller_result": {
+    "before_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 1,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-baseline",
+        "stage": "baseline"
+      },
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-a",
+      "vip": "healthy"
+    },
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-10",
+    "changed_fields": [
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "rpf"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "desired_state": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 2,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+      "_controller.stage": "bounded-control-fault",
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 2,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+        "stage": "bounded-control-fault"
+      },
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "effective_state_hash": "576c4a463e2d9ae045c7e4e2783f95e3322fb6e61dbf8138bd7d36db285fb198",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "stage": "bounded-control-fault",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-10-bounded-control-fault",
+    "timestamp": "2026-09-02T03:15:42.751Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-10",
+    "desired_state": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "10-multicast-service-delivery",
+    "operation": "bounded-control-fault",
+    "requested_fields": {
+      "igmp": "joined",
+      "pim": "FULL",
+      "rpf": "uplink-b",
+      "vip": "healthy"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.751Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": false,
+    "observations": {
+      "healthy_backends": 2,
+      "igmp_membership": "joined",
+      "pim_neighbor": "FULL",
+      "rpf_check": "PASS",
+      "rpf_interface": "uplink-b"
+    },
+    "result": "MULTICAST_RPF_FAILURE",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-10-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "rpf_check": "PASS"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "client",
+        "L3 tree",
+        "RPF check",
+        "ADC VIP",
+        "backend pool"
+      ],
+      "request": {
+        "healthy_backends": 2
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-10-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "client -- L3 tree -- RPF check -- ADC VIP -- backend pool",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-10-baseline"
+    },
+    "traffic_request": {
+      "healthy_backends": 2
+    }
+  },
+  "observed_symptom": "MULTICAST_RPF_FAILURE",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

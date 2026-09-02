@@ -1,0 +1,487 @@
+{
+  "control_fault": {
+    "controller_result": {
+      "before_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-baseline",
+          "stage": "baseline"
+        },
+        "aaa": "REACHABLE",
+        "acl": "ALLOW-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-08",
+      "changed_fields": [
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "acl"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+      "desired_state": {
+        "aaa": "REACHABLE",
+        "acl": "DENY-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 2,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-bounded-control-fault",
+        "_controller.stage": "bounded-control-fault",
+        "aaa": "REACHABLE",
+        "acl": "DENY-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 2,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-bounded-control-fault",
+          "stage": "bounded-control-fault"
+        },
+        "aaa": "REACHABLE",
+        "acl": "DENY-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "effective_state_hash": "efd89a19dd6f4fc900120d0271f7285b1654672f9e08cc4b4a77234a93ed264b",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "aaa": "REACHABLE",
+        "acl": "DENY-HTTPS",
+        "secure_boot": "VALID"
+      },
+      "stage": "bounded-control-fault",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-08-bounded-control-fault",
+      "timestamp": "2026-09-02T03:15:42.744Z",
+      "writer": null
+    },
+    "device_service_observation": {
+      "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+      "healthy": false,
+      "observations": {
+        "aaa_server": "REACHABLE",
+        "boot_chain": "VALID",
+        "ordered_decision": "UNDECIDED",
+        "packet": {
+          "port": 443,
+          "protocol": "tcp"
+        },
+        "packet_path": "DELIVERED"
+      },
+      "result": "POLICY_DENY",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+    }
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+  "negative_control": {
+    "control_only_change": {
+      "authoritative_readback": {
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "acl",
+          "operator_note",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "effective_state": {
+          "module_control": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "aaa": "REACHABLE",
+            "acl": "ALLOW-HTTPS",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "secure_boot": "VALID",
+            "test": "08"
+          }
+        },
+        "kind": "observed local controller-store read-back",
+        "reconciliation": {
+          "before_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 2,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-bounded-control-fault",
+              "stage": "bounded-control-fault"
+            },
+            "aaa": "REACHABLE",
+            "acl": "DENY-HTTPS",
+            "secure_boot": "VALID"
+          },
+          "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-08",
+          "changed_fields": [
+            "_controller.generation",
+            "_controller.last_task_id",
+            "_controller.stage",
+            "acl",
+            "operator_note",
+            "test"
+          ],
+          "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+          "desired_state": {
+            "aaa": "REACHABLE",
+            "acl": "ALLOW-HTTPS",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "secure_boot": "VALID",
+            "test": "08"
+          },
+          "effective_fields": {
+            "_controller.controller_source": "bounded-local-controller-store",
+            "_controller.defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "_controller.generation": 3,
+            "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+            "_controller.stage": "control-only-negative",
+            "aaa": "REACHABLE",
+            "acl": "ALLOW-HTTPS",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "secure_boot": "VALID",
+            "test": "08"
+          },
+          "effective_state": {
+            "_controller": {
+              "controller_source": "bounded-local-controller-store",
+              "defaults_applied": [
+                "reconcile_generation",
+                "controller_source"
+              ],
+              "generation": 3,
+              "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+              "stage": "control-only-negative"
+            },
+            "aaa": "REACHABLE",
+            "acl": "ALLOW-HTTPS",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "secure_boot": "VALID",
+            "test": "08"
+          },
+          "effective_state_hash": "602b2a421b2759f1f73018a8304f21a690d956728773358caa106addba89e1f3",
+          "immutable": true,
+          "ownership_key": null,
+          "requested_fields": {
+            "aaa": "REACHABLE",
+            "acl": "ALLOW-HTTPS",
+            "operator_note": "metadata-only control change; no forwarding input changes",
+            "secure_boot": "VALID",
+            "test": "08"
+          },
+          "stage": "control-only-negative",
+          "status": "APPLIED",
+          "task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+          "timestamp": "2026-09-02T03:15:42.745Z",
+          "writer": null
+        },
+        "requested_fields": {
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "stage": "control-only-negative",
+        "status": "ACTIVE",
+        "timestamp": "2026-09-02T03:15:42.745Z"
+      },
+      "controller_result": {
+        "before_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 2,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-bounded-control-fault",
+            "stage": "bounded-control-fault"
+          },
+          "aaa": "REACHABLE",
+          "acl": "DENY-HTTPS",
+          "secure_boot": "VALID"
+        },
+        "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-08",
+        "changed_fields": [
+          "_controller.generation",
+          "_controller.last_task_id",
+          "_controller.stage",
+          "acl",
+          "operator_note",
+          "test"
+        ],
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+        "desired_state": {
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "effective_fields": {
+          "_controller.controller_source": "bounded-local-controller-store",
+          "_controller.defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "_controller.generation": 3,
+          "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+          "_controller.stage": "control-only-negative",
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "effective_state": {
+          "_controller": {
+            "controller_source": "bounded-local-controller-store",
+            "defaults_applied": [
+              "reconcile_generation",
+              "controller_source"
+            ],
+            "generation": 3,
+            "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+            "stage": "control-only-negative"
+          },
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "effective_state_hash": "602b2a421b2759f1f73018a8304f21a690d956728773358caa106addba89e1f3",
+        "immutable": true,
+        "ownership_key": null,
+        "requested_fields": {
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "stage": "control-only-negative",
+        "status": "APPLIED",
+        "task_id": "task-20260902T031542.717447Z-c145ed02-module-08-control-only-negative",
+        "timestamp": "2026-09-02T03:15:42.745Z",
+        "writer": null
+      },
+      "desired_request": {
+        "correlation_id": "20260902T031542.717447Z-c145ed02-module-08",
+        "desired_state": {
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "kind": "fictional local emulator desired-state request",
+        "object": "08-acl-aaa-security",
+        "operation": "control-only-negative",
+        "requested_fields": {
+          "aaa": "REACHABLE",
+          "acl": "ALLOW-HTTPS",
+          "operator_note": "metadata-only control change; no forwarding input changes",
+          "secure_boot": "VALID",
+          "test": "08"
+        },
+        "status": "ACCEPTED",
+        "timestamp": "2026-09-02T03:15:42.745Z"
+      },
+      "device_service_observation": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "aaa_server": "REACHABLE",
+          "boot_chain": "VALID",
+          "ordered_decision": "ALLOW",
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          },
+          "packet_path": "DELIVERED"
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+      },
+      "evaluator_input": {
+        "control_source": "authoritative_readback#/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "packet_path": "DELIVERED"
+          },
+          "mode": "baseline",
+          "path_hops": [
+            "operator",
+            "management ACL",
+            "device",
+            "protected service"
+          ],
+          "request": {
+            "packet": {
+              "port": 443,
+              "protocol": "tcp"
+            }
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-08-baseline",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "operator -- management ACL -- device -- protected service",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+        },
+        "traffic_request": {
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          }
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": true,
+        "observations": {
+          "aaa_server": "REACHABLE",
+          "boot_chain": "VALID",
+          "ordered_decision": "ALLOW",
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          },
+          "packet_path": "DELIVERED"
+        },
+        "result": "HEALTHY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-baseline"
+      }
+    },
+    "independent_path_change": {
+      "evaluator_input": {
+        "control_source": "baseline-readback.json#/authoritative_readback/effective_state/module_control",
+        "path_trace": {
+          "device_service_state": {
+            "packet_path": "DROPPED"
+          },
+          "mode": "degraded",
+          "path_hops": [
+            "operator",
+            "management ACL",
+            "device",
+            "protected service"
+          ],
+          "request": {
+            "packet": {
+              "port": 443,
+              "protocol": "tcp"
+            }
+          },
+          "request_id": "request-20260902T031542.717447Z-c145ed02-module-08-degraded",
+          "source": "bounded-local-traffic-and-device-model",
+          "topology": "operator -- management ACL -- device -- protected service",
+          "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-degraded"
+        },
+        "traffic_request": {
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          }
+        }
+      },
+      "evaluator_output": {
+        "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+        "healthy": false,
+        "observations": {
+          "aaa_server": "REACHABLE",
+          "boot_chain": "VALID",
+          "ordered_decision": "UNDECIDED",
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          },
+          "packet_path": "DROPPED"
+        },
+        "result": "POLICY_DENY",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-degraded"
+      },
+      "path_trace": {
+        "device_service_state": {
+          "packet_path": "DROPPED"
+        },
+        "mode": "degraded",
+        "path_hops": [
+          "operator",
+          "management ACL",
+          "device",
+          "protected service"
+        ],
+        "request": {
+          "packet": {
+            "port": 443,
+            "protocol": "tcp"
+          }
+        },
+        "request_id": "request-20260902T031542.717447Z-c145ed02-module-08-degraded",
+        "source": "bounded-local-traffic-and-device-model",
+        "topology": "operator -- management ACL -- device -- protected service",
+        "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-08-degraded"
+      },
+      "readback_reference": "baseline-readback.json#/authoritative_readback",
+      "readback_status": "ACTIVE",
+      "request_status": "ACCEPTED",
+      "traffic_request": {
+        "packet": {
+          "port": 443,
+          "protocol": "tcp"
+        }
+      }
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "semantic_assertions": {
+    "control_change_can_leave_dataplane_healthy": true,
+    "independent_path_change_can_fail_dataplane": true,
+    "no_direct_outcome_injection": true,
+    "same_control_readback_can_have_different_path_result": true
+  }
+}

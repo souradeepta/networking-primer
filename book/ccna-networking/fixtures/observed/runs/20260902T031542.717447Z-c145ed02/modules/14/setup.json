@@ -1,0 +1,67 @@
+{
+  "baseline_path_trace": {
+    "device_service_state": {
+      "device_apply_state": "APPLIED"
+    },
+    "mode": "baseline",
+    "path_hops": [
+      "operator",
+      "IaC state",
+      "controller",
+      "device/FIB",
+      "service probe"
+    ],
+    "request": {
+      "device_observation": {
+        "device_can_apply": true
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-baseline",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-baseline"
+  },
+  "config": {
+    "desired_route": "route-allow",
+    "resource": "route.lab"
+  },
+  "control_state_path": "controller_store",
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+  "degraded_path_trace": {
+    "device_service_state": {
+      "device_apply_state": "NOT_APPLIED"
+    },
+    "mode": "degraded",
+    "path_hops": [
+      "operator",
+      "IaC state",
+      "controller",
+      "device/FIB",
+      "service probe"
+    ],
+    "request": {
+      "device_observation": {
+        "device_can_apply": true
+      }
+    },
+    "request_id": "request-20260902T031542.717447Z-c145ed02-module-14-degraded",
+    "source": "bounded-local-traffic-and-device-model",
+    "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-14-degraded"
+  },
+  "fault_injection_boundary": "control/configuration only; data-plane state is derived",
+  "fixture_boundary": "bounded local emulator; no provider/device mutation",
+  "mechanism": "Intent, state, device read-back, drift, and idempotent plan",
+  "module": "14-automation-iac",
+  "path_model": "separate local traffic/device/service model",
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3",
+  "timestamp": "2026-09-02T03:15:42.764Z",
+  "topology": "operator -- IaC state -- controller -- device/FIB -- service probe",
+  "traffic_fixture_path": "traffic_request",
+  "traffic_request": {
+    "device_observation": {
+      "device_can_apply": true
+    }
+  }
+}

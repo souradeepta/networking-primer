@@ -1,0 +1,235 @@
+{
+  "authoritative_readback": {
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "peer",
+      "policy",
+      "prefix"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+      "_controller.stage": "baseline",
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "effective_state": {
+      "module_control": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+          "stage": "baseline"
+        },
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      }
+    },
+    "kind": "observed local controller-store read-back",
+    "reconciliation": {
+      "before_state": {},
+      "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-06",
+      "changed_fields": [
+        "_controller.controller_source",
+        "_controller.defaults_applied",
+        "_controller.generation",
+        "_controller.last_task_id",
+        "_controller.stage",
+        "peer",
+        "policy",
+        "prefix"
+      ],
+      "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+      "desired_state": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_fields": {
+        "_controller.controller_source": "bounded-local-controller-store",
+        "_controller.defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "_controller.generation": 1,
+        "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+        "_controller.stage": "baseline",
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_state": {
+        "_controller": {
+          "controller_source": "bounded-local-controller-store",
+          "defaults_applied": [
+            "reconcile_generation",
+            "controller_source"
+          ],
+          "generation": 1,
+          "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+          "stage": "baseline"
+        },
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "effective_state_hash": "4fd39a799808f3c5694e29c6afe3bbde033802686ef110bb1b396454dfb4d6aa",
+      "immutable": true,
+      "ownership_key": null,
+      "requested_fields": {
+        "peer": "ESTABLISHED",
+        "policy": "ALLOW",
+        "prefix": "203.0.113.0/24"
+      },
+      "stage": "baseline",
+      "status": "APPLIED",
+      "task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+      "timestamp": "2026-09-02T03:15:42.738Z",
+      "writer": null
+    },
+    "requested_fields": {
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "stage": "baseline",
+    "status": "ACTIVE",
+    "timestamp": "2026-09-02T03:15:42.738Z"
+  },
+  "controller_result": {
+    "before_state": {},
+    "change_record_id": "CHG-20260902T031542.717447Z-c145ed02-module-06",
+    "changed_fields": [
+      "_controller.controller_source",
+      "_controller.defaults_applied",
+      "_controller.generation",
+      "_controller.last_task_id",
+      "_controller.stage",
+      "peer",
+      "policy",
+      "prefix"
+    ],
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+    "desired_state": {
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "effective_fields": {
+      "_controller.controller_source": "bounded-local-controller-store",
+      "_controller.defaults_applied": [
+        "reconcile_generation",
+        "controller_source"
+      ],
+      "_controller.generation": 1,
+      "_controller.last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+      "_controller.stage": "baseline",
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "effective_state": {
+      "_controller": {
+        "controller_source": "bounded-local-controller-store",
+        "defaults_applied": [
+          "reconcile_generation",
+          "controller_source"
+        ],
+        "generation": 1,
+        "last_task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+        "stage": "baseline"
+      },
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "effective_state_hash": "4fd39a799808f3c5694e29c6afe3bbde033802686ef110bb1b396454dfb4d6aa",
+    "immutable": true,
+    "ownership_key": null,
+    "requested_fields": {
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "stage": "baseline",
+    "status": "APPLIED",
+    "task_id": "task-20260902T031542.717447Z-c145ed02-module-06-baseline",
+    "timestamp": "2026-09-02T03:15:42.738Z",
+    "writer": null
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+  "desired_request": {
+    "correlation_id": "20260902T031542.717447Z-c145ed02-module-06",
+    "desired_state": {
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "kind": "fictional local emulator desired-state request",
+    "object": "06-bgp-policy",
+    "operation": "baseline",
+    "requested_fields": {
+      "peer": "ESTABLISHED",
+      "policy": "ALLOW",
+      "prefix": "203.0.113.0/24"
+    },
+    "status": "ACCEPTED",
+    "timestamp": "2026-09-02T03:15:42.738Z"
+  },
+  "device_service_observation": {
+    "derivation": "computed from effective controller fields and raw path trace; no expected outcome input",
+    "healthy": true,
+    "observations": {
+      "forwarding_programming": "PROGRAMMED",
+      "policy_action": "ALLOW",
+      "prefix": "203.0.113.0/24",
+      "rib_result": "FIB",
+      "session": "ESTABLISHED"
+    },
+    "result": "HEALTHY",
+    "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+  },
+  "evaluator_input": {
+    "control_source": "authoritative_readback#/effective_state/module_control",
+    "path_trace": {
+      "device_service_state": {
+        "forwarding_programming": "PROGRAMMED"
+      },
+      "mode": "baseline",
+      "path_hops": [
+        "customer-edge",
+        "eBGP",
+        "provider-edge",
+        "transit"
+      ],
+      "request": {
+        "prefix": "203.0.113.0/24"
+      },
+      "request_id": "request-20260902T031542.717447Z-c145ed02-module-06-baseline",
+      "source": "bounded-local-traffic-and-device-model",
+      "topology": "customer-edge == eBGP == provider-edge == transit",
+      "trace_id": "trace-20260902T031542.717447Z-c145ed02-module-06-baseline"
+    },
+    "traffic_request": {
+      "prefix": "203.0.113.0/24"
+    }
+  },
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

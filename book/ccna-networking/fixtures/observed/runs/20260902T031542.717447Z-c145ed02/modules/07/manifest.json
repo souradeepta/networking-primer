@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "30c2be12e00ebd39460d4cb2242402cd6503a093f5efe549fcf407c021c85a16",
+    "baseline-readback.json": "1420013e2da5ff984b4c9a85989504db1a17c190ab0d89ba90be3872c3ac2ec7",
+    "cleanup.json": "778d435a68828129a1803f8f3349e8c46f1303c4bc01242c95b16a753a9181d5",
+    "fault.json": "5c6085be34e1bb2ccdefd0d4bd4d4d9da2ef7afef3c9c3a7df043df7865feea1",
+    "repair-readback.json": "009cf9f4e30115d18ff6c077d0e4664a0b205b421dfdaa0f73d8f5a6d99524ae",
+    "rollback.json": "50b767fd678ac14194872d59318d4e898b38164526acd008b6fb3ee0e2640663",
+    "setup.json": "3b0df601879b2d5aeab3471bba5ca1d2afe081bebbfa4b6132f24273ef02a288"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-07",
+  "immutable": true,
+  "module": "07-network-services",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

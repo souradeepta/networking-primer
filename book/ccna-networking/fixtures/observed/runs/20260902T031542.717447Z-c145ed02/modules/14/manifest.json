@@ -1,0 +1,26 @@
+{
+  "bundle_complete": true,
+  "content_sha256": {
+    "assertion.json": "6025c978761a2441bcac5adc8eceac0c2da83dcc081c87876ac8a49042401892",
+    "baseline-readback.json": "765b509dfeaf24002e4a800389accc689ff4a856644ea0251b6d97593e9f99dc",
+    "cleanup.json": "f4f4801aedc078bcc761f34b4e018a5c5b02cfbe58b0d14d17783217dac50864",
+    "fault.json": "e2194929c4480aa85dd6e47acdd782956d11a7e07353b5ee3325acdbc746b9ef",
+    "repair-readback.json": "6519fe456b9e3c8e23a24882e1192a54004f06a5975af692dff4e9bfa0e51f61",
+    "rollback.json": "713ca2848eddccf1859b312cd9c881413cc123caa9df0340076059b7b1983b2f",
+    "setup.json": "d16205ef1c8a6d0d127d80919a36b29e2c7602ee19741e3c982e263d17328871"
+  },
+  "correlation_id": "20260902T031542.717447Z-c145ed02-module-14",
+  "immutable": true,
+  "module": "14-automation-iac",
+  "phase_files": [
+    "setup.json",
+    "baseline-readback.json",
+    "fault.json",
+    "assertion.json",
+    "repair-readback.json",
+    "rollback.json",
+    "cleanup.json"
+  ],
+  "runner_version": "4.0.0",
+  "schema": "ccna-fixture-bundle/v3"
+}

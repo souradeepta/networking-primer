@@ -300,3 +300,7 @@ and [A10 APIs](https://documentation.a10networks.com/). **Observed lab result:**
 a mock API can return success while a data-plane assertion fails. **Engineering
 inference:** ownership and post-change forwarding checks are first-class API
 requirements.
+
+## N. Artifact-backed submission
+
+Observed bundle: [`14-automation-iac.json`](fixtures/observed/14-automation-iac.json). The v3 evaluator derives device route, FIB next hop, and service probe from effective intent/state and an independent device capability fixture. Reconciliation retains desired state, changed fields, task ID, effective state, and device observation; evaluator-only device-apply loss is the negative control. Module-specific scoring: [worked submissions](fixtures/worked-submissions.md#15-b-module-14--14-automation-iac).
