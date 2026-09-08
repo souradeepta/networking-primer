@@ -20,6 +20,18 @@ The baseline currently passes `./scripts/validate.sh` and
 that every answer is unique, every diagram is semantically correct, or every
 vendor claim is sufficiently sourced.
 
+## Implementation status
+
+The prioritized remediation is complete. Phases 0–4 have been implemented:
+the known correctness contradictions were repaired, all maintained focused
+topics have ledger coverage, direct answers have explicit boundaries, Staff
+practice is distributed across the curriculum, and validation covers role
+metadata, evidence labels, local anchors, index parity, duplicate answers, and
+Mermaid theme constraints. Optional follow-up work also added modern DNS/IPv6,
+edge-abuse-defense, six Staff simulations, and role/evidence contracts for the
+cloud, Terraform, and platform tracks. The current maintained focused-topic
+inventory is 39 topics.
+
 ## Prioritized findings
 
 Severity means **High** can teach a materially wrong mental model or weaken
