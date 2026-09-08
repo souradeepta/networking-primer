@@ -27,6 +27,19 @@ client to one member and create a hotspot. SNAT maps client sources and has
 finite translated-port capacity. These are vendor behaviors whose exact
 defaults require release-specific verification.
 
+**Vendor terminology:** LTM priority groups, slow ramp, drain, persistence,
+monitors, pool members, and SNAT are BIG-IP traffic-management terms.
+
+**Engineering inference:** Selection and capacity recommendations must be
+verified against per-member evidence, persistence state, and SNAT headroom on
+the deployed release before changing traffic.
+
+## Evidence and scope
+
+The release-specific boundary is the deployed TMOS LTM documentation for
+eligibility, priority, slow ramp, drain, persistence, connection limits, and
+SNAT behavior. See the [topic 30 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

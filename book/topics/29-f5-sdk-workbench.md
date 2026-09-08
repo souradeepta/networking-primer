@@ -30,6 +30,20 @@ must distinguish transient transport errors from accepted mutations. These
 facts imply an engineering rule: every write needs an idempotency strategy and
 a recovery record.
 
+**Vendor terminology:** BIG-IP SDK, iControl REST, tokens, transactions,
+partition-qualified resources, async tasks, and post-change read-back describe
+the F5 automation surface and its API behavior.
+
+**Engineering inference:** A successful request is not the verification
+boundary; reconcile ambiguous outcomes with a read, effective-state check, and
+authorized behavior probe before retrying or declaring success.
+
+## Evidence and scope
+
+The release-specific boundary is the pinned F5 Python SDK and BIG-IP/iControl
+REST versions, including their supported resources, fields, pagination, and
+task semantics. See the [topic 29 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

@@ -62,6 +62,10 @@ old writer must lose authority before the new writer is declared authoritative.
 For read-only evacuation, traffic can move earlier, provided stale reads and
 cache behavior are acceptable.
 
+**Engineering inference:** Make storage-enforced fencing the promotion gate,
+then stage route, DNS, and connection changes using measured lag, RPO/RTO, and
+rollback evidence rather than a health signal alone.
+
 ## Replication choices
 
 | Model | Strength | Cost or risk | Suitable follow-up |
@@ -76,6 +80,11 @@ Cloud DNS, F5 BIG-IP DNS/GTM, anycast, and application load balancers can
 change reachability. F5 LTM or a cloud LB can drain endpoints and preserve or
 drop different connection state depending on design. None of those surfaces
 alone establishes a database epoch or resolves an active-active conflict.
+
+**Vendor terminology:** DNS/GTM, anycast, F5 LTM, and cloud load-balancer
+health or drain controls describe reachability and connection behavior; their
+release-specific semantics do not provide a portable replication or fencing
+contract.
 
 ## Worked example: lag and fencing budget
 
@@ -234,6 +243,15 @@ Answer: Re-establish replication,
    traffic in stages, then enable writes at the former site. Reversing DNS
    alone is not failback. Confirm clients, queues, replicas, and operators all
    observe the new authority before declaring recovery complete.
+
+## Evidence and scope
+
+- Protocol boundary: DNS, BGP, and NTP claims use RFC 1035 (1987), RFC 4271
+  (2006), and RFC 5905 (2010).
+- Provider/product boundary: F5 HA, cloud LB, DNS, database, queue, and
+  consensus behavior depends on the deployed release and configuration.
+- See the [fact and inference ledger](../FACT-INFERENCE-LEDGER.md), especially
+  the row for topic 36, for evidence and verification boundaries.
 
 ## References and evidence labels
 

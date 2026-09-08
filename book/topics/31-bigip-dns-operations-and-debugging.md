@@ -26,6 +26,20 @@ location. Listeners must receive the query on the expected address and VLAN.
 DNSSEC adds signing or validation material. TTL controls caching and therefore
 how quickly new decisions reach clients; it is not an instant failover switch.
 
+**Vendor terminology:** BIG-IP DNS (formerly GTM), iQuery, Wide IPs, LDNS,
+listeners, topology, monitors, pools, and DNSSEC are F5 DNS terms or related
+DNS concepts.
+
+**Engineering inference:** A DNS recommendation is verified only by comparing
+listener, authoritative, and recursive evidence with TTL and cache effects;
+direct answers do not prove end-user convergence.
+
+## Evidence and scope
+
+The release-specific boundary is the deployed TMOS BIG-IP DNS documentation for
+iQuery, listeners, Wide IP selection, topology, monitors, DNSSEC, and TTL
+behavior. See the [topic 31 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

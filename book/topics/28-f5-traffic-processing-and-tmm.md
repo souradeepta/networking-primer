@@ -29,6 +29,20 @@ members. Route domains partition address spaces and can influence reachability.
 OneConnect can decouple client-side and server-side connection reuse. These are
 vendor facts whose defaults must be checked against the deployed release.
 
+**Vendor terminology:** TMM, CMP, route domains, virtual servers, profiles,
+iRules, OneConnect, SNAT, and pool selection are BIG-IP terms; exact behavior
+depends on the deployed TMOS release.
+
+**Engineering inference:** Treat the two packet legs and read-only counters as
+the verification boundary; confirm any recommendation with a release-matched
+canary and rollback plan.
+
+## Evidence and scope
+
+The release-specific boundary is the deployed TMOS release and platform CMP
+documentation; use that release's TMM, route-domain, profile, iRule,
+OneConnect, SNAT, and pool-selection references. See the [topic 28 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

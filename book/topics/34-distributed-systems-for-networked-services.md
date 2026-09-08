@@ -77,6 +77,10 @@ The control path can be healthy while the data path is failing, and the
 reverse can also occur. A health probe that checks only TCP or `/healthz` may
 not test authorization, a required dependency, or write correctness.
 
+**Engineering inference:** Treat probe depth, state ownership, and the
+failover stop condition as service-design decisions; validate them with the
+dependency and storage evidence available in the target deployment.
+
 ## Worked example: a regional order service
 
 Assume three regions serve `orders.lab.example`. Peak traffic is 900 requests
@@ -108,6 +112,10 @@ changes, stale-read handling, and what happens when a replica is slow; do not
 call every two-acknowledgement scheme a consensus protocol.
 
 ## Portable concepts and vendor vocabulary
+
+**Vendor terminology:** F5 LTM, BIG-IP DNS/GTM, cloud load balancers, Envoy,
+NGINX, WAFs, and service-mesh control planes are product surfaces for these
+portable concepts; names and behavior vary by release and configuration.
 
 | Portable concept | Examples of vendor surfaces | Interview caveat |
 | --- | --- | --- |
@@ -237,6 +245,15 @@ Answer: If
 Answer: At the service or data boundary that understands identity, tenant, and
    resource. Network reachability, a healthy LB monitor, and a valid route are
    necessary evidence but are not authorization.
+
+## Evidence and scope
+
+- Protocol boundary: CAP terminology follows the 2004 Brewer discussion;
+  TCP and HTTP claims use RFC 9293 (2022) and RFC 9110 (2022).
+- Provider/product boundary: F5, cloud LB, proxy, mesh, WAF, database, and
+  queue behavior must be checked against the deployed product and release.
+- See the [fact and inference ledger](../FACT-INFERENCE-LEDGER.md), especially
+  the row for topic 34, for the evidence boundary and verification checklist.
 
 ## References and evidence labels
 

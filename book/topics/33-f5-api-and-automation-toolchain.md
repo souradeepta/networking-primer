@@ -24,6 +24,20 @@ interfaces. Telemetry Streaming is for exporting observations, not configuring
 VIPs. The tool does not remove BIG-IP version, partition, RBAC, transaction,
 or rollback concerns.
 
+**Vendor terminology:** iControl REST, AS3, Declarative Onboarding, FAST,
+Telemetry Streaming, Ansible, Terraform, tmsh, SSH, SDKs, partitions, and RBAC
+name F5 interfaces, integrations, or control-plane concepts.
+
+**Engineering inference:** Tool selection is a recommendation, while effective
+state and a data-plane probe are the verification boundary; prove ownership and
+reconcile unknown outcomes before destructive actions.
+
+## Evidence and scope
+
+The release-specific boundary is the pinned BIG-IP and AS3, DO, FAST,
+Telemetry Streaming, SDK, Ansible, and Terraform provider documentation used
+by the toolchain. See the [topic 33 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

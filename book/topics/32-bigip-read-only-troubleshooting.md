@@ -23,6 +23,20 @@ Role labels: SDE2 (read-only evidence correlation); Staff (incident ownership
 and irreversible-failure handling). Expected interview artifact: a symptom
 matrix with falsifying evidence and an approved escalation boundary.
 
+**Vendor terminology:** LTM, BIG-IP DNS, VIPs, pools, monitors, SNAT, traffic
+legs, management reads, counters, logs, and packet captures are the relevant
+F5 troubleshooting terms.
+
+**Engineering inference:** Keep the verification boundary read-only until
+correlated evidence identifies the failing leg and an approved escalation has
+an explicit stop condition.
+
+## Evidence and scope
+
+The release-specific boundary is the deployed TMOS LTM and BIG-IP DNS
+documentation for object state, counters, logs, captures, TLS, and DNS
+behavior. See the [topic 32 ledger row](../FACT-INFERENCE-LEDGER.md).
+
 ## Diagram
 
 ```mermaid

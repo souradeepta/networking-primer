@@ -64,6 +64,10 @@ Multiple independent layers can multiply attempts. A mesh retry, gateway
 retry, client retry, and SDK retry are not four independent safety nets; they
 are one combined offered-load multiplier.
 
+**Engineering inference:** Assign one owner for the semantic retry budget and
+make every other layer obey a bounded attempt, deadline, and cancellation
+contract measured against the service's capacity.
+
 ## Worked example: an overloaded search API
 
 Assume a client sends 100 requests per second. A request fails transiently
@@ -113,6 +117,11 @@ mesh, a WAF, and an API gateway can all expose related knobs, but names,
 defaults, and retryable conditions differ by product and version. Verify the
 effective configuration and count attempts at the service, not just at the
 edge.
+
+**Vendor terminology:** “Retry,” “outlier detection,” “circuit breaking,” and
+“load shedding” are product-specific controls across F5, cloud LBs, Envoy,
+NGINX, meshes, WAFs, and gateways; do not infer equivalent defaults from the
+shared vocabulary.
 
 ## Worked example
 
@@ -235,6 +244,15 @@ Answer: It can repeat a
    payment, authorization-sensitive action, or personal-data submission. Use
    authenticated keys, redacted telemetry, and explicit operation contracts;
    a network timeout does not erase the server-side effect.
+
+## Evidence and scope
+
+- Protocol boundary: HTTP semantics use RFC 9110 (2022), and TCP failure
+  observations use RFC 9293 (2022).
+- Provider/product boundary: proxy, mesh, gateway, cloud LB, and F5 retry
+  defaults are release- and configuration-specific; pin the deployed versions.
+- See the [fact and inference ledger](../FACT-INFERENCE-LEDGER.md), especially
+  the row for topic 35, for evidence and pre-change verification guidance.
 
 ## References and evidence labels
 

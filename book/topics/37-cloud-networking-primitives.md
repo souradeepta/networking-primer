@@ -55,6 +55,15 @@ behavior are version-specific. Verify the target provider. Kubernetes CNI,
 EndpointSlice, kube-proxy/eBPF, NetworkPolicy, and Gateway API behavior belong
 to the cluster layer; this topic stops at the cloud network boundary.
 
+**Vendor terminology:** VPC, VNet, project network, security group, NACL, NAT
+gateway, private endpoint, and cloud load balancer are provider-specific
+surfaces whose scope and defaults must be checked in the target account,
+region, and release.
+
+**Engineering inference:** Keep cloud-network and Kubernetes ownership explicit
+at the handoff, and replace illustrative quota, NAT, route, and cost
+assumptions with measurements before approving a migration or capacity plan.
+
 ## Diagram
 
 ```mermaid
@@ -256,6 +265,16 @@ Answer: The cloud network supplies addresses, routes, gateways, and often extern
    load balancers. Kubernetes supplies cluster service discovery, endpoint
    programming, policy, and controllers. Define ownership at the handoff so
    two systems do not fight over routes or traffic policy.
+
+## Evidence and scope
+
+- Protocol boundary: router and NAT claims use RFC 1812 (1995), RFC 4291
+  (2006), and RFC 4787 (2007).
+- Provider/cluster boundary: AWS VPC, Azure VNet, Google Cloud VPC, F5,
+  managed load balancers, and Kubernetes CNI/controller behavior require the
+  target provider region and deployed product or cluster versions.
+- See the [fact and inference ledger](../FACT-INFERENCE-LEDGER.md), especially
+  the row for topic 37, for evidence and verification guidance.
 
 ## References and evidence labels
 

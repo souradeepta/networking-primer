@@ -366,6 +366,12 @@ for path in topics:
         raise SystemExit(f"{path}: missing expected interview artifact")
     if "staff exercise" not in lowered and "staff follow-up" not in lowered and "[staff |" not in lowered:
         raise SystemExit(f"{path}: missing Staff follow-up or exercise")
+    if path.name.startswith(tuple(f"{n:02d}-" for n in range(28, 38))):
+        for label in ("Vendor terminology:", "Engineering inference:"):
+            if label.lower() not in lowered:
+                raise SystemExit(f"{path}: advanced focused topic needs {label} label")
+        if "## evidence and scope" not in lowered or "fact-inference-ledger.md" not in lowered:
+            raise SystemExit(f"{path}: advanced focused topic needs an evidence and scope section linked to the ledger")
 print(f"Focused topic checks passed: {len(topics)} topics.")
 PY
 
