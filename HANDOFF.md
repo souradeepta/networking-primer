@@ -2,7 +2,7 @@
 
 **Updated:** 2026-09-07  
 **Branch:** `main`  
-**Latest pushed commit:** `767ba6c Validate broader track contracts`
+**Latest pushed commit:** `209aa73 Update learning path and handoff documentation`
 
 ## Current state
 
@@ -34,4 +34,3 @@ using examples operationally. Curriculum maintainers should preserve the
 Fact/Vendor terminology/Engineering inference boundary and update the ledger
 when adding platform claims. Future additions should be justified by a
 distinct learning objective and evidence contract rather than file count.
-

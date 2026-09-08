@@ -3,7 +3,7 @@
 ## Current state — 2026-09-07
 
 - The public `main` branch is current and clean. The latest pushed commit is
-  `767ba6c Validate broader track contracts`.
+  `209aa73 Update learning path and handoff documentation`.
 - The content target is SDE1/SDE2 networking, focused on F5 LTM and GTM
   (BIG-IP DNS).
 - Public GitHub remote: https://github.com/souradeepta/networking-primer
