@@ -13,6 +13,7 @@ no scenario authorizes changing a real F5, DNS, DHCP, or certificate system.
 | DDI, addressing, and network migration | 03, 07, 09, 10 |
 | Transport, TLS, and security | 05, 06, 08, 16, 17 |
 | Automation, lifecycle, and change safety | 04, 18, 19 |
+| AI-era data-center networking | 20 |
 
 ## B. Complete case index
 
@@ -35,6 +36,7 @@ no scenario authorizes changing a real F5, DNS, DHCP, or certificate system.
 17. [mTLS trust rotation](17-mtls-trust-rotation.md)
 18. [F5 SDK idempotency drift](18-f5-sdk-idempotency-drift.md)
 19. [LB upgrade rollback](19-lb-upgrade-rollback.md)
+20. [AI training fabric straggler](20-ai-training-fabric-straggler.md)
 
 Read the architecture and timeline first, then pause at the competing
 hypotheses before reading the remediation. Use the Q&A to practice explaining

@@ -10,7 +10,7 @@ is sound mental models and safe debugging questions, not device administration.
 | Start here | Best for |
 | --- | --- |
 | [`docs/`](docs/README.md) | Quick concepts, operations, interviews, references, and study plans |
-| [`book/`](book/README.md) | Long-form chapters, focused topics, and incident case studies |
+| [`book/`](book/README.md) | Long-form chapters, focused topics, and incident case studies, including AI-era data-center networking |
 | [`cloud-networking-interview/`](cloud-networking-interview/00-README.md) | Ordered AWS/GCP cloud networking preparation |
 | [`cloud-deployment-models/`](cloud-deployment-models/00-README.md) | Networking-focused private, public, hybrid, and on-premises cloud designs |
 | [`terraform-interview/`](terraform-interview/00-README.md) | Terraform, IaC, provider, state, and network automation interviews |
@@ -107,6 +107,14 @@ topics into 17 chapters with worked examples, diagrams, operational checklists,
 and chapter-level Q&A. The book also includes the [CCNA-to-Staff networking
 expansion](book/ccna-networking/00-README.md), with switching, routing, wireless,
 security, cloud, automation, and troubleshooting modules.
+
+For a full AI-era data-center treatment, use [topic 40](book/topics/40-ai-data-center-networking.md),
+the [offline fabric fixture](book/topics/fixtures/ai-data-center/README.md),
+[exercise 15](exercises/15-ai-fabric-capacity-and-failure-model.md), and the
+[training-fabric case study](book/case-studies/20-ai-training-fabric-straggler.md).
+These materials cover theory, safe local practice, and SDE1/SDE2/Staff
+interview reasoning. They are educational and do not authorize production
+fabric changes or hardware performance claims.
 
 CCNA expansion modules: [01](book/ccna-networking/01-network-models-and-physical.md),
 [02](book/ccna-networking/02-ethernet-switching-and-vlans.md),

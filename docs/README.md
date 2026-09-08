@@ -101,6 +101,7 @@ that track.
 | Protocol/vendor evidence | [References](references.md) |
 | Book fact/inference map | [Book ledger](../book/FACT-INFERENCE-LEDGER.md) |
 | Curriculum gaps and roadmap | [Curriculum improvement spec](interview-curriculum-improvement-spec.md) |
+| AI-era data-center plan and contract | [Terra plan](ai-data-center-networking-plan.md) and [implementation spec](ai-data-center-networking-spec.md) |
 | Terra review findings and remediation | [Book material review plan](book-material-review-plan.md) |
 | Book material remediation handoff | [Book material review handoff](book-material-review-handoff.md) |
 | Formatting rules | [Markdown style guide](markdown-style-guide.md) |

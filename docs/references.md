@@ -53,7 +53,25 @@
 | GTM/BIG-IP DNS does not provide instantaneous universal failover. | Engineering inference | DNS caching and existing connection behavior; test in the target environment |
 | Deep health checks are always better than TCP checks. | Rejected oversimplification | Probe depth trades detection fidelity against dependencies, load, and flapping |
 | The included F5 SDK example is production-ready for every BIG-IP release. | Not claimed | Validate installed BIG-IP/SDK versions and team interface standards |
-## Cloud interview track evidence index
+## AI-era data-center networking evidence index
+
+The [AI-era data-center topic](../book/topics/40-ai-data-center-networking.md)
+uses a portable protocol foundation and release-qualified vendor terminology.
+**Fact:** IP and ECN references are standards-backed. **Vendor terminology:**
+NCCL, RoCE, RDMA, InfiniBand, rail, topology-aware collective, and lossless
+Ethernet claims require the named implementation and release. **Observed lab
+result:** only applies to the local `ai-fabric-fixture/v1` runner and its
+scenario/artifact. **Engineering inference:** capacity, ownership, migration,
+cost, and failure-domain choices must be validated against the target workload
+and topology.
+
+| Area | Primary evidence | Verification boundary |
+| --- | --- | --- |
+| IP and congestion signaling | [RFC 791](https://www.rfc-editor.org/rfc/rfc791), [RFC 3168](https://www.rfc-editor.org/rfc/rfc3168), [RFC 8200](https://www.rfc-editor.org/rfc/rfc8200) | Check the deployed path, encapsulation, MTU, ECN support, and route policy; RFC text does not prove hardware queue behavior. |
+| Collective runtime terminology | [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html) | Pin runtime, driver, firmware, accelerator, topology, and algorithm selection; verify with an authorized target-specific test. |
+| Ethernet/RoCE terminology | [NVIDIA RoCE material](https://www.nvidia.com/en-us/networking/ethernet/roce/) | Pin NIC and switch generations, QoS/congestion policy, software release, and management surface; do not transfer behavior across vendors. |
+| InfiniBand terminology | [InfiniBand Trade Association](https://www.infinibandta.org/) | Verify architecture, addressing, routing, partitioning, counters, and release-specific operations against the target fabric. |
+| Safe local practice | [AI fabric fixture README](../book/topics/fixtures/ai-data-center/README.md) | Standard-library-only, deterministic, offline, one allowlisted fault, immutable hashes, cleanup proof, and no physical-performance claim. |
 
 ## CCNA-to-Staff book expansion
 

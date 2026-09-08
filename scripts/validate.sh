@@ -758,3 +758,102 @@ for path in sorted(root.glob('*.md')):
             raise SystemExit(f'{path}: Mermaid diagram contains non-ASCII characters')
 print('Terraform interview track checks passed: exact 20-file set, ordered index, provider examples, HCL, diagrams, exercises, and Q&A.')
 PY
+
+python3 - <<'PY'
+import hashlib
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+topic = Path('book/topics/40-ai-data-center-networking.md')
+case = Path('book/case-studies/20-ai-training-fabric-straggler.md')
+exercise = Path('exercises/15-ai-fabric-capacity-and-failure-model.md')
+fixture = Path('book/topics/fixtures/ai-data-center')
+required = [
+    topic, case, exercise,
+    fixture / 'README.md', fixture / 'runner.py', fixture / 'test_runner.py',
+    Path('docs/ai-data-center-networking-plan.md'), Path('docs/ai-data-center-networking-spec.md'),
+]
+for path in required:
+    if not path.is_file():
+        raise SystemExit(f'AI data-center deliverable missing: {path}')
+
+topic_text = topic.read_text(encoding='utf-8')
+topic_lower = topic_text.lower()
+for heading in (
+    'Learning objectives', 'Prerequisites', 'Interview scope', 'Mental model',
+    'Topology and traffic paths', 'Transport and congestion terminology',
+    'Workload communication models', 'Capacity and cost model',
+    'Observability and safe diagnosis', 'Security and ownership boundaries',
+    'When this breaks', 'Operational checklist', 'Local fixture exercise',
+    'Questions and answers', 'Evidence and scope', 'Worked example',
+):
+    if f'## {heading}'.lower() not in topic_lower:
+        raise SystemExit(f'{topic}: missing required heading {heading}')
+if len(re.findall(r"\b[\w'-]+\b", re.sub(r'```.*?```', '', topic_text, flags=re.DOTALL))) < 1500:
+    raise SystemExit(f'{topic}: needs at least 1500 prose words')
+if topic_text.count('```mermaid') < 3 or '| --- |' not in topic_text:
+    raise SystemExit(f'{topic}: needs three Mermaid diagrams and a table')
+for label in ('Fact:', 'Vendor terminology:', 'Engineering inference:', 'Observed lab result:'):
+    if label.lower() not in topic_lower:
+        raise SystemExit(f'{topic}: missing evidence label {label}')
+if 'fact-inference-ledger.md' not in topic_lower or 'ai-fabric-fixture/v1' not in topic_lower:
+    raise SystemExit(f'{topic}: missing ledger or fixture evidence boundary')
+if len(re.findall(r'^\s*\d+\.\s+\*\*', topic_text, flags=re.MULTILINE)) < 12:
+    raise SystemExit(f'{topic}: needs twelve numbered interview questions')
+for block in re.findall(r'```mermaid\n(.*?)```', topic_text, flags=re.DOTALL):
+    if not block.isascii() or not block.lstrip().startswith('%%{init:') or '#111111' not in block or 'theme' not in block:
+        raise SystemExit(f'{topic}: Mermaid diagram must be ASCII and use the light/dark-text init')
+
+case_text = case.read_text(encoding='utf-8')
+for heading in ('Context and goals', 'Architecture', 'Timeline', 'Evidence', 'Competing hypotheses', 'Decision points', 'Remediation', 'Verification', 'Rollback or recovery', 'Postmortem lessons', 'Questions and answers', 'Evidence and scope'):
+    if f'## {heading}' not in case_text:
+        raise SystemExit(f'{case}: missing required heading {heading}')
+if len(re.findall(r"\b[\w'-]+\b", re.sub(r'```.*?```', '', case_text, flags=re.DOTALL))) < 1500:
+    raise SystemExit(f'{case}: needs at least 1500 prose words')
+if len(re.findall(r'^\s*\d+\.\s+\*\*', case_text, flags=re.MULTILINE)) < 10 or '```mermaid' not in case_text or '| --- |' not in case_text:
+    raise SystemExit(f'{case}: needs ten Q&A, a Mermaid diagram, and a table')
+for label in ('Fact:', 'Vendor terminology:', 'Engineering inference:', 'Observed lab result:'):
+    if label.lower() not in case_text.lower():
+        raise SystemExit(f'{case}: missing evidence label {label}')
+for block in re.findall(r'```mermaid\n(.*?)```', case_text, flags=re.DOTALL):
+    if not block.isascii() or '#111111' not in block:
+        raise SystemExit(f'{case}: Mermaid diagram is not portable')
+
+exercise_text = exercise.read_text(encoding='utf-8').lower()
+for marker in ('scenario', 'constraints', 'deliverables', 'rubric', 'answer key', 'sde2 extension', 'staff extension', 'rollback'):
+    if marker not in exercise_text:
+        raise SystemExit(f'{exercise}: missing marker {marker}')
+
+fixture_readme = (fixture / 'README.md').read_text(encoding='utf-8').lower()
+for marker in ('ai-fabric-fixture/v1', 'standard-library-only', 'allowlist', 'baseline-readback', 'repair-readback', 'rollback', 'cleanup', 'sha-256', 'observed/'):
+    if marker not in fixture_readme:
+        raise SystemExit(f'{fixture}/README.md: missing safety marker {marker}')
+runner_source = (fixture / 'runner.py').read_text(encoding='utf-8')
+for forbidden in ('import socket', 'import subprocess', 'import urllib', 'os.system', 'create_connection'):
+    if forbidden in runner_source:
+        raise SystemExit(f'{fixture}/runner.py: forbidden external-side-effect token {forbidden}')
+if 'ALLOWED_FAULTS' not in runner_source or 'FORBIDDEN_INPUT_FIELDS' not in runner_source or 'tempfile.TemporaryDirectory' not in runner_source:
+    raise SystemExit(f'{fixture}/runner.py: missing allowlist, conclusion rejection, or temporary cleanup contract')
+
+topic_index = Path('book/topics/README.md').read_text(encoding='utf-8')
+case_index = Path('book/case-studies/README.md').read_text(encoding='utf-8')
+exercise_index = Path('exercises/README.md').read_text(encoding='utf-8')
+if '(40-ai-data-center-networking.md)' not in topic_index or '(20-ai-training-fabric-straggler.md)' not in case_index or '15-ai-fabric-capacity-and-failure-model.md' not in exercise_index:
+    raise SystemExit('AI data-center navigation indexes are incomplete')
+ledger = Path('book/FACT-INFERENCE-LEDGER.md').read_text(encoding='utf-8')
+references = Path('docs/references.md').read_text(encoding='utf-8')
+if '40 AI-era data-center networking' not in ledger or '20 AI training fabric straggler' not in ledger or 'AI-era data-center networking evidence index' not in references:
+    raise SystemExit('AI data-center evidence indexes are incomplete')
+
+test = subprocess.run([sys.executable, str(fixture / 'test_runner.py')], check=True, capture_output=True, text=True)
+if 'OK' not in test.stdout and 'OK' not in test.stderr:
+    raise SystemExit('AI fixture contract tests did not report OK')
+run = subprocess.run([sys.executable, str(fixture / 'runner.py'), '--scenario', 'baseline'], check=True, capture_output=True, text=True)
+payload = json.loads(run.stdout)
+if payload.get('schema') != 'ai-fabric-fixture/v1' or payload.get('fault') != 'none' or payload.get('workload_result', {}).get('status') != 'COMPLETED':
+    raise SystemExit('AI fixture baseline output is not the expected derived result')
+print('AI data-center topic, case study, exercise, evidence, fixture safety, and lifecycle checks passed.')
+PY

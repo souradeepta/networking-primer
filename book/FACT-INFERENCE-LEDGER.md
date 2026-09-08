@@ -73,6 +73,8 @@ version that must be pinned before applying a claim.
 | 38 Modern DNS and IPv6 migration | [RFC 4033](https://www.rfc-editor.org/rfc/rfc4033) (2005), [RFC 4861](https://www.rfc-editor.org/rfc/rfc4861) (2007), [RFC 8201](https://www.rfc-editor.org/rfc/rfc8201) (2017), [RFC 8305](https://www.rfc-editor.org/rfc/rfc8305) (2018); resolver/provider release docs | Measure resolver caching, DNSSEC validation, address-family choice, PMTUD, fallback, and ownership before expanding dual-stack rollout. |
 | 39 Edge abuse defense | [RFC 6585](https://www.rfc-editor.org/rfc/rfc6585) (2012); [OWASP API Security Top 10](https://owasp.org/API-Security/editions/2023/en/0x11-t10/) (2023); WAF/CDN release docs | Tune controls against measured abuse cost and false positives; validate privacy, customer impact, capacity, rollout, and rollback in the target edge. |
 
+| 40 AI-era data-center networking | [RFC 791](https://www.rfc-editor.org/rfc/rfc791), [RFC 3168](https://www.rfc-editor.org/rfc/rfc3168), [RFC 8200](https://www.rfc-editor.org/rfc/rfc8200); [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html); [InfiniBand Trade Association](https://www.infinibandta.org/) | Rail meaning, collective algorithm, ECMP distribution, congestion behavior, capacity, and failure-domain choices require the selected hardware, driver, firmware, runtime, release, topology, and workload. Verify with release documentation, authorized measurements, and the local fixture's schema-bound evidence. |
+
 ## Case-study evidence map
 
 | Case | Primary evidence | Inference boundary |
@@ -96,6 +98,7 @@ version that must be pinned before applying a claim.
 | 17 mTLS trust rotation | [RFC 5280](https://www.rfc-editor.org/rfc/rfc5280), [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446) | Dual trust and client authorization mapping are policy choices. |
 | 18 F5 SDK idempotency drift | [iControl REST](https://clouddocs.f5.com/api/icontrol-rest/), [F5 SDK](https://github.com/F5Networks/f5-common-python) | Normalization, preconditions, retry classification, and rollback are inferences. |
 | 19 LB upgrade rollback | [F5 LTM references](https://clouddocs.f5.com/cli/tmsh-reference/latest/modules/ltm/), [NIST SP 800-61r3](https://csrc.nist.gov/pubs/sp/800/61/r3/final) | Upgrade gates, canary scope, and rollback triggers depend on local HA evidence. |
+| 20 AI training fabric straggler | [RFC 3168](https://www.rfc-editor.org/rfc/rfc3168), [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html), local `ai-fabric-fixture/v1` schema | A rank straggler may arise from rail, storage, placement, control, or telemetry state; compare independent evidence before assigning network causality. |
 
 The ledger does not claim that a citation proves every sentence in a chapter;
 it identifies the central evidence-backed propositions and separates them from

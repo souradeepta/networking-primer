@@ -23,11 +23,11 @@ then use the role artifacts to practice explaining decisions.
 ## Focused-topic progression
 
 Use [the focused-topic index](book/topics/README.md) for the maintained
-39-topic sequence. Topics 01–16 establish F5, DNS, DDI, operations, cloud, and
+40-topic sequence. Topics 01–16 establish F5, DNS, DDI, operations, cloud, and
 security foundations; 17–27 cover transport and systems mechanics; 28–37
 cover F5 implementation and distributed/cloud design; 38–39 cover modern
-DNS/IPv6 and edge abuse defense. The HTTP overview is topic 17, with protocol
-deep dives in topics 22–23.
+DNS/IPv6 and edge abuse defense; 40 covers AI-era data-center networking. The
+HTTP overview is topic 17, with protocol deep dives in topics 22–23.
 
 Every topic includes SDE2/Staff calibration, an expected artifact, evidence
 scope, and a Staff follow-up. Facts and vendor terminology must be separated
@@ -45,6 +45,13 @@ from engineering inference and verified against the target release.
 Use the [Staff design review pack](docs/staff-design-review-pack.md),
 [simulation pack](docs/interview-simulation-pack.md), and [Staff rubric](docs/staff-interview-rubric.md)
 to score the artifacts.
+
+For AI-fabric study, complete [topic 40](book/topics/40-ai-data-center-networking.md),
+run the [local fixture](book/topics/fixtures/ai-data-center/README.md), and
+submit [exercise 15](exercises/15-ai-fabric-capacity-and-failure-model.md).
+Use the [training-fabric case study](book/case-studies/20-ai-training-fabric-straggler.md)
+to practice evidence-led SDE1, SDE2, and Staff answers. The fixture is a
+deterministic educational model, not a production or hardware benchmark.
 
 ## Verification before handoff
 

@@ -12,6 +12,7 @@ Use only reserved addresses, local sockets, or fixture data.
 | 4. Request-path tracer | Model DNS -> VIP -> pool and emit structured JSON events | Layered diagnosis and correlation IDs |
 | 5. Retry budget simulator | Compare bounded idempotent retries with unsafe duplicate writes | Timeouts, backoff, overload |
 | 6. F5 SDK plan generator | Convert desired pool state into a read-before-write diff | REST/SDK, idempotency, audit, rollback |
+| 7. [AI-fabric capacity and failure model](15-ai-fabric-capacity-and-failure-model.md) | Compare deterministic baseline, rail, storage, and rollback evidence | Accelerator fabrics, capacity, congestion, ownership, interview design |
 
 For every exercise, include malformed input tests, an explicit “no eligible
 target” result, and a short fact/inference note. Do not connect to a real F5 or
