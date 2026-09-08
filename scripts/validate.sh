@@ -503,6 +503,8 @@ PY
 
 python3 scripts/check_internal_links.py
 
+python3 scripts/check_answer_quality.py
+
 python3 - <<'PY'
 from pathlib import Path
 import re

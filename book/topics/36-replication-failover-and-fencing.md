@@ -170,42 +170,58 @@ that proves a health signal without a storage fence cannot prevent two writers.
 ## Questions and answers
 
 1. **[SDE2 | system-design] What is the difference between failover and
-   fencing?** Failover chooses a new serving path or authority. Fencing makes
+   fencing?**
+
+Answer: Failover chooses a new serving path or authority. Fencing makes
    the old authority unable to mutate durable state. Safe write failover needs
    both.
 
-2. **[SDE2 | debugging] What evidence says a DNS change worked?** Check the
+2. **[SDE2 | debugging] What evidence says a DNS change worked?**
+
+Answer: Check the
    authoritative answer, several recursive answers, client resolver behavior,
    active connection destinations, and the new service's request logs. One
    successful authoritative query does not prove user convergence.
 
-3. **[SDE2 | fundamentals] What does replication lag imply for RPO?** If 800
+3. **[SDE2 | fundamentals] What does replication lag imply for RPO?**
+
+Answer: If 800
    writes per second lag by four seconds, as much as 3,200 events are outside
    the remote copy. Compare that gap with the declared RPO and the actual
    acknowledgement contract.
 
-4. **[Staff | system-design] How do you make active-active safe?** Partition
+4. **[Staff | system-design] How do you make active-active safe?**
+
+Answer: Partition
    key ownership where possible, identify commutative operations, attach
    versions or causality, define conflict merges, deduplicate events, and
    expose unresolved conflicts. Symmetry is not a conflict policy.
 
-5. **[SDE2 | operations] Why is a health check not a leader election?** It is
+5. **[SDE2 | operations] Why is a health check not a leader election?**
+
+Answer: It is
    an observation from a particular probe path. It does not establish a unique
    view of membership or prevent an isolated old leader from writing.
 
-6. **[Staff | trade-off] When is synchronous replication a bad choice?** When
+6. **[Staff | trade-off] When is synchronous replication a bad choice?**
+
+Answer: When
    cross-region latency or partitions make the write SLO unacceptable and the
    business can tolerate measured data loss or delayed reconciliation. State
    the alternative RPO and recovery work explicitly. Explain who accepts that
    risk and how the decision is revisited using measured replication evidence.
 
-7. **[SDE2 | security] Who should be allowed to advance a fence epoch?** A
+7. **[SDE2 | security] Who should be allowed to advance a fence epoch?**
+
+Answer: A
    narrowly authorized control identity, with durable audit and independent
    verification. A compromised routing account should not automatically gain
    write authority. Require an explicit owner approval and tested emergency
    recovery path.
 
-8. **[Staff | migration] What is a safe failback?** Re-establish replication,
+8. **[Staff | migration] What is a safe failback?**
+
+Answer: Re-establish replication,
    reconcile and validate the highest epoch, fence the current writer, move
    traffic in stages, then enable writes at the former site. Reversing DNS
    alone is not failback. Confirm clients, queues, replicas, and operators all

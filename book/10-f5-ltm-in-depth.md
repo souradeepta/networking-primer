@@ -90,43 +90,43 @@ flowchart LR
 
 ## Questions and answers
 
-1. **What does a virtual server represent?** A client-facing listener and its traffic-processing contract; it is not the origin pool itself.
+1. **What does a virtual server represent?** **Answer:** A client-facing listener and its traffic-processing contract; it is not the origin pool itself.
 
 Interview reasoning: For “What does a virtual server represent,” distinguish the address from the LTM listener contract: the virtual server owns profiles, policies, pool selection, SNAT, and persistence. Trace a client tuple to the VIP and a second tuple to the member, then compare direct-member and VIP tests. The caveat is that a reachable VIP can still have no eligible pool member or an incorrect route domain.
 
-2. **How does a member differ from a node?** A node is an address object; a member combines an address with a service port, so ports can have different health.
+2. **How does a member differ from a node?** **Answer:** A node is an address object; a member combines an address with a service port, so ports can have different health.
 
 Interview reasoning: For “How does a member differ from a node,” a node is an address object, while a member binds that address to a service port and monitor context. Check node state, member state, inherited monitor, and pool selection independently; a healthy host can expose a failed 443 member while 8443 works. Port-specific health is why the distinction matters operationally.
 
-3. **Why can a green monitor coexist with errors?** The test may use the wrong port, path, Host/SNI, dependency scope, or authentication context.
+3. **Why can a green monitor coexist with errors?** **Answer:** The test may use the wrong port, path, Host/SNI, dependency scope, or authentication context.
 
 Interview reasoning: For “Why can a green monitor coexist with errors,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
 
-4. **When is persistence harmful?** When it creates hotspots, preserves failed-member mappings, or hides a need for shared session state.
+4. **When is persistence harmful?** **Answer:** When it creates hotspots, preserves failed-member mappings, or hides a need for shared session state.
 
 Interview reasoning: For “When is persistence harmful,” explain the persistence key and lifetime, then inspect key cardinality, member skew, table pressure, expiry, and failover behavior. A shared NAT address can concentrate many users on one member. Persistence preserves session continuity but weakens distribution and can retain a bad mapping; shared application state may allow a shorter timeout.
 
-5. **What does SNAT solve?** It helps force a predictable return path through BIG-IP, at the cost of source identity and finite ports.
+5. **What does SNAT solve?** **Answer:** It helps force a predictable return path through BIG-IP, at the cost of source identity and finite ports.
 
 Interview reasoning: For “What does SNAT solve,” show the two tuples and the return route: SNAT changes the source seen by the backend so replies return through the stateful LTM. Verify the self IP, backend ACL view, translated-port utilization, and client identity headers. It solves asymmetry but hides the original source and has finite port capacity, so scale translation addresses deliberately.
 
-6. **Why inspect both TLS profiles?** Client-side termination and server-side re-encryption are independent sessions with independent certificates and trust.
+6. **Why inspect both TLS profiles?** **Answer:** Client-side termination and server-side re-encryption are independent sessions with independent certificates and trust.
 
 Interview reasoning: For “Why inspect both TLS profiles,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
-7. **Policy or iRule?** Prefer the simplest reviewable mechanism that meets the requirement; iRules need code review, event-order tests, and resource controls.
+7. **Policy or iRule?** **Answer:** Prefer the simplest reviewable mechanism that meets the requirement; iRules need code review, event-order tests, and resource controls.
 
 Interview reasoning: For “Policy or iRule,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-8. **What does HA failover not guarantee?** It does not prove every existing connection, persistence entry, SNAT mapping, or external route converges identically.
+8. **What does HA failover not guarantee?** **Answer:** It does not prove every existing connection, persistence entry, SNAT mapping, or external route converges identically.
 
 Interview reasoning: For “What does HA failover not guarantee,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-9. **How should a 504 be investigated?** Correlate queue, connect, TLS, origin response, timeout, retry, SNAT, and origin-log timings using a request ID.
+9. **How should a 504 be investigated?** **Answer:** Correlate queue, connect, TLS, origin response, timeout, retry, SNAT, and origin-log timings using a request ID.
 
 Interview reasoning: For “How should a 504 be investigated,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-10. **Why avoid universal algorithm claims?** Request cost and member capacity vary; measure the workload and validate the algorithm hypothesis.
+10. **Why avoid universal algorithm claims?** **Answer:** Request cost and member capacity vary; measure the workload and validate the algorithm hypothesis.
 
 Interview reasoning: For “Why avoid universal algorithm claims,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 

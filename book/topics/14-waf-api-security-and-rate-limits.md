@@ -157,43 +157,43 @@ authorize every API operation; map identity to policy and rotate trust roots.
 
 ## Questions and answers
 
-1. **Is a WAF an authentication system?** No. It may inspect an identity
+1. **Is a WAF an authentication system?** **Answer:** No. It may inspect an identity
    signal, but authentication and authorization require explicit mechanisms.
 
 Interview reasoning: For “Is a WAF an authentication system,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
 
-2. **Why not rate-limit by IP only?** NAT, mobile networks, and proxies can
+2. **Why not rate-limit by IP only?** **Answer:** NAT, mobile networks, and proxies can
    group many legitimate users, while attackers can distribute source IPs.
 
 Interview reasoning: For “Why not rate-limit by IP only,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
 
-3. **Can F5 LTM alone replace a WAF?** LTM provides proxy and traffic policy
+3. **Can F5 LTM alone replace a WAF?** **Answer:** LTM provides proxy and traffic policy
    capabilities; WAF protections depend on the deployed module and policy.
 
 Interview reasoning: For “Can F5 LTM alone replace a WAF,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
 
-4. **Why return 429?** It communicates throttling so clients can apply a
+4. **Why return 429?** **Answer:** It communicates throttling so clients can apply a
    documented backoff rather than treating the event as a server crash.
 
 Interview reasoning: For “Why return 429,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-5. **What makes a forwarding header trustworthy?** A known proxy writes it,
+5. **What makes a forwarding header trustworthy?** **Answer:** A known proxy writes it,
    downstream trust boundaries are explicit, and client-supplied values are
    removed or ignored.
 
 Interview reasoning: For “What makes a forwarding header trustworthy,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-6. **Does mTLS authorize a payment?** No. It authenticates a certificate
+6. **Does mTLS authorize a payment?** **Answer:** No. It authenticates a certificate
    identity; application authorization and business rules still apply.
 
 Interview reasoning: For “Does mTLS authorize a payment,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
-7. **How should a WAF exception be written?** Narrowly by rule, route,
+7. **How should a WAF exception be written?** **Answer:** Narrowly by rule, route,
    parameter, encoding, and owner with an expiry and test case.
 
 Interview reasoning: For “How should a WAF exception be written,” name the trust boundary, identity, resource, decision, telemetry, and recovery path. Start a new WAF or rate rule in observation, measure false positives, then enforce with a rollback threshold. Stronger inspection can add latency and block valid clients; TLS termination determines what fields are visible, and “blocked attack” metrics must be balanced with user success.
 
-8. **Why do HTTP/2 connections complicate limits?** Many requests share one
+8. **Why do HTTP/2 connections complicate limits?** **Answer:** Many requests share one
    connection, so connection caps do not bound request work.
 
 Interview reasoning: For “Why do HTTP/2 connections complicate limits,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.

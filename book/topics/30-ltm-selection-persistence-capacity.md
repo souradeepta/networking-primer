@@ -79,11 +79,34 @@ a selection problem from backend saturation.
 
 ## Questions and answers
 
-1. **Why can persistence cause imbalance?** A persistence key maps repeated clients to one member even when another has capacity. Long-lived sessions amplify the effect; inspect key distribution and connection age before changing the load method.
-2. **What does slow ramp protect?** It limits how quickly a newly eligible member receives traffic, allowing caches and application workers to warm. It cannot fix a fundamentally unhealthy member or guarantee equal request distribution.
-3. **What does drain mean?** Drain prevents new assignments while existing connections complete or reach a bounded deadline. It needs client reconnect behavior and a maximum grace period because some sessions can otherwise remain indefinitely.
-4. **Why does SNAT have capacity?** Each translated address and destination has finite source-port combinations. Many clients or long-lived connections consume them; adding addresses changes capacity but also identity and security assumptions.
-5. **How do priority groups fail?** If health or thresholds are interpreted incorrectly, standby members may activate unexpectedly or never activate. Verify group configuration, eligibility counts, and the exact reason each member is selected.
-6. **Why compare requests and connections?** A single persistent connection can carry many requests, while another member may have many short connections. One metric alone can misrepresent work and hide application-level imbalance.
-7. **What is safe persistence recovery?** First identify the key, scope, and expiry, then test a narrow canary or planned expiration. Clearing all records can create a synchronized surge and should not be an emergency guess.
-8. **What proves capacity failure?** Correlate allocation errors or port utilization with failed new flows and unchanged member health. A generic timeout is insufficient because route, policy, listener, and backend causes look similar.
+1. **Why can persistence cause imbalance?**
+
+Answer: A persistence key maps repeated clients to one member even when another has capacity. Long-lived sessions amplify the effect; inspect key distribution and connection age before changing the load method.
+
+2. **What does slow ramp protect?**
+
+Answer: It limits how quickly a newly eligible member receives traffic, allowing caches and application workers to warm. It cannot fix a fundamentally unhealthy member or guarantee equal request distribution.
+
+3. **What does drain mean?**
+
+Answer: Drain prevents new assignments while existing connections complete or reach a bounded deadline. It needs client reconnect behavior and a maximum grace period because some sessions can otherwise remain indefinitely.
+
+4. **Why does SNAT have capacity?**
+
+Answer: Each translated address and destination has finite source-port combinations. Many clients or long-lived connections consume them; adding addresses changes capacity but also identity and security assumptions.
+
+5. **How do priority groups fail?**
+
+Answer: If health or thresholds are interpreted incorrectly, standby members may activate unexpectedly or never activate. Verify group configuration, eligibility counts, and the exact reason each member is selected.
+
+6. **Why compare requests and connections?**
+
+Answer: A single persistent connection can carry many requests, while another member may have many short connections. One metric alone can misrepresent work and hide application-level imbalance.
+
+7. **What is safe persistence recovery?**
+
+Answer: First identify the key, scope, and expiry, then test a narrow canary or planned expiration. Clearing all records can create a synchronized surge and should not be an emergency guess.
+
+8. **What proves capacity failure?**
+
+Answer: Correlate allocation errors or port utilization with failed new flows and unchanged member health. A generic timeout is insufficient because route, policy, listener, and backend causes look similar.--- book/case-studies/01-ltm-vip-certificate-migration.md

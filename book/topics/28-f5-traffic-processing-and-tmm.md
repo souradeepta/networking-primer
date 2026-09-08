@@ -93,14 +93,37 @@ for a timeout and one observation that would falsify each.
 
 ## Questions and answers
 
-1. **What does TMM do?** TMM is the data-plane component that processes traffic, applies matching and protocol behavior, and forwards packets or connections. Exact process layout and supported features vary by release, so operational conclusions require platform evidence.
-2. **Why does CMP matter?** CMP can distribute eligible processing across TMM instances. A feature that prevents parallel processing or creates shared state can affect throughput and imbalance; verify release documentation rather than assuming every virtual server scales identically.
-3. **What is a route domain?** It partitions routing and address space so overlapping addresses can be isolated. A route-domain identifier is part of the reachability context; using the right IP with the wrong domain can still select no usable route.
-4. **What is OneConnect?** OneConnect can reuse server-side connections independently from client-side connections, allowing request-level distribution in suitable HTTP designs. It changes connection observability and must be tested with persistence, headers, and application expectations.
-5. **Why preserve tuples?** Tuples reveal NAT, listener, and return-path changes. Comparing client-side and server-side tuples distinguishes a backend route issue from a virtual-server match or policy issue, especially when backend logs see only SNAT addresses.
-6. **What is profile ownership?** A profile declares how BIG-IP interprets a protocol such as TCP, HTTP, or TLS. Teams should document which hop terminates or re-encrypts TLS and which profile owns timeout, header, and protocol behavior.
-7. **How should iRules be debugged?** Inspect event scope, conditions, side effects, and logs with bounded sampling. A rule can alter pool choice or headers after basic matching, so remove or bypass it only through an approved, reversible experiment.
-8. **Why can a monitor lie?** A monitor tests its configured source, protocol, URI, and expected response, not every user path. A green monitor proves that probe succeeded; compare it with application dependencies, TLS names, and real request evidence.
+1. **What does TMM do?**
+
+Answer: TMM is the data-plane component that processes traffic, applies matching and protocol behavior, and forwards packets or connections. Exact process layout and supported features vary by release, so operational conclusions require platform evidence.
+
+2. **Why does CMP matter?**
+
+Answer: CMP can distribute eligible processing across TMM instances. A feature that prevents parallel processing or creates shared state can affect throughput and imbalance; verify release documentation rather than assuming every virtual server scales identically.
+
+3. **What is a route domain?**
+
+Answer: It partitions routing and address space so overlapping addresses can be isolated. A route-domain identifier is part of the reachability context; using the right IP with the wrong domain can still select no usable route.
+
+4. **What is OneConnect?**
+
+Answer: OneConnect can reuse server-side connections independently from client-side connections, allowing request-level distribution in suitable HTTP designs. It changes connection observability and must be tested with persistence, headers, and application expectations.
+
+5. **Why preserve tuples?**
+
+Answer: Tuples reveal NAT, listener, and return-path changes. Comparing client-side and server-side tuples distinguishes a backend route issue from a virtual-server match or policy issue, especially when backend logs see only SNAT addresses.
+
+6. **What is profile ownership?**
+
+Answer: A profile declares how BIG-IP interprets a protocol such as TCP, HTTP, or TLS. Teams should document which hop terminates or re-encrypts TLS and which profile owns timeout, header, and protocol behavior.
+
+7. **How should iRules be debugged?**
+
+Answer: Inspect event scope, conditions, side effects, and logs with bounded sampling. A rule can alter pool choice or headers after basic matching, so remove or bypass it only through an approved, reversible experiment.
+
+8. **Why can a monitor lie?**
+
+Answer: A monitor tests its configured source, protocol, URI, and expected response, not every user path. A green monitor proves that probe succeeded; compare it with application dependencies, TLS names, and real request evidence.
 
 ## Debug-session notes
 

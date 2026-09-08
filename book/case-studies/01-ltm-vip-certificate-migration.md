@@ -236,66 +236,90 @@ BIG-IP release.
 
 ## Questions and answers
 
-1. **Why is the LTM called a TLS termination point?** It decrypts the client
+1. **Why is the LTM called a TLS termination point?**
+
+Answer: It decrypts the client
    session and makes policy decisions, so the first TLS session terminates
    there. Re-encryption creates a separate protected server session.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-2. **What does SNI change?** SNI supplies the hostname in ClientHello, allowing
+2. **What does SNI change?**
+
+Answer: SNI supplies the hostname in ClientHello, allowing
    a client SSL profile to choose a matching certificate before HTTP exists.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-3. **Why retain a default certificate?** Clients without SNI still need a
+3. **Why retain a default certificate?**
+
+Answer: Clients without SNI still need a
    deterministic response; the default should be explicitly selected and
    monitored rather than accidental.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-4. **Does a valid front-end certificate prove backend health?** No. The pool
+4. **Does a valid front-end certificate prove backend health?**
+
+Answer: No. The pool
    handshake has its own trust, name, protocol, and certificate checks.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-5. **Why test RSA and ECDSA?** Client populations differ. Dual coverage tests
+5. **Why test RSA and ECDSA?**
+
+Answer: Client populations differ. Dual coverage tests
    compatibility while allowing capable clients to use ECDSA.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-6. **Why did old-VIP traffic persist?** Recursive caches and existing sessions
+6. **Why did old-VIP traffic persist?**
+
+Answer: Recursive caches and existing sessions
    can outlive the authoritative update; TTL is a cache lifetime hint, not a
    synchronized global switch.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-7. **Why use SNAT here?** SNAT makes return traffic route through the LTM in
+7. **Why use SNAT here?**
+
+Answer: SNAT makes return traffic route through the LTM in
    this fictional topology; without it, asymmetric routing could break state.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-8. **What evidence distinguishes chain failure from name mismatch?** Trust
+8. **What evidence distinguishes chain failure from name mismatch?**
+
+Answer: Trust
    errors and issuer/path diagnostics point toward the chain; a name mismatch
    points toward SAN, SNI, or the selected certificate. Both require testing.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-9. **Why not disable backend validation for speed?** That would conceal an
+9. **Why not disable backend validation for speed?**
+
+Answer: That would conceal an
    identity failure and weaken the security boundary. Repair the trust path.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-10. **What is the safest first rollback?** Restore the old DNS target while
+10. **What is the safest first rollback?**
+
+Answer: Restore the old DNS target while
     retaining the new objects and observing TTL-driven convergence.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-11. **Why preserve the old VIP after success?** It provides a reversible path
+11. **Why preserve the old VIP after success?**
+
+Answer: It provides a reversible path
     while caches drain and makes recovery measurable rather than destructive.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-12. **Which claims are inferred?** The stale-cache explanation and the value of
+12. **Which claims are inferred?**
+
+Answer: The stale-cache explanation and the value of
     parallel VIPs are inferences; certificate SAN contents, timestamps, and
     counters are scenario observations.
 | Decision | Evidence | Trade-off |

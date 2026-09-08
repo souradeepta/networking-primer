@@ -104,42 +104,62 @@ mapping.
 
 ## Questions and answers
 
-1. **What makes mTLS mutual?** The server authenticates the client certificate while the client authenticates the server certificate.
+1. **What makes mTLS mutual?**
+
+Answer: The server authenticates the client certificate while the client authenticates the server certificate.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-2. **Why append a CA first?** It allows old and new clients to overlap during asynchronous rotation.
+2. **Why append a CA first?**
+
+Answer: It allows old and new clients to overlap during asynchronous rotation. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-3. **Does a trusted CA authorize every client?** No; subject, SAN, and role policy still need evaluation.
+3. **Does a trusted CA authorize every client?**
+
+Answer: No; subject, SAN, and role policy still need evaluation. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-4. **What caused staging failure?** The old CA was removed instead of retained in an overlap bundle.
+4. **What caused staging failure?**
+
+Answer: The old CA was removed instead of retained in an overlap bundle.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-5. **What does issuer telemetry show?** Which certificate issuer is actually arriving at the endpoint.
+5. **What does issuer telemetry show?**
+
+Answer: Which certificate issuer is actually arriving at the endpoint. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-6. **Why test the server-side profile?** LTM may succeed with a client while failing its pool-member handshake.
+6. **Why test the server-side profile?**
+
+Answer: LTM may succeed with a client while failing its pool-member handshake. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-7. **What is a fact?** Replacement-only staging rejected old scanner certificates.
+7. **What is a fact?**
+
+Answer: Replacement-only staging rejected old scanner certificates. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-8. **What is an inference?** Overlap reduced risk for intermittently connected scanners.
+8. **What is an inference?**
+
+Answer: Overlap reduced risk for intermittently connected scanners. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-9. **When remove old trust?** After measured zero use, owner confirmation, and a tested rollback artifact.
+9. **When remove old trust?**
+
+Answer: After measured zero use, owner confirmation, and a tested rollback artifact. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-10. **What is the SDE2 lesson?** mTLS identity, trust, authorization, and lifecycle deletion are distinct controls.
+10. **What is the SDE2 lesson?**
+
+Answer: mTLS identity, trust, authorization, and lifecycle deletion are distinct controls. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.

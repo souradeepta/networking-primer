@@ -90,50 +90,74 @@ The template is stored with the service's recovery objective and reviewed after 
 
 ## Questions and answers
 
-1. **What failed first?** The active unit lost forwarding after a power-controller fault.
+1. **What failed first?**
+
+Answer: The active unit lost forwarding after a power-controller fault. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-2. **Why did standby not restore every socket?** Abrupt failure and application semantics limit what connection mirroring can preserve.
+2. **Why did standby not restore every socket?**
+
+Answer: Abrupt failure and application semantics limit what connection mirroring can preserve. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-3. **What was the main inference?** Stale ARP and CAM state extended impact after B owned the VIP.
+3. **What was the main inference?**
+
+Answer: Stale ARP and CAM state extended impact after B owned the VIP.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-4. **Why fence before promotion?** Fencing prevents the old unit from returning as a second active owner.
+4. **Why fence before promotion?**
+
+Answer: Fencing prevents the old unit from returning as a second active owner.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-5. **What does config sync prove?** It proves selected configuration matched, not that traffic or sessions are currently healthy.
+5. **What does config sync prove?**
+
+Answer: It proves selected configuration matched, not that traffic or sessions are currently healthy.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-6. **Why avoid static ARP?** Hidden static state can mask the design issue and complicate safe rollback.
+6. **Why avoid static ARP?**
+
+Answer: Hidden static state can mask the design issue and complicate safe rollback.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-7. **What should synthetic tests cover?** New connections, report completion, retries, and expected behavior for interrupted jobs.
+7. **What should synthetic tests cover?**
+
+Answer: New connections, report completion, retries, and expected behavior for interrupted jobs. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-8. **What does RFC 826 explain?** IPv4 ARP request, reply, and cache behavior relevant to neighbor convergence.
+8. **What does RFC 826 explain?**
+
+Answer: IPv4 ARP request, reply, and cache behavior relevant to neighbor convergence. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-9. **Can HA eliminate packet loss?** No; convergence and transport retransmission create a bounded but nonzero interruption.
+9. **Can HA eliminate packet loss?**
+
+Answer: No; convergence and transport retransmission create a bounded but nonzero interruption. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-10. **Why document traffic-group ownership?** Operators need one authoritative owner during incidents and drills.
+10. **Why document traffic-group ownership?**
+
+Answer: Operators need one authoritative owner during incidents and drills. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-11. **What is an application-level safeguard?** Idempotent report job IDs let retries avoid duplicate work.
+11. **What is an application-level safeguard?**
+
+Answer: Idempotent report job IDs let retries avoid duplicate work. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.
 
-12. **What is the SDE2 lesson?** Model device, state, neighbor, transport, and application recovery as separate layers.
+12. **What is the SDE2 lesson?**
+
+Answer: Model device, state, neighbor, transport, and application recovery as separate layers. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Map the answer to the BIG-IP LTM object model: virtual server and profiles admit the client flow, a monitor determines member eligibility, a pool chooses a member, and SNAT/persistence influence the server-side tuple. In a diagnosis, compare VIP-side and member-side captures, monitor logs, pool state, persistence records, and return routing. The caveat is that a green monitor is only evidence for that probe; it is not proof that every user request, TLS name, dependency, or capacity budget is healthy.

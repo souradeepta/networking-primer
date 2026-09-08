@@ -76,12 +76,24 @@ connection.
 
 ## Questions and answers
 
-1. **Why do gRPC calls use HTTP/2?** HTTP/2 supplies multiplexed streams, binary framing, and flow control that fit typed RPC messages. It does not provide method authorization or guarantee that an intermediary preserves every streaming feature.
-2. **Why are retries dangerous?** A transport failure can occur after the server committed a write but before the client received its response. Retry only operations whose contract permits replay, use deadlines and idempotency keys, and observe attempt counts.
-3. **How does WebSocket upgrade work?** An HTTP request negotiates an upgrade and then the connection carries WebSocket frames. Every proxy and firewall on the path must support the upgrade and preserve appropriate timeout and authentication policy.
-4. **Why can streams create load imbalance?** A load balancer often chooses a member when a connection is established. A few clients with long streams can therefore hold disproportionate work even when request counts look balanced.
-5. **What should health checks test?** They should test readiness appropriate to the protocol and dependency contract, not merely that a port accepts TCP. A separate lightweight unary health method is often safer than creating a permanent stream.
-6. **How should drains be designed?** Stop new assignments, announce a bounded grace period, finish or cancel active work, and let clients reconnect. Coordinate proxy timeout, server shutdown, and client backoff so draining does not become a retry storm.
+1. **Why do gRPC calls use HTTP/2?**
+
+**Answer:** HTTP/2 supplies multiplexed streams, binary framing, and flow control that fit typed RPC messages. It does not provide method authorization or guarantee that an intermediary preserves every streaming feature.
+2. **Why are retries dangerous?**
+
+**Answer:** A transport failure can occur after the server committed a write but before the client received its response. Retry only operations whose contract permits replay, use deadlines and idempotency keys, and observe attempt counts.
+3. **How does WebSocket upgrade work?**
+
+**Answer:** An HTTP request negotiates an upgrade and then the connection carries WebSocket frames. Every proxy and firewall on the path must support the upgrade and preserve appropriate timeout and authentication policy.
+4. **Why can streams create load imbalance?**
+
+**Answer:** A load balancer often chooses a member when a connection is established. A few clients with long streams can therefore hold disproportionate work even when request counts look balanced.
+5. **What should health checks test?**
+
+**Answer:** They should test readiness appropriate to the protocol and dependency contract, not merely that a port accepts TCP. A separate lightweight unary health method is often safer than creating a permanent stream.
+6. **How should drains be designed?**
+
+**Answer:** Stop new assignments, announce a bounded grace period, finish or cancel active work, and let clients reconnect. Coordinate proxy timeout, server shutdown, and client backoff so draining does not become a retry storm.
 
 ## Design notes and evidence
 

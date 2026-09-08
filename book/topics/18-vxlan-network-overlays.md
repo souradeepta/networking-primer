@@ -82,6 +82,8 @@ path issue.
 
 ### 1. Why put VXLAN over a routed underlay?
 
+**Answer:**
+
 A routed underlay offers scalable equal-cost paths and separates physical
 reachability from tenant segmentation. VXLAN then creates logical segments at
 the edge without extending a broadcast domain through every switch. This
@@ -92,6 +94,8 @@ application can move without changing its IP address.
 
 ### 2. What does a VNI identify?
 
+**Answer:**
+
 A VNI identifies a VXLAN logical segment, analogous to a VLAN identifier but
 with a larger namespace. It does not by itself identify a host, route, or
 security policy. Devices map local ports or bridge domains to a VNI and must
@@ -100,6 +104,8 @@ the wrong broadcast domain. Always verify the control-plane or configuration
 source rather than inferring identity from a familiar VLAN number.
 
 ### 3. Why does MTU matter so much?
+
+**Answer:**
 
 VXLAN adds an outer Ethernet, IP, UDP, and VXLAN header around the original
 frame. If the underlay allows only the old MTU, the encapsulated packet can be
@@ -111,6 +117,8 @@ timeout first.
 
 ### 4. How do you distinguish underlay and overlay faults?
 
+**Answer:**
+
 First test VTEP-to-VTEP IP reachability and routing independently of tenant
 traffic. Then inspect VNI membership, remote endpoint learning, and encapsulated
 packet counters. A clean underlay with no remote MAC entry points toward a
@@ -120,6 +128,8 @@ the fault domain without declaring that a single counter proves root cause.
 
 ### 5. Why can a routed underlay carry a broadcast-like overlay?
 
+**Answer:**
+
 The VTEP receives a local Ethernet frame and decides how to deliver it
 remotely. Broadcast and unknown-unicast traffic can be replicated through a
 control plane or configured mechanism, while the underlay forwards ordinary
@@ -128,6 +138,8 @@ physical broadcast domain. Replication consumes bandwidth and state, so a
 design must define flooding limits and convergence after a VTEP failure.
 
 ### 6. What does an EVPN-style control plane contribute?
+
+**Answer:**
 
 An EVPN control plane can advertise MAC, IP, and VTEP reachability so devices
 learn remote endpoints without excessive flooding. It can support policy

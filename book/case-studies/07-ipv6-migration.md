@@ -103,50 +103,74 @@ The edge configuration was reviewed object by object. The IPv6 virtual server ne
 
 Migration sequencing matters when a dependency has a longer cache life than the team expects. AAAA was published only after routes and probes were ready, yet the rollback plan still had to account for resolvers that retain records beyond the requested TTL. The support team received a temporary IPv4-only hostname and a diagnostic command that displayed resolver, answer, family, and certificate name. The lesson is broader than IPv6: any DNS-based migration needs a serving path before it advertises a name, and a rollback that remains safe while caches disagree.
 
-1. **Why publish AAAA at all?** It enables IPv6 clients but creates an obligation to operate the path.
+1. **Why publish AAAA at all?**
+
+Answer: It enables IPv6 clients but creates an obligation to operate the path.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-2. **Does an AAAA answer prove service health?** No; DNS says data, not reachability.
+2. **Does an AAAA answer prove service health?**
+
+Answer: No; DNS says data, not reachability. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-3. **What is Happy Eyeballs?** A client strategy that races address families to reduce user delay; RFC 8305 describes it.
+3. **What is Happy Eyeballs?**
+
+Answer: A client strategy that races address families to reduce user delay; RFC 8305 describes it.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-4. **Why did one ISP fail?** Its path reached R2, where the service prefix was absent.
+4. **Why did one ISP fail?**
+
+Answer: Its path reached R2, where the service prefix was absent. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-5. **Why use brackets in curl?** Colons in IPv6 literals require bracketed URL authority syntax.
+5. **Why use brackets in curl?**
+
+Answer: Colons in IPv6 literals require bracketed URL authority syntax. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-6. **Could certificates differ by family?** Yes, separate VIP profiles can present different chains; test SNI on each.
+6. **Could certificates differ by family?**
+
+Answer: Yes, separate VIP profiles can present different chains; test SNI on each.
 
 Interview reasoning: Walk through the handshake fields and the trust decision rather than saying only that TLS encrypts traffic. Check the hostname/SNI, negotiated protocol and cipher, certificate validity interval, SAN, chain order, trust store, and—when applicable—the client certificate and mapped identity. A practical example is testing each proxy leg independently with an explicit SNI name. The caveat is that front-end certificate success says nothing about backend TLS, authorization, or application readiness.
 
-7. **Why separate dashboards?** Aggregate success can hide one address family's failure.
+7. **Why separate dashboards?**
+
+Answer: Aggregate success can hide one address family's failure. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-8. **What is the safe AAAA rollback?** Withdraw it, preserve A, and account for TTL and caches.
+8. **What is the safe AAAA rollback?**
+
+Answer: Withdraw it, preserve A, and account for TTL and caches. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Interviewers want the control loop: discover current state, normalize only supported fields, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record evidence. For F5, include partition/folder/self-link handling, pagination, version compatibility, bounded retries, and read-back after uncertain responses; use SSH for approved diagnostics rather than hidden mutation. The caveat is that an HTTP 200 or successful SDK call is not proof of traffic health, so rollback and post-change probes are part of correctness.
 
-9. **Why test literal IPv6 and hostname?** Literal tests isolate routing; hostname tests include DNS and certificate identity.
+9. **Why test literal IPv6 and hostname?**
+
+Answer: Literal tests isolate routing; hostname tests include DNS and certificate identity. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Define the invariant and the failure boundary before choosing a test: what must remain reachable, isolated, authenticated, or within an SLO? Reproduce with a controlled client, fixed timestamps, reserved addresses, and reversible fault injection, then verify both data-plane behavior and control-plane recovery. The caveat is that a lab result does not automatically generalize to production; rate limits, shared dependencies, retries, and blast radius must be explicit.
 
-10. **What does RFC 8200 establish?** IPv6 packet and addressing behavior, not this network's route readiness.
+10. **What does RFC 8200 establish?**
+
+Answer: IPv6 packet and addressing behavior, not this network's route readiness. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.
 
-11. **What did the route fix prove?** It reproduced recovery, strongly supporting causation but not excluding every contributor.
+11. **What did the route fix prove?**
+
+Answer: It reproduced recovery, strongly supporting causation but not excluding every contributor. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: A strong answer names the source and destination prefixes, the longest-prefix decision, the next hop, and the return route. In practice, verify both directions with route-table lookups and a narrowly scoped flow trace, because policy routing, NAT, VRFs, and asymmetric paths can invalidate a simple diagram. The caveat is that a route being present does not prove that ACLs, MTU, ARP/ND, or the receiving process will accept the packet.
 
-12. **What should SDE2 own?** Dependency sequencing, address-family parity, telemetry, and migration rollback.
+12. **What should SDE2 own?**
+
+Answer: Dependency sequencing, address-family parity, telemetry, and migration rollback. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Explain the packet and state transition, then identify the observation point: a client capture, a listener socket, and a server capture can show different parts of the same flow. For example, compare the five-tuple, sequence progress, retransmissions, and FIN/RST timing before deciding whether the failure is transport or application-level. The caveat is that a successful handshake proves only reachability to a listener at that instant; it does not prove routing symmetry, HTTP success, capacity, or dependency health.

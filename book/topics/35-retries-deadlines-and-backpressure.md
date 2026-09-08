@@ -175,40 +175,55 @@ the recorded trace, and never sleep in tests.
 
 ## Questions and answers
 
-1. **[SDE2 | fundamentals] Why propagate an absolute deadline?** Relative
+1. **[SDE2 | fundamentals] Why propagate an absolute deadline?**
+
+Answer: Relative
    timeouts at each hop can add up beyond the user contract. An absolute
    deadline lets every hop calculate remaining time and stop work when it is
    no longer useful.
 
-2. **[SDE2 | system-design] Which errors are retryable?** Usually a bounded
+2. **[SDE2 | system-design] Which errors are retryable?**
+
+Answer: Usually a bounded
    set of transient transport or overload outcomes, subject to operation
    semantics. Retryability requires both a transient failure hypothesis and a
    safe way to avoid duplicate effects.
 
-3. **[SDE2 | debugging] How do you prove a retry storm?** Compare original
+3. **[SDE2 | debugging] How do you prove a retry storm?**
+
+Answer: Compare original
    request rate with attempt rate at each layer, correlate retry headers and
    request IDs, and check whether attempt rate rises with latency. A flat
    attempt ratio falsifies retry amplification as the primary cause.
 
 4. **[Staff | trade-off] Why not retry aggressively to improve availability?**
-   Retries can improve success for isolated transient faults but consume the
+
+Answer: Retries can improve success for isolated transient faults but consume the
    same scarce capacity during correlated failure. Set an error-budget and
    capacity budget, then choose bounded retries, rejection, or degradation.
 
-5. **[SDE2 | coding] How should an idempotency key work?** Store a key bound to
+5. **[SDE2 | coding] How should an idempotency key work?**
+
+Answer: Store a key bound to
    principal and operation with the committed result or an in-progress marker.
    A duplicate returns the same result, a conflicting payload is rejected,
    and expiry is chosen from the business retry window.
 
-6. **[SDE2 | operations] What is backpressure?** It is a bounded signal that
+6. **[SDE2 | operations] What is backpressure?**
+
+Answer: It is a bounded signal that
    downstream capacity is lower than offered work: limit concurrency, queue a
    finite amount, or reject/degrade. It is not simply adding a larger queue.
 
-7. **[Staff | architecture] Where should retries live?** Put semantic retry
+7. **[Staff | architecture] Where should retries live?**
+
+Answer: Put semantic retry
    ownership near the operation owner, and keep lower layers transport-aware
    and bounded. If several layers retry, coordinate one total attempt budget.
 
-8. **[SDE2 | security] What can a retry leak or replay?** It can repeat a
+8. **[SDE2 | security] What can a retry leak or replay?**
+
+Answer: It can repeat a
    payment, authorization-sensitive action, or personal-data submission. Use
    authenticated keys, redacted telemetry, and explicit operation contracts;
    a network timeout does not erase the server-side effect.

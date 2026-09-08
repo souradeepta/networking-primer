@@ -74,12 +74,24 @@ edge hit rather than an origin response.
 
 ## Questions and answers
 
-1. **What is a cache key?** It identifies which request dimensions select an object. Omitting a meaningful query, host, cookie, or authorization boundary can serve the wrong representation, while adding unnecessary dimensions reduces reuse.
-2. **Why use validators?** ETags or modification timestamps let an edge ask whether its object remains current without downloading the full representation. The origin must implement consistent validator semantics for this to be safe.
-3. **Does purge erase every client copy?** No. Purge behavior is provider-specific, and browsers or intermediate resolvers may retain data. Versioned immutable URLs provide deterministic rollout while purge handles exceptional corrections.
-4. **Why can hit ratio hide an outage?** A high hit ratio may serve old healthy objects while uncached API paths fail. Segment metrics by object class, status, edge, and origin dependency rather than using one aggregate number.
-5. **How does GTM relate to a CDN?** DNS steering chooses an answer for new resolution clients. It does not choose every request or instantly invalidate edge state, so CDN policy and DNS TTL must be designed together.
-6. **What is origin shielding?** A selected intermediary consolidates misses before reaching origin, reducing duplicate fetches. It can become a bottleneck or failure domain, so capacity and bypass behavior require explicit testing.
+1. **What is a cache key?**
+
+**Answer:** It identifies which request dimensions select an object. Omitting a meaningful query, host, cookie, or authorization boundary can serve the wrong representation, while adding unnecessary dimensions reduces reuse.
+2. **Why use validators?**
+
+**Answer:** ETags or modification timestamps let an edge ask whether its object remains current without downloading the full representation. The origin must implement consistent validator semantics for this to be safe.
+3. **Does purge erase every client copy?**
+
+**Answer:** No. Purge behavior is provider-specific, and browsers or intermediate resolvers may retain data. Versioned immutable URLs provide deterministic rollout while purge handles exceptional corrections.
+4. **Why can hit ratio hide an outage?**
+
+**Answer:** A high hit ratio may serve old healthy objects while uncached API paths fail. Segment metrics by object class, status, edge, and origin dependency rather than using one aggregate number.
+5. **How does GTM relate to a CDN?**
+
+**Answer:** DNS steering chooses an answer for new resolution clients. It does not choose every request or instantly invalidate edge state, so CDN policy and DNS TTL must be designed together.
+6. **What is origin shielding?**
+
+**Answer:** A selected intermediary consolidates misses before reaching origin, reducing duplicate fetches. It can become a bottleneck or failure domain, so capacity and bypass behavior require explicit testing.
 
 ## Design notes and evidence
 

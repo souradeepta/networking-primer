@@ -97,50 +97,74 @@ The owner also records when the sample was collected so cache age is not mistake
 
 ## Questions and answers
 
-1. **Why did Europe receive Phoenix?** A stale broad topology prefix matched the new recursive resolver address.
+1. **Why did Europe receive Phoenix?**
+
+Answer: A stale broad topology prefix matched the new recursive resolver address. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-2. **What was directly observed?** Resolver answer differences, healthy VIPs, and an overlapping /12 topology record.
+2. **What was directly observed?**
+
+Answer: Resolver answer differences, healthy VIPs, and an overlapping /12 topology record. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-3. **What is the causal inference?** The broad record caused selection; carrier and VPN behavior remain contributing context.
+3. **What is the causal inference?**
+
+Answer: The broad record caused selection; carrier and VPN behavior remain contributing context.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-4. **Why not flush public caches?** Operators do not control every recursive cache, and authoritative DNS cannot recall valid answers.
+4. **Why not flush public caches?**
+
+Answer: Operators do not control every recursive cache, and authoritative DNS cannot recall valid answers.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-5. **What does TTL control?** The expected caching lifetime, not an absolute promise of instant global convergence.
+5. **What does TTL control?**
+
+Answer: The expected caching lifetime, not an absolute promise of instant global convergence.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-6. **Why can resolver geography mislead?** NAT, VPNs, roaming, and centralized resolvers separate resolver location from user location.
+6. **Why can resolver geography mislead?**
+
+Answer: NAT, VPNs, roaming, and centralized resolvers separate resolver location from user location.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-7. **What does a Wide IP do?** It applies DNS policy to pools and virtual-server availability for a DNS name.
+7. **What does a Wide IP do?**
+
+Answer: It applies DNS policy to pools and virtual-server availability for a DNS name.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-8. **Why test multiple resolvers?** One resolver path cannot reveal policy behavior across different source prefixes.
+8. **Why test multiple resolvers?**
+
+Answer: One resolver path cannot reveal policy behavior across different source prefixes. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-9. **Could LTM health solve topology errors?** No; health can remove a dead target but cannot choose the correct geography.
+9. **Could LTM health solve topology errors?**
+
+Answer: No; health can remove a dead target but cannot choose the correct geography.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-10. **Why retain a fallback pool?** It provides availability when no trustworthy topology match exists.
+10. **Why retain a fallback pool?**
+
+Answer: It provides availability when no trustworthy topology match exists. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-11. **What belongs in topology ownership?** Prefix provenance, precedence, owner, review date, and rollback contact.
+11. **What belongs in topology ownership?**
+
+Answer: Prefix provenance, precedence, owner, review date, and rollback contact. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.
 
-12. **What is the SDE2 lesson?** Treat DNS answers as cached policy decisions whose input identity and convergence are uncertain.
+12. **What is the SDE2 lesson?**
+
+Answer: Treat DNS answers as cached policy decisions whose input identity and convergence are uncertain.
 
 Interview reasoning: Separate DNS decision time from application connection time. BIG-IP DNS/GTM evaluates Wide IP pools, topology or other methods, server/virtual-server health, and sometimes limits before returning an address; recursive caches may continue serving that answer until TTL expiry. Diagnose authoritative and recursive views, monitor state, topology data, TTL, and the resulting LTM path. The caveat is that DNS steering cannot revoke already cached answers or guarantee data consistency during a site failover.

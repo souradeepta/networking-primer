@@ -142,42 +142,42 @@ unknown outcomes.
 
 ## Questions and answers
 
-1. **What is ManagementRoot?** It is the SDK entry point carrying management
+1. **What is ManagementRoot?** **Answer:** It is the SDK entry point carrying management
    connection context and exposing mapped BIG-IP resource collections.
 
 Interview reasoning: For “What is ManagementRoot,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
 
-2. **Why does `verify=True` matter?** It asks the client to validate the
+2. **Why does `verify=True` matter?** **Answer:** It asks the client to validate the
    management server certificate and identity instead of trusting any endpoint.
 
 Interview reasoning: For “Why does `verify=True` matter,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-3. **Why is partition awareness essential?** Similar names can exist in
+3. **Why is partition awareness essential?** **Answer:** Similar names can exist in
    different administrative scopes, and the REST path encodes that scope.
 
 Interview reasoning: For “Why is partition awareness essential,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-4. **Is a 200 response proof of completion?** No. Read back state and relevant
+4. **Is a 200 response proof of completion?** **Answer:** No. Read back state and relevant
    health, especially when device work is asynchronous.
 
 Interview reasoning: For “Is a 200 response proof of completion,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-5. **When is retrying a write safe?** Only when server semantics and the
+5. **When is retrying a write safe?** **Answer:** Only when server semantics and the
    operation's idempotency make duplicate execution harmless or impossible.
 
 Interview reasoning: For “When is retrying a write safe,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
 
-6. **What should a 404 trigger?** Check version, partition, folder, and
+6. **What should a 404 trigger?** **Answer:** Check version, partition, folder, and
    self-link; do not assume the object should be created.
 
 Interview reasoning: For “What should a 404 trigger,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
 
-7. **Why mock the SDK?** To prove safety and error handling without changing a
+7. **Why mock the SDK?** **Answer:** To prove safety and error handling without changing a
    device, while reserving contract tests for a disposable lab.
 
 Interview reasoning: For “Why mock the SDK,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.
 
-8. **What belongs in an audit record?** Target, scope, actor reference,
+8. **What belongs in an audit record?** **Answer:** Target, scope, actor reference,
    correlation ID, redacted before/after fields, status, timing, and validation.
 
 Interview reasoning: For “What belongs in an audit record,” describe the safe control loop: discover, normalize an allow-listed state, calculate a minimal diff, obtain approval, apply idempotently, validate behavior, and record redacted evidence. For F5, resolve version, partition, folder, and self-link before mutation and read back after uncertain results. A successful HTTP response is not traffic health, and retries are safe only when reconciliation prevents duplicates.

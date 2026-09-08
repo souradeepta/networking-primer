@@ -76,12 +76,24 @@ would falsify it.
 
 ## Questions and answers
 
-1. **Why is QUIC over UDP?** UDP gives QUIC a deployable datagram substrate without imposing TCP's kernel transport behavior. QUIC then implements reliability, congestion control, encryption, and streams itself. This flexibility helps evolution but requires firewalls and observability to understand UDP traffic.
-2. **What is connection migration?** Connection IDs can allow a QUIC session to survive some endpoint address changes, such as network transitions. NAT and policy can still prevent it, so applications must handle reconnects and operators must test the actual path.
-3. **Does HTTP/3 remove congestion?** No. QUIC has congestion control and shares bottlenecks with other traffic. It mainly changes stream loss behavior and handshake evolution. A congested access link can make HTTP/3 slow even when the origin is healthy.
-4. **Why does ALPN matter?** ALPN binds the TLS handshake to an application protocol such as h3. A certificate can be valid while protocol negotiation fails. Record ALPN on every termination hop to separate capability from authorization and service health.
-5. **What is 0-RTT risk?** Early data can reduce setup latency but may be replayed by an attacker under protocol conditions. Servers should accept it only for operations safe to replay, and authentication and idempotency rules still apply.
-6. **How should fallback be measured?** Count attempted, negotiated, failed, and fallback requests by client and path. A fallback success preserves availability but may indicate blocked UDP or an edge regression, so it deserves an explicit service objective.
+1. **Why is QUIC over UDP?**
+
+**Answer:** UDP gives QUIC a deployable datagram substrate without imposing TCP's kernel transport behavior. QUIC then implements reliability, congestion control, encryption, and streams itself. This flexibility helps evolution but requires firewalls and observability to understand UDP traffic.
+2. **What is connection migration?**
+
+**Answer:** Connection IDs can allow a QUIC session to survive some endpoint address changes, such as network transitions. NAT and policy can still prevent it, so applications must handle reconnects and operators must test the actual path.
+3. **Does HTTP/3 remove congestion?**
+
+**Answer:** No. QUIC has congestion control and shares bottlenecks with other traffic. It mainly changes stream loss behavior and handshake evolution. A congested access link can make HTTP/3 slow even when the origin is healthy.
+4. **Why does ALPN matter?**
+
+**Answer:** ALPN binds the TLS handshake to an application protocol such as h3. A certificate can be valid while protocol negotiation fails. Record ALPN on every termination hop to separate capability from authorization and service health.
+5. **What is 0-RTT risk?**
+
+**Answer:** Early data can reduce setup latency but may be replayed by an attacker under protocol conditions. Servers should accept it only for operations safe to replay, and authentication and idempotency rules still apply.
+6. **How should fallback be measured?**
+
+**Answer:** Count attempted, negotiated, failed, and fallback requests by client and path. A fallback success preserves availability but may indicate blocked UDP or an edge regression, so it deserves an explicit service objective.
 
 ## Design notes and evidence
 

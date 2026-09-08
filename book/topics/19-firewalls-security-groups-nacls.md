@@ -80,6 +80,8 @@ it to a real system.
 
 ### 1. What is the difference between stateful and stateless filtering?
 
+**Answer:**
+
 A stateful filter records connection state, such as an established TCP flow,
 and can permit return traffic associated with an allowed request. A stateless
 filter evaluates each packet independently, so a return path generally needs a
@@ -90,6 +92,8 @@ identity or application intent.
 
 ### 2. Why can an allow rule still produce a timeout?
 
+**Answer:**
+
 The rule may match the wrong address after NAT, the return route may differ, or
 another boundary may deny the packet. A health check may use a different source
 than a user request, and DNS may resolve to another endpoint. Timeouts provide
@@ -98,6 +102,8 @@ controlled test from the same source subnet. A reset suggests an active reject
 or listener behavior, while silence is compatible with several causes.
 
 ### 3. How should least privilege be applied to network policy?
+
+**Answer:**
 
 Specify the smallest source set, destination, protocol, port, and direction
 needed for the dependency. Prefer identity or workload groups where supported,
@@ -109,6 +115,8 @@ after broad allows.
 
 ### 4. What evidence belongs in a firewall change review?
 
+**Answer:**
+
 Include the dependency owner, exact flow tuple, business purpose, expected
 volume, direction, NAT assumptions, rollback, and validation test. Identify
 which control evaluates the rule and how propagation is observed. A screenshot
@@ -118,6 +126,8 @@ goal is a reversible, auditable change rather than a permanently open port.
 
 ### 5. Why is rule order important on some firewalls?
 
+**Answer:**
+
 Many policy engines evaluate rules in order and stop at the first match,
 although some compile rules or use another precedence model. A broad deny
 above a narrow allow blocks intended traffic; a broad allow can bypass useful
@@ -126,6 +136,8 @@ source test does not prove another NAT-translated address cannot match a
 different rule, so reviews must include the complete evaluated tuple.
 
 ### 6. Why are network controls not application authorization?
+
+**Answer:**
 
 Network policy decides whether a flow can reach a listener, while application
 authorization decides whether a caller may perform an operation. A permitted

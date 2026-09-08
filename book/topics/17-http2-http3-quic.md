@@ -83,6 +83,8 @@ the command line or test a real target without authorization.
 
 ### 1. Why can HTTP/2 use one TCP connection for many requests?
 
+**Answer:**
+
 HTTP/2 assigns each request and response a stream identifier and wraps work in
 frames. Frames from different streams can be interleaved, so a browser can
 fetch stylesheets, scripts, and images concurrently over one connection. TCP
@@ -91,6 +93,8 @@ application-level connection overhead but does not remove TCP loss recovery.
 The server must also respect stream and connection flow-control windows.
 
 ### 2. What does QUIC add beyond UDP?
+
+**Answer:**
 
 UDP is only a datagram delivery interface; it does not provide reliable
 delivery, congestion control, ordering, or encryption. QUIC implements those
@@ -102,6 +106,8 @@ client support, and proxy behavior.
 
 ### 3. What is head-of-line blocking in these protocols?
 
+**Answer:**
+
 At the HTTP/2 application layer, streams are independent in framing, but TCP
 delivers bytes in order. If one segment is missing, later bytes wait in the
 receiver even if they belong to other HTTP/2 streams. QUIC acknowledges and
@@ -110,6 +116,8 @@ need not stall another. A shared bottleneck can still affect all traffic, and
 HTTP/3 does not make congestion disappear.
 
 ### 4. How should an engineer debug an HTTP/3 fallback?
+
+**Answer:**
 
 Start by recording the negotiated ALPN and whether the client sent a QUIC
 attempt. Check UDP reachability and firewall policy, certificate validity, and
@@ -121,6 +129,8 @@ evidence, but it may conceal path-specific UDP problems.
 
 ### 5. How do HPACK and QPACK differ?
 
+**Answer:**
+
 HPACK compresses HTTP/2 headers with static and dynamic tables on an ordered
 TCP connection. QPACK serves HTTP/3, where independent QUIC streams avoid
 unnecessary blocking on table updates by using encoder and decoder streams. It
@@ -129,6 +139,8 @@ TLS supplies confidentiality and integrity, while the application validates
 authorization and request semantics.
 
 ### 6. What is the difference between flow and congestion control?
+
+**Answer:**
 
 Flow control protects a receiver from an individual sender. Congestion control
 protects the shared path and reacts to loss or delay. A request can stall

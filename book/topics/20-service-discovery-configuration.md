@@ -81,6 +81,8 @@ to a live registry.
 
 ### 1. Why is DNS-based discovery not immediate failover?
 
+**Answer:**
+
 Authoritative DNS can publish a new answer, but recursive resolvers and clients
 may retain the old answer until its TTL expires, and some libraries add their
 own caching. Existing TCP connections also continue until closed. Therefore a
@@ -91,6 +93,8 @@ instant control.
 
 ### 2. What makes registry membership trustworthy?
 
+**Answer:**
+
 Membership needs an owner, an authentication mechanism, a lease or heartbeat,
 and a health check that tests the dependency being advertised. A process that
 is alive but unable to serve should not remain eligible. Updates should be
@@ -99,6 +103,8 @@ data policy. These controls reduce false positives, but no health signal proves
 all requests will succeed under every payload or authorization context.
 
 ### 3. How should runtime configuration be rolled out?
+
+**Answer:**
 
 Validate syntax and semantics before activation, version each change, and make
 the effective version observable. Use staged rollout or a canary when a value
@@ -109,6 +115,8 @@ has reloaded it. Rollback should identify the previous known-good version.
 
 ### 4. What is a dangerous retry interaction?
 
+**Answer:**
+
 If a client retries quickly while a server, proxy, and queue also retry, one
 logical request can multiply into many physical attempts. During an outage this
 creates a retry storm that worsens saturation. Set bounded attempts, deadlines,
@@ -118,6 +126,8 @@ operation is safe to repeat; that belongs to the API contract and client.
 
 ### 5. What is the difference between readiness and liveness?
 
+**Answer:**
+
 Readiness asks whether an instance should receive new work; liveness asks
 whether a process should be restarted or recovered. A service can be alive
 while its database is unavailable, so treating liveness as readiness routes
@@ -126,6 +136,8 @@ than restart a healthy process. Probe names vary, but this distinction prevents
 restart storms and contains dependency incidents.
 
 ### 6. How can configuration drift be detected safely?
+
+**Answer:**
 
 Publish a version or digest of validated effective configuration and compare it
 with intended state. Keep secret values outside ordinary logs and diffs. A

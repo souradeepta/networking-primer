@@ -174,45 +174,59 @@ advance without sleeping.
 ## Questions and answers
 
 1. **[SDE2 | system-design] What must be named before choosing replication?**
-   Name the invariant, state owner, read/write path, failure domain, RPO/RTO,
+
+Answer: Name the invariant, state owner, read/write path, failure domain, RPO/RTO,
    and consistency contract. “Three replicas” is not a design until the
    acknowledgement and recovery rules are defined.
 
-2. **[SDE2 | fundamentals] Does a timeout mean a write failed?** No. The
+2. **[SDE2 | fundamentals] Does a timeout mean a write failed?**
+
+Answer: No. The
    request may have committed and the response may have been dropped. Use an
    idempotency key or status lookup, and reconcile before retrying a
    non-idempotent operation.
 
 3. **[SDE2 | debugging] How would you distinguish stale cache from replica
-   lag?** Compare a version or commit timestamp from the authority, the read
+   lag?**
+
+Answer: Compare a version or commit timestamp from the authority, the read
    replica, and the cache while recording request routing. A cache purge that
    leaves the replica version old falsifies the cache-only hypothesis.
 
-4. **[Staff | system-design] Is active-active always more available?** It can
+4. **[Staff | system-design] Is active-active always more available?**
+
+Answer: It can
    accept more local traffic during a partition, but conflict resolution,
    ordering, residency, and operational complexity increase. Choose it when
    the business merge is explicit and measured, not because the topology looks
    symmetrical.
 
 5. **[Staff | operations] Why is DNS failover insufficient for stateful
-   writes?** Cached answers and existing connections delay movement, while the
+   writes?**
+
+Answer: Cached answers and existing connections delay movement, while the
    old region may still receive traffic. A write gate and storage-enforced
    fencing rule are needed before declaring the new region authoritative.
 
-6. **[SDE2 | fundamentals] How is a queue different from a database?** A
+6. **[SDE2 | fundamentals] How is a queue different from a database?**
+
+Answer: A
    queue or log primarily represents work or events and has delivery and
    ordering semantics. A database represents queryable state. Either can be
    durable, but neither automatically supplies the other’s consistency or
    deduplication contract.
 
-7. **[Staff | trade-off] What would make you reject a quorum design?** If
+7. **[Staff | trade-off] What would make you reject a quorum design?**
+
+Answer: If
    cross-region quorum violates the latency SLO, membership changes are not
    safe, or the business cannot tolerate write unavailability during a
    partition, choose a documented weaker guarantee or a different ownership
    model.
 
 8. **[SDE2 | security] Where should authorization be checked after failover?**
-   At the service or data boundary that understands identity, tenant, and
+
+Answer: At the service or data boundary that understands identity, tenant, and
    resource. Network reachability, a healthy LB monitor, and a valid route are
    necessary evidence but are not authorization.
 

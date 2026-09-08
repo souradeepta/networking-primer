@@ -78,12 +78,24 @@ response with a deliberately bounded header or timeout in your own lab.
 
 ## Questions and answers
 
-1. **Why does HTTP/2 use streams?** Streams let many request and response exchanges share one connection while retaining per-request identity. Frames can interleave, reducing connection setup overhead, but TCP ordering still means packet loss can delay every stream on that connection.
-2. **What does RST_STREAM mean?** It cancels one stream and carries an error code describing the protocol or application reason. The connection may remain usable. Clients should apply method idempotency and deadline policy before retrying rather than blindly replaying writes.
-3. **Why inspect SETTINGS?** SETTINGS advertises limits and capabilities such as maximum concurrent streams and initial windows. A peer can legally constrain concurrency, so a client that assumes unlimited streams may queue or fail despite healthy TCP.
-4. **What is HPACK risk?** Dynamic compression tables improve efficiency but require synchronized decoder state. Invalid indexes or oversized header blocks can cause protocol errors. Logging decoded headers must also respect privacy and credential-handling rules.
-5. **Why can a proxy hide a problem?** A proxy may terminate client HTTP/2 and use another protocol upstream. Client success then proves only the first hop. Compare both negotiated protocols, queue timing, and origin responses before concluding end-to-end support.
-6. **How should priorities be treated?** Priority signals express preferences, but implementations and proxies may ignore or reinterpret them. Use application measurements and bounded resource policies rather than assuming a priority tree guarantees a particular completion order.
+1. **Why does HTTP/2 use streams?**
+
+**Answer:** Streams let many request and response exchanges share one connection while retaining per-request identity. Frames can interleave, reducing connection setup overhead, but TCP ordering still means packet loss can delay every stream on that connection.
+2. **What does RST_STREAM mean?**
+
+**Answer:** It cancels one stream and carries an error code describing the protocol or application reason. The connection may remain usable. Clients should apply method idempotency and deadline policy before retrying rather than blindly replaying writes.
+3. **Why inspect SETTINGS?**
+
+**Answer:** SETTINGS advertises limits and capabilities such as maximum concurrent streams and initial windows. A peer can legally constrain concurrency, so a client that assumes unlimited streams may queue or fail despite healthy TCP.
+4. **What is HPACK risk?**
+
+**Answer:** Dynamic compression tables improve efficiency but require synchronized decoder state. Invalid indexes or oversized header blocks can cause protocol errors. Logging decoded headers must also respect privacy and credential-handling rules.
+5. **Why can a proxy hide a problem?**
+
+**Answer:** A proxy may terminate client HTTP/2 and use another protocol upstream. Client success then proves only the first hop. Compare both negotiated protocols, queue timing, and origin responses before concluding end-to-end support.
+6. **How should priorities be treated?**
+
+**Answer:** Priority signals express preferences, but implementations and proxies may ignore or reinterpret them. Use application measurements and bounded resource policies rather than assuming a priority tree guarantees a particular completion order.
 
 ## Design notes and evidence
 

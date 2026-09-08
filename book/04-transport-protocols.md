@@ -71,39 +71,39 @@ flowchart LR
 
 ## Questions and answers
 
-1. **What does TCP guarantee?** It presents an ordered, reliable byte stream if the connection remains usable; it does not guarantee bounded latency or application success. Retries can make delivery late.
+1. **What does TCP guarantee?** **Answer:** It presents an ordered, reliable byte stream if the connection remains usable; it does not guarantee bounded latency or application success. Retries can make delivery late.
 
 Interview reasoning: For “What does TCP guarantee,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-2. **Why is a three-way handshake needed?** Each side confirms that it can send and receive, and sequence numbers are synchronized. It also creates work that can be abused, motivating backlog protections.
+2. **Why is a three-way handshake needed?** **Answer:** Each side confirms that it can send and receive, and sequence numbers are synchronized. It also creates work that can be abused, motivating backlog protections.
 
 Interview reasoning: For “Why is a three-way handshake needed,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-3. **What is the difference between flow and congestion control?** Flow control protects a receiver’s buffers; congestion control protects the shared path. Either can limit sending, and they require different evidence.
+3. **What is the difference between flow and congestion control?** **Answer:** Flow control protects a receiver’s buffers; congestion control protects the shared path. Either can limit sending, and they require different evidence.
 
 Interview reasoning: For “What is the difference between flow and congestion control,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-4. **When is UDP appropriate?** When the application can tolerate loss or implements its own recovery and needs message boundaries or low setup overhead. It is not automatically faster.
+4. **When is UDP appropriate?** **Answer:** When the application can tolerate loss or implements its own recovery and needs message boundaries or low setup overhead. It is not automatically faster.
 
 Interview reasoning: For “When is UDP appropriate,” distinguish UDP delivery from the reliability and encryption QUIC builds above it. Check firewall and NAT idle timers, path MTU, connection IDs, and load-balancer affinity separately from TLS. TCP fallback may hide a blocked UDP path; conversely, broad UDP blocking removes the intended mobility or latency benefit. Validate with packet captures and application counters.
 
-5. **Why can a TCP connection be established but requests fail?** The listening socket may accept while the process is overloaded, a proxy may reject a route, or TLS and application work may fail afterward.
+5. **Why can a TCP connection be established but requests fail?** **Answer:** The listening socket may accept while the process is overloaded, a proxy may reject a route, or TLS and application work may fail afterward.
 
 Interview reasoning: For “Why can a TCP connection be established but requests fail,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-6. **What does RST tell an operator?** An endpoint or intermediary abruptly rejected or aborted state. It identifies an event, not necessarily the root cause; inspect who sent it and what preceded it.
+6. **What does RST tell an operator?** **Answer:** An endpoint or intermediary abruptly rejected or aborted state. It identifies an event, not necessarily the root cause; inspect who sent it and what preceded it.
 
 Interview reasoning: For “What does RST tell an operator,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-7. **How does QUIC reduce head-of-line blocking?** Loss in one stream does not prevent other streams from being delivered at the transport’s stream interface, although congestion and packet loss still affect all streams sharing the connection.
+7. **How does QUIC reduce head-of-line blocking?** **Answer:** Loss in one stream does not prevent other streams from being delivered at the transport’s stream interface, although congestion and packet loss still affect all streams sharing the connection.
 
 Interview reasoning: For “How does QUIC reduce head-of-line blocking,” distinguish UDP delivery from the reliability and encryption QUIC builds above it. Check firewall and NAT idle timers, path MTU, connection IDs, and load-balancer affinity separately from TLS. TCP fallback may hide a blocked UDP path; conversely, broad UDP blocking removes the intended mobility or latency benefit. Validate with packet captures and application counters.
 
-8. **Why do retries cause incidents?** Independent clients can synchronize retries and multiply requests against an already impaired dependency. Exponential backoff, jitter, budgets, and idempotency limit amplification.
+8. **Why do retries cause incidents?** **Answer:** Independent clients can synchronize retries and multiply requests against an already impaired dependency. Exponential backoff, jitter, budgets, and idempotency limit amplification.
 
 Interview reasoning: For “Why do retries cause incidents,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-9. **What should a capture prove before a tuning change?** It should show the failing phase, direction, packet evidence, and a plausible mechanism. A single retransmission is not enough to justify changing congestion control.
+9. **What should a capture prove before a tuning change?** **Answer:** It should show the failing phase, direction, packet evidence, and a plausible mechanism. A single retransmission is not enough to justify changing congestion control.
 
 Primary references include [RFC 9293](https://www.rfc-editor.org/rfc/rfc9293), [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000), and [RFC 9001](https://www.rfc-editor.org/rfc/rfc9001). Statements labeled **Fact** summarize standards; statements labeled **Inference** are engineering conclusions.
 

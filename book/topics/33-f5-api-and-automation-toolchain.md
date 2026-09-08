@@ -75,14 +75,37 @@ or private-key material.
 
 ## Questions and answers
 
-1. **When should SDK beat AS3?** Use the SDK for targeted discovery, audits, or a narrow object update; use AS3 for an owned application declaration where complete desired state and lifecycle are explicit.
-2. **Why is pagination correctness?** A partial collection produces a false diff, which can miss drift or delete objects that were never read. Follow every documented cursor and record counts.
-3. **What does 409 mean?** It often indicates concurrent state or an existing object. Re-read, compare ownership and version, then decide whether to merge, wait, or stop.
-4. **How are async tasks verified?** Poll with a deadline and backoff, parse terminal failure, then GET the resource and run a behavioral check; task submission alone is insufficient.
-5. **What is the role of RBAC?** It limits which resources and actions an identity can access. A valid token with the wrong partition role can still produce confusing 403 or filtered reads.
-6. **Why compare REST and SDK?** The SDK may hide pagination, defaults, or multiple calls. REST inspection exposes the actual URI and payload when debugging version or field behavior.
-7. **What belongs in a plan artifact?** Target version, partition-qualified resources, redacted before/after fields, dependencies, actor, correlation ID, approval, rollback, and verification criteria.
-8. **What does Telemetry Streaming do?** It exports selected device observations to an external consumer; it does not make a configuration change safe or replace post-change behavioral validation.
+1. **When should SDK beat AS3?**
+
+Answer: Use the SDK for targeted discovery, audits, or a narrow object update; use AS3 for an owned application declaration where complete desired state and lifecycle are explicit.
+
+2. **Why is pagination correctness?**
+
+Answer: A partial collection produces a false diff, which can miss drift or delete objects that were never read. Follow every documented cursor and record counts.
+
+3. **What does 409 mean?**
+
+Answer: It often indicates concurrent state or an existing object. Re-read, compare ownership and version, then decide whether to merge, wait, or stop.
+
+4. **How are async tasks verified?**
+
+Answer: Poll with a deadline and backoff, parse terminal failure, then GET the resource and run a behavioral check; task submission alone is insufficient.
+
+5. **What is the role of RBAC?**
+
+Answer: It limits which resources and actions an identity can access. A valid token with the wrong partition role can still produce confusing 403 or filtered reads.
+
+6. **Why compare REST and SDK?**
+
+Answer: The SDK may hide pagination, defaults, or multiple calls. REST inspection exposes the actual URI and payload when debugging version or field behavior.
+
+7. **What belongs in a plan artifact?**
+
+Answer: Target version, partition-qualified resources, redacted before/after fields, dependencies, actor, correlation ID, approval, rollback, and verification criteria.
+
+8. **What does Telemetry Streaming do?**
+
+Answer: It exports selected device observations to an external consumer; it does not make a configuration change safe or replace post-change behavioral validation.
 
 ## Debug-session notes
 

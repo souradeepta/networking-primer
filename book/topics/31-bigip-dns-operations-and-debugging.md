@@ -78,11 +78,34 @@ would differ from monitor failure.
 
 ## Questions and answers
 
-1. **What is iQuery for?** It exchanges BIG-IP system information used by DNS objects and health relationships. It is not the client DNS protocol; inspect its state separately from listener reachability and recursive caching.
-2. **Why can TTL delay failover?** Recursive resolvers and clients retain answers until their cache policy permits refresh. Publishing a new answer changes future responses but cannot retract every already cached value instantly.
-3. **What does LDNS mean?** LDNS is the local recursive resolver making the authoritative query for a user. Its network location may differ from the user, so topology decisions based on LDNS can be approximate.
-4. **Why test TCP DNS too?** Large responses, DNSSEC records, or truncation can require TCP. A UDP-only test may pass while clients fail when the response exceeds path limits.
-5. **What does a monitor prove?** It proves a configured probe succeeded from its configured source and expected response. It does not prove every client path, TLS name, or application transaction is healthy.
-6. **How does DNSSEC change debugging?** A resolver can reject an answer whose signature, chain, or validity interval fails even when the address is correct. Check signatures and clock state rather than disabling validation.
-7. **Why inspect listener ownership?** Multiple listeners, VLANs, or addresses can receive different queries and policies. Testing the wrong endpoint can produce a valid but irrelevant answer.
-8. **What is safe TTL planning?** Choose TTL from failure-detection, cache-staleness, and query-load goals, then measure resolver behavior. Lowering TTL does not guarantee immediate propagation or avoid existing cache lifetime.
+1. **What is iQuery for?**
+
+Answer: It exchanges BIG-IP system information used by DNS objects and health relationships. It is not the client DNS protocol; inspect its state separately from listener reachability and recursive caching.
+
+2. **Why can TTL delay failover?**
+
+Answer: Recursive resolvers and clients retain answers until their cache policy permits refresh. Publishing a new answer changes future responses but cannot retract every already cached value instantly.
+
+3. **What does LDNS mean?**
+
+Answer: LDNS is the local recursive resolver making the authoritative query for a user. Its network location may differ from the user, so topology decisions based on LDNS can be approximate.
+
+4. **Why test TCP DNS too?**
+
+Answer: Large responses, DNSSEC records, or truncation can require TCP. A UDP-only test may pass while clients fail when the response exceeds path limits.
+
+5. **What does a monitor prove?**
+
+Answer: It proves a configured probe succeeded from its configured source and expected response. It does not prove every client path, TLS name, or application transaction is healthy.
+
+6. **How does DNSSEC change debugging?**
+
+Answer: A resolver can reject an answer whose signature, chain, or validity interval fails even when the address is correct. Check signatures and clock state rather than disabling validation.
+
+7. **Why inspect listener ownership?**
+
+Answer: Multiple listeners, VLANs, or addresses can receive different queries and policies. Testing the wrong endpoint can produce a valid but irrelevant answer.
+
+8. **What is safe TTL planning?**
+
+Answer: Choose TTL from failure-detection, cache-staleness, and query-load goals, then measure resolver behavior. Lowering TTL does not guarantee immediate propagation or avoid existing cache lifetime.--- book/topics/32-bigip-read-only-troubleshooting.md

@@ -120,37 +120,37 @@ boundary; an arbitrary client-supplied identity header is not authentication.
 
 ## Questions and answers
 
-1. **Why does SNI matter?** It lets one address select among hostname-specific
+1. **Why does SNI matter?** **Answer:** It lets one address select among hostname-specific
    certificates and policies before HTTP headers are available.
 
 Interview reasoning: For “Why does SNI matter,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
-2. **Does a valid leaf prove trust?** No. The client also needs a trusted chain,
+2. **Does a valid leaf prove trust?** **Answer:** No. The client also needs a trusted chain,
    correct dates, and acceptable usage and algorithms.
 
 Interview reasoning: For “Does a valid leaf prove trust,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-3. **What does termination mean?** The endpoint decrypts and completes one TLS
+3. **What does termination mean?** **Answer:** The endpoint decrypts and completes one TLS
    session; a later re-encrypted session is a separate security decision.
 
 Interview reasoning: For “What does termination mean,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-4. **Why test with `--resolve`?** It preserves hostname and SNI while choosing
+4. **Why test with `--resolve`?** **Answer:** It preserves hostname and SNI while choosing
    a controlled address, separating DNS from endpoint behavior.
 
 Interview reasoning: For “Why test with `--resolve`,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-5. **What is a chain error?** The peer may omit an intermediate or present an
+5. **What is a chain error?** **Answer:** The peer may omit an intermediate or present an
    order the client cannot build to a trusted root.
 
 Interview reasoning: For “What is a chain error,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-6. **Does mTLS authenticate authorization?** A client certificate authenticates
+6. **Does mTLS authenticate authorization?** **Answer:** A client certificate authenticates
    a certificate holder; application policy still decides what it may do.
 
 Interview reasoning: For “Does mTLS authenticate authorization,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
-7. **Why avoid a verification bypass?** It removes an intended identity check
+7. **Why avoid a verification bypass?** **Answer:** It removes an intended identity check
    and can hide the actual trust or naming defect.
 
 Interview reasoning: For “Why avoid a verification bypass,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.

@@ -72,12 +72,24 @@ which state expires first.
 
 ## Questions and answers
 
-1. **Why does SNAT fix return routing?** It makes the backend's destination a local address owned by the translating device, so the reply returns through that device. It also hides the original client unless another mechanism preserves identity.
-2. **What is conntrack state?** It records tuple and protocol state needed to associate reverse packets with an existing flow. Expiration, table pressure, or asymmetric routing can remove that association even while endpoints remain alive.
-3. **Why does port exhaustion happen?** A translated address has a finite set of source ports per destination and protocol. Many clients, long-lived connections, or slow state aging can consume that set and cause new flows to fail.
-4. **What does hairpin NAT mean?** A client accesses a service through an address that routes back into the same network or device. Special translation and return handling may be needed; test it explicitly rather than assuming ordinary routing applies.
-5. **Why can backend logs hide users?** SNAT replaces the source address visible to the backend. Use trusted forwarding metadata or correlated request IDs only where authenticated and safe; never infer identity from an untrusted header.
-6. **What is a safe NAT change?** Define tuples, expected return path, capacity impact, rollback, and a lab or canary test. Verify both new and existing connections because state created under the old mapping may behave differently.
+1. **Why does SNAT fix return routing?**
+
+**Answer:** It makes the backend's destination a local address owned by the translating device, so the reply returns through that device. It also hides the original client unless another mechanism preserves identity.
+2. **What is conntrack state?**
+
+**Answer:** It records tuple and protocol state needed to associate reverse packets with an existing flow. Expiration, table pressure, or asymmetric routing can remove that association even while endpoints remain alive.
+3. **Why does port exhaustion happen?**
+
+**Answer:** A translated address has a finite set of source ports per destination and protocol. Many clients, long-lived connections, or slow state aging can consume that set and cause new flows to fail.
+4. **What does hairpin NAT mean?**
+
+**Answer:** A client accesses a service through an address that routes back into the same network or device. Special translation and return handling may be needed; test it explicitly rather than assuming ordinary routing applies.
+5. **Why can backend logs hide users?**
+
+**Answer:** SNAT replaces the source address visible to the backend. Use trusted forwarding metadata or correlated request IDs only where authenticated and safe; never infer identity from an untrusted header.
+6. **What is a safe NAT change?**
+
+**Answer:** Define tuples, expected return path, capacity impact, rollback, and a lab or canary test. Verify both new and existing connections because state created under the old mapping may behave differently.
 
 ## Design notes and evidence
 

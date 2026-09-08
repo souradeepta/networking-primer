@@ -106,50 +106,74 @@ Key management was treated as a state machine rather than a single deployment. B
 
 Negative caching and retry behavior also influenced recovery. Some resolvers cached SERVFAIL briefly, others retried upstream, and clients differed in how they surfaced the error. The team waited through the relevant TTLs and watched payment requests rather than assuming the first successful diagnostic meant every user had recovered. The resulting runbook names facts that can be asserted immediately, inferences that need a controlled test, and decisions that require security approval. That discipline is useful for any authentication system where “available” and “trusted” are different outcomes.
 
-1. **Why did non-validating DNS work?** It ignored the broken trust chain and returned unsigned-looking data.
+1. **Why did non-validating DNS work?**
+
+Answer: It ignored the broken trust chain and returned unsigned-looking data. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-2. **What does SERVFAIL mean here?** The resolver could not safely produce an authenticated answer.
+2. **What does SERVFAIL mean here?**
+
+Answer: The resolver could not safely produce an authenticated answer. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-3. **What is a DS record?** A parent-held digest that authenticates a child DNSKEY.
+3. **What is a DS record?**
+
+Answer: A parent-held digest that authenticates a child DNSKEY. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-4. **Why publish both keys?** Overlap lets validators transition without a gap.
+4. **Why publish both keys?**
+
+Answer: Overlap lets validators transition without a gap. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-5. **What does AD indicate?** A validating resolver asserts the answer was authenticated.
+5. **What does AD indicate?**
+
+Answer: A validating resolver asserts the answer was authenticated. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-6. **Can an expired RRSIG cause this?** Yes; validators check its validity interval and may return SERVFAIL.
+6. **Can an expired RRSIG cause this?**
+
+Answer: Yes; validators check its validity interval and may return SERVFAIL. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-7. **Why not remove DS immediately?** It weakens the delegation and still waits on caches.
+7. **Why not remove DS immediately?**
+
+Answer: It weakens the delegation and still waits on caches. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-8. **What is the safest first action?** Restore a known-good consistent chain while preserving validation.
+8. **What is the safest first action?**
+
+Answer: Restore a known-good consistent chain while preserving validation. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-9. **Why test UDP and TCP?** Large DNSSEC responses may trigger TCP fallback.
+9. **Why test UDP and TCP?**
+
+Answer: Large DNSSEC responses may trigger TCP fallback. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-10. **What is fact versus inference?** The mismatched digest is fact; attributing it to provider ordering is inference.
+10. **What is fact versus inference?**
+
+Answer: The mismatched digest is fact; attributing it to provider ordering is inference.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-11. **What should an SDE1 inspect?** Status, resolver identity, AD flag, EDE, SOA serial, and timestamps.
+11. **What should an SDE1 inspect?**
+
+Answer: Status, resolver identity, AD flag, EDE, SOA serial, and timestamps. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.
 
-12. **What should an SDE2 design?** Key overlap, parent ownership, cache-aware rollback, and independent validators.
+12. **What should an SDE2 design?**
+
+Answer: Key overlap, parent ownership, cache-aware rollback, and independent validators. Verify the conclusion with configuration, packet, and behavioral evidence; exact behavior remains implementation-specific.
 
 Interview reasoning: Describe the resolver chain and the exact record, flags, TTL, and response code involved. A useful diagnostic is to query the configured recursive resolver and an authoritative server separately, then compare the answer, authority section, DNSSEC status, and cache age. The caveat is that DNS is cached and control-plane driven: changing an authoritative record does not instantly change every client, and a healthy answer still does not prove that the selected VIP or origin is healthy.

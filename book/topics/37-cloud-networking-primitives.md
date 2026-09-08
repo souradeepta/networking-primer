@@ -190,46 +190,60 @@ simulator labels reachability as authorization.
 ## Questions and answers
 
 1. **[SDE2 | debugging] How do you debug a private connection failure?**
-   Record source/destination/port, resolve the name from the workload, inspect
+
+Answer: Record source/destination/port, resolve the name from the workload, inspect
    forward and return routes, check stateful and stateless policy, then compare
    flow logs with a packet or socket trace. A route alone does not prove a
    listener or authorization.
 
 2. **[SDE2 | fundamentals] What is the difference between a subnet and a
-   route table?** A subnet allocates or groups addresses and placement; a
+   route table?**
+
+Answer: A subnet allocates or groups addresses and placement; a
    route table selects forwarding next hops. Their association and scope are
    provider-specific, so verify both rather than assuming same-zone means
    reachable.
 
-3. **[SDE2 | capacity] How would you size NAT?** Estimate concurrent flows per
+3. **[SDE2 | capacity] How would you size NAT?**
+
+Answer: Estimate concurrent flows per
    destination tuple, usable source ports per translation address, idle time,
    connection reuse, and failure reserve. Then validate allocation failures
    and flow age in the target implementation; total request rate alone is not
    enough.
 
-4. **[Staff | system-design] When choose L4 over L7 load balancing?** Choose
+4. **[Staff | system-design] When choose L4 over L7 load balancing?**
+
+Answer: Choose
    L4 for transport-level scale or opaque protocols when the service owns
    application policy. Choose L7 when routing, TLS, identity, or HTTP policy
    justifies termination and its latency, trust, and operational cost.
 
-5. **[SDE2 | security] Does a private route make a service trusted?** No. It
+5. **[SDE2 | security] Does a private route make a service trusted?**
+
+Answer: No. It
    reduces exposure and may provide reachability, but authentication,
    authorization, encryption, and tenant policy still belong at the relevant
    service boundary. Verify identity and policy independently from route
    reachability before treating the connection as safe.
 
-6. **[Staff | trade-off] Why care about cross-zone traffic?** It can add
+6. **[Staff | trade-off] Why care about cross-zone traffic?**
+
+Answer: It can add
    latency, a shared failure dependency, and usage cost. First measure the
    traffic volume and locality, then compare zonal redundancy with deliberate
    cross-zone distribution and its budget.
 
-7. **[SDE2 | operations] What should a cloud migration verify?** CIDR
+7. **[SDE2 | operations] What should a cloud migration verify?**
+
+Answer: CIDR
    compatibility, DNS resolution, routes in both directions, translated source
    identity, security policy, LB health, quotas, observability, and rollback.
    A green control-plane deployment is not end-to-end proof.
 
 8. **[Staff | architecture] How do cloud primitives relate to Kubernetes?**
-   The cloud network supplies addresses, routes, gateways, and often external
+
+Answer: The cloud network supplies addresses, routes, gateways, and often external
    load balancers. Kubernetes supplies cluster service discovery, endpoint
    programming, policy, and controllers. Define ownership at the handoff so
    two systems do not fight over routes or traffic policy.

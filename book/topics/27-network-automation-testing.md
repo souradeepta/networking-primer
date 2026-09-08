@@ -79,12 +79,24 @@ a live device or install packages.
 
 ## Questions and answers
 
-1. **What makes automation idempotent?** Reapplying the same desired state produces no additional change after the first successful application. Stable identifiers, normalized comparisons, and explicit replace semantics help; blindly rerunning a command is not idempotency.
-2. **Why separate validation from application?** Validation can reject unsafe scope, duplicate addresses, incompatible profiles, or missing ownership before a mutation. It also gives reviewers a concrete diff instead of asking them to trust implementation code.
-3. **What is partial success?** A device may accept one object update while rejecting another, or a control plane may propagate slowly. Verification must inspect effective state and behavior, not only the final HTTP status from one request.
-4. **When is SSH appropriate?** SSH can support approved read-only inspection or a documented emergency workflow when an API lacks a needed capability. Commands are version-sensitive and harder to parse, so they need constrained access and captured evidence.
-5. **What should network tests assert?** Assert invariants such as intended listener, healthy member count, DNS ownership, certificate validity, and bounded response behavior. A single successful ping is not an end-to-end application test.
-6. **How does rollback differ from undo?** Rollback restores a known-good desired state and verifies it; undo merely reverses the last command. A dependency may have changed meanwhile, so rollback plans need versioned state, ownership, and independent probes.
+1. **What makes automation idempotent?**
+
+**Answer:** Reapplying the same desired state produces no additional change after the first successful application. Stable identifiers, normalized comparisons, and explicit replace semantics help; blindly rerunning a command is not idempotency.
+2. **Why separate validation from application?**
+
+**Answer:** Validation can reject unsafe scope, duplicate addresses, incompatible profiles, or missing ownership before a mutation. It also gives reviewers a concrete diff instead of asking them to trust implementation code.
+3. **What is partial success?**
+
+**Answer:** A device may accept one object update while rejecting another, or a control plane may propagate slowly. Verification must inspect effective state and behavior, not only the final HTTP status from one request.
+4. **When is SSH appropriate?**
+
+**Answer:** SSH can support approved read-only inspection or a documented emergency workflow when an API lacks a needed capability. Commands are version-sensitive and harder to parse, so they need constrained access and captured evidence.
+5. **What should network tests assert?**
+
+**Answer:** Assert invariants such as intended listener, healthy member count, DNS ownership, certificate validity, and bounded response behavior. A single successful ping is not an end-to-end application test.
+6. **How does rollback differ from undo?**
+
+**Answer:** Rollback restores a known-good desired state and verifies it; undo merely reverses the last command. A dependency may have changed meanwhile, so rollback plans need versioned state, ownership, and independent probes.
 
 ## Design notes and evidence
 

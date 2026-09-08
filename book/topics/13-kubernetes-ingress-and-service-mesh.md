@@ -147,44 +147,44 @@ Ingress controller, and mesh policy in the same unobserved window.
 
 ## Questions and answers
 
-1. **Is an Ingress an actual proxy?** Usually it is a desired resource; the
+1. **Is an Ingress an actual proxy?** **Answer:** Usually it is a desired resource; the
    controller implements the proxy or programs another data plane.
 
 Interview reasoning: For “Is an Ingress an actual proxy,” identify where each connection terminates and which method, headers, authority, body framing, and timeout cross the boundary. Compare downstream and upstream tuples with request IDs. A proxy improves policy and pooling but can introduce queueing, stale connections, header trust, and retry errors; a timeout after a POST may mean the server changed state even if the client saw no response.
 
-2. **Why can a Service work while the F5 VIP fails?** The VIP adds DNS,
+2. **Why can a Service work while the F5 VIP fails?** **Answer:** The VIP adds DNS,
    listener, monitor, TLS, routing, and policy behavior outside the Service.
 
 Interview reasoning: For “Why can a Service work while the F5 VIP fails,” distinguish the address from the LTM listener contract: the virtual server owns profiles, policies, pool selection, SNAT, and persistence. Trace a client tuple to the VIP and a second tuple to the member, then compare direct-member and VIP tests. The caveat is that a reachable VIP can still have no eligible pool member or an incorrect route domain.
 
-3. **Where does mTLS terminate?** It may terminate at F5, ingress, sidecars,
+3. **Where does mTLS terminate?** **Answer:** It may terminate at F5, ingress, sidecars,
    or multiple legs. Document each trust boundary rather than saying “the
    service uses mTLS.”
 
 Interview reasoning: For “Where does mTLS terminate,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.
 
-4. **What does EndpointSlice tell us?** It shows selected endpoint state, not
+4. **What does EndpointSlice tell us?** **Answer:** It shows selected endpoint state, not
    necessarily that the endpoint serves the exact Host, path, and protocol.
 
 Interview reasoning: For “What does EndpointSlice tell us,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-5. **Why avoid retries at every layer?** They multiply load and can repeat
+5. **Why avoid retries at every layer?** **Answer:** They multiply load and can repeat
    side effects while consuming the caller’s deadline.
 
 Interview reasoning: For “Why avoid retries at every layer,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-6. **What is a safe F5 controller behavior?** Reconcile only owned objects,
+6. **What is a safe F5 controller behavior?** **Answer:** Reconcile only owned objects,
    calculate a diff, require valid inventory and approval, and retain a
    rollback artifact.
 
 Interview reasoning: For “What is a safe F5 controller behavior,” state the mechanism and where it operates, then give the tuple, state transition, and evidence that distinguish the leading hypotheses. Explain the operational trade-off and a worked diagnostic. The caveat is that a successful local check proves only that check, so validate the complete request path and define rollback.
 
-7. **Can readiness replace an F5 monitor?** No. They can cover different
-   paths and contracts; align them intentionally.
+7. **Can readiness replace an F5 monitor?** **Answer:** No. They can cover different
+   paths and contracts; align them intentionally. Readiness reports a Kubernetes path, while the F5 monitor tests its configured external path.
 
 Interview reasoning: For “Can readiness replace an F5 monitor,” state exactly what the probe sends and expects: source, destination port, Host/SNI, URI, status or body, interval, and timeout. Replay it from the same path and compare a real request and origin logs. A deeper F5 monitor improves fidelity but can make a dependency outage eject every member, so its dependency budget must be explicit.
 
-8. **What is a common TLS mistake?** Sending plaintext to a TLS listener or
+8. **What is a common TLS mistake?** **Answer:** Sending plaintext to a TLS listener or
    using an SNI/Host name absent from the certificate and route table.
 
 Interview reasoning: For “What is a common TLS mistake,” walk the handshake fields rather than saying only “encrypted”: SNI selects identity, SAN matches the name, the chain reaches a trusted root, and protocol policy permits negotiation. Test client-to-LTM and LTM-to-member independently. Re-encryption protects the second hop but creates a second certificate/trust lifecycle; front-end success does not prove backend authorization or readiness.

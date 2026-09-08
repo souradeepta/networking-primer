@@ -87,16 +87,37 @@ the exercise to a live BIG-IP or include a real credential.
 
 ## Questions and answers
 
-1. **Why use tokens carefully?** Tokens authorize API calls for a bounded scope and lifetime. They should be obtained from an approved secret mechanism, never committed or printed, and refreshed deliberately when expiry is detected.
-2. **Why is pagination a correctness issue?** A first page can look complete while hiding members on later pages. Diffing incomplete data may remove valid objects or fail to detect drift, so automation must follow documented cursors or offsets.
-3. **What is a transaction?** A transaction groups dependent configuration operations so the platform can validate and commit them together where supported. It is not a universal guarantee of rollback; verify platform semantics and handle partial or queued outcomes.
-4. **How should retries work?** Retry only classified transient failures, use bounded exponential backoff and jitter, and include a stable idempotency key or object identity. After an ambiguous timeout, read state before deciding whether another write is safe.
-5. **Why support async operations?** Large or distributed changes may return a task before completion. Polling needs a deadline, backoff, terminal-state parsing, and a final GET; treating task submission as success can hide failure.
-6. **What makes a mock useful?** A useful mock models pagination, permissions, rate limits, malformed responses, token expiry, async transitions, and partial success. It should enforce the same invariants as production code without contacting a real target.
-7. **How does idempotency prevent drift?** Stable names and desired-state comparisons make a rerun converge to one result instead of creating duplicates. Idempotency still requires verifying ownership and scope, because a stable name in the wrong partition can be harmful.
-8. **What should post-change verification prove?** It should prove both effective configuration and intended behavior: object association, health state, listener response, and relevant DNS or certificate evidence. A 200 API response alone proves none of those end-to-end properties.
+1. **Why use tokens carefully?**
 
-## SDK debug-session notes
+Answer: Tokens authorize API calls for a bounded scope and lifetime. They should be obtained from an approved secret mechanism, never committed or printed, and refreshed deliberately when expiry is detected.
+
+2. **Why is pagination a correctness issue?**
+
+Answer: A first page can look complete while hiding members on later pages. Diffing incomplete data may remove valid objects or fail to detect drift, so automation must follow documented cursors or offsets.
+
+3. **What is a transaction?**
+
+Answer: A transaction groups dependent configuration operations so the platform can validate and commit them together where supported. It is not a universal guarantee of rollback; verify platform semantics and handle partial or queued outcomes.
+
+4. **How should retries work?**
+
+Answer: Retry only classified transient failures, use bounded exponential backoff and jitter, and include a stable idempotency key or object identity. After an ambiguous timeout, read state before deciding whether another write is safe.
+
+5. **Why support async operations?**
+
+Answer: Large or distributed changes may return a task before completion. Polling needs a deadline, backoff, terminal-state parsing, and a final GET; treating task submission as success can hide failure.
+
+6. **What makes a mock useful?**
+
+Answer: A useful mock models pagination, permissions, rate limits, malformed responses, token expiry, async transitions, and partial success. It should enforce the same invariants as production code without contacting a real target.
+
+7. **How does idempotency prevent drift?**
+
+Answer: Stable names and desired-state comparisons make a rerun converge to one result instead of creating duplicates. Idempotency still requires verifying ownership and scope, because a stable name in the wrong partition can be harmful.
+
+8. **What should post-change verification prove?**
+
+Answer: It should prove both effective configuration and intended behavior: object association, health state, listener response, and relevant DNS or certificate evidence. A 200 API response alone proves none of those end-to-end properties.## SDK debug-session notes
 
 When an SDK job fails, save the target hostname, BIG-IP software version,
 partition, resource self-link, HTTP method, status code, elapsed time, and a

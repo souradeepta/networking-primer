@@ -79,6 +79,8 @@ point production hosts at an unapproved server for this exercise.
 
 ### 1. Why should timeout code use a monotonic clock?
 
+**Answer:**
+
 Elapsed-time logic assumes that time moves forward at a predictable rate. Wall
 clocks can step forward or backward when synchronization corrects drift, when
 administrators change settings, or when virtualization affects timekeeping. A
@@ -88,6 +90,8 @@ appropriate for human-readable timestamps, but duration calculations should
 not depend on calendar corrections.
 
 ### 2. What does NTP stratum tell you?
+
+**Answer:**
 
 Stratum is a distance-like indicator from a reference clock in the NTP
 hierarchy; lower values are generally closer to a reference. It is not a direct
@@ -99,6 +103,8 @@ automatically proves correctness.
 
 ### 3. How does clock error affect TLS?
 
+**Answer:**
+
 Certificates have validity intervals expressed using wall-clock timestamps. If
 a client clock is substantially behind or ahead, it can reject a certificate
 as not yet valid or expired even when the certificate and server are correct.
@@ -109,6 +115,8 @@ security and does not repair the underlying time source.
 
 ### 4. Can synchronized logs prove event order?
 
+**Answer:**
+
 They improve correlation but cannot prove a total order. Each host has residual
 offset, timestamps may be buffered before export, and collectors can receive
 events out of order. Use trace IDs, sequence numbers, request IDs, and causal
@@ -118,6 +126,8 @@ interval, not an infallible global clock shared by every process.
 
 ### 5. What is clock offset versus network delay?
 
+**Answer:**
+
 Offset is the estimated difference between a local clock and a reference;
 delay estimates round-trip transit and processing. A client cannot directly
 observe the remote clock, so the estimate depends on path symmetry and timing
@@ -126,6 +136,8 @@ offset is small. Dashboards should show source state, delay, dispersion, and
 offset rather than presenting one number as exact truth.
 
 ### 6. Why can a time-source outage be silent for a while?
+
+**Answer:**
 
 An oscillator continues advancing after synchronization, and a daemon may
 retain an estimate temporarily. Drift accumulates gradually or can become

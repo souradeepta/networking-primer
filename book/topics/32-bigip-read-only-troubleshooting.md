@@ -75,11 +75,34 @@ read-only query and the evidence that would disprove the leading hypothesis.
 
 ## Questions and answers
 
-1. **Why start with the client tuple?** It proves which VIP and port the client reached and gives a stable key for correlating LTM counters, captures, and request logs before inspecting the backend leg.
-2. **What does a green monitor prove?** Only that its configured source, protocol, URI, credentials, and expected response succeeded at that time; it does not prove every user path or dependency.
-3. **How do you distinguish 503 from timeout?** A 503 is an explicit HTTP response; a timeout indicates missing progress. Check who generated the response and whether a server-side connection existed.
-4. **Why inspect both TLS profiles?** Client and server sessions can terminate at different boundaries, with separate SNI, SAN, trust, cipher, and expiration requirements.
-5. **What evidence shows SNAT exhaustion?** New backend flows fail while existing ones continue, translation-port usage is near capacity, and member reachability works with an alternate source address.
-6. **Why avoid forcing failover?** It changes ownership and can destroy useful evidence or expose state-mirroring defects; prove the failure with read-only state first.
-7. **What makes a capture useful?** Interface, direction, filter, timestamp, five-tuple, and packet-size context; an unscoped payload dump is noisy and may expose secrets.
-8. **When is a monitor change justified?** Only after proving the monitor contract mismatches the user journey, reviewing false-positive risk, and defining a canary and rollback threshold.
+1. **Why start with the client tuple?**
+
+Answer: It proves which VIP and port the client reached and gives a stable key for correlating LTM counters, captures, and request logs before inspecting the backend leg.
+
+2. **What does a green monitor prove?**
+
+Answer: Only that its configured source, protocol, URI, credentials, and expected response succeeded at that time; it does not prove every user path or dependency.
+
+3. **How do you distinguish 503 from timeout?**
+
+Answer: A 503 is an explicit HTTP response; a timeout indicates missing progress. Check who generated the response and whether a server-side connection existed.
+
+4. **Why inspect both TLS profiles?**
+
+Answer: Client and server sessions can terminate at different boundaries, with separate SNI, SAN, trust, cipher, and expiration requirements.
+
+5. **What evidence shows SNAT exhaustion?**
+
+Answer: New backend flows fail while existing ones continue, translation-port usage is near capacity, and member reachability works with an alternate source address.
+
+6. **Why avoid forcing failover?**
+
+Answer: It changes ownership and can destroy useful evidence or expose state-mirroring defects; prove the failure with read-only state first.
+
+7. **What makes a capture useful?**
+
+Answer: Interface, direction, filter, timestamp, five-tuple, and packet-size context; an unscoped payload dump is noisy and may expose secrets.
+
+8. **When is a monitor change justified?**
+
+Answer: Only after proving the monitor contract mismatches the user journey, reviewing false-positive risk, and defining a canary and rollback threshold.--- book/topics/33-f5-api-and-automation-toolchain.md
