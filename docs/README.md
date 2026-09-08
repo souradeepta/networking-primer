@@ -56,6 +56,7 @@ that track.
 3. [F5 expansion plan](f5-expansion-plan.md) — planning material for additional
    vendor-focused depth; it is not a required reading chapter.
 4. [AI data-center networking remediation plan](ai-data-center-networking-remediation-plan.md) — Terra acceptance contract and Luna implementation scope.
+5. [AI data-center networking handoff](ai-data-center-networking-handoff.md) — implementation, verification evidence, and ownership boundaries.
 
 ### B.4 Infra engineer practice
 
@@ -105,6 +106,7 @@ that track.
 | AI-era data-center plan and contract | [Terra plan](ai-data-center-networking-plan.md) and [implementation spec](ai-data-center-networking-spec.md) |
 | Terra review findings and remediation | [Book material review plan](book-material-review-plan.md) |
 | Book material remediation handoff | [Book material review handoff](book-material-review-handoff.md) |
+| AI data-center remediation handoff | [AI data-center networking handoff](ai-data-center-networking-handoff.md) |
 | Formatting rules | [Markdown style guide](markdown-style-guide.md) |
 | Safety, privacy, warranty, and generated content | [Repository disclosures](../DISCLOSURES.md) |
 | Repository contract | [SPEC](../SPEC.md) and [AGENTS guidance](../AGENTS.md) |

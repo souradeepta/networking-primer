@@ -2,11 +2,12 @@
 
 **Updated:** 2026-09-07  
 **Branch:** `main`  
-**Latest pushed commit:** `209aa73 Update learning path and handoff documentation`
+**Latest pushed commit:** `8e1965e Remediate AI data center fixture semantics`
 
 ## Current state
 
-The networking primer remediation is complete and pushed to the public remote.
+The networking primer remediation, including the AI data-center networking
+review and fixture remediation, is complete and pushed to the public remote.
 The repository maintains 17 book chapters, 39 focused topics, 19 case
 studies, cloud/Terraform/platform tracks, and distributed SDE2/Staff practice.
 
@@ -20,12 +21,16 @@ validation. Modern DNS/IPv6 and edge-abuse-defense topics are included.
 ```text
 ./scripts/validate.sh                         PASS
 python3 examples/request_path.py              PASS
+python3 -m unittest discover -s book/topics/fixtures/ai-data-center -p 'test_*.py'  PASS (21 tests)
 git diff --check                              PASS
 ```
 
-The validator checks 39 focused topics, 663 answer entries, 147 Mermaid
-diagrams, role/evidence contracts, index parity, local anchors, and
-duplicate-answer warnings.
+The validator checks the current focused topics, answer entries, Mermaid
+diagrams, role/evidence contracts, index parity, local anchors, duplicate
+answers, and AI data-center fixture safety/lifecycle contracts.
+
+For the AI data-center work, see the [focused handoff](docs/ai-data-center-networking-handoff.md)
+and [Terra remediation plan](docs/ai-data-center-networking-remediation-plan.md).
 
 ## Ownership and next steps
 
