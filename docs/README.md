@@ -55,6 +55,7 @@ that track.
 2. [Glossary](glossary.md) — concise terminology lookup while reading.
 3. [F5 expansion plan](f5-expansion-plan.md) — planning material for additional
    vendor-focused depth; it is not a required reading chapter.
+4. [AI data-center networking remediation plan](ai-data-center-networking-remediation-plan.md) — Terra acceptance contract and Luna implementation scope.
 
 ### B.4 Infra engineer practice
 

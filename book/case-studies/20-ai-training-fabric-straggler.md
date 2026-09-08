@@ -1,7 +1,7 @@
 # AI training fabric straggler: a bounded simulated incident
 
 This case study is fictional and intentionally uses the local
-`ai-fabric-fixture/v1` model. It describes how an interview candidate or design
+`ai-fabric-fixture/v2` model. It describes how an interview candidate or design
 reviewer should reason from evidence; it is not a claim about a real cluster,
 GPU, NIC, switch, collective library, or vendor release.
 
@@ -56,7 +56,7 @@ helps order hypotheses but is not a runtime benchmark.
 | Time | Event | Initial interpretation | Evidence boundary |
 | --- | --- | --- | --- |
 | 09:00 | Job admitted and placed | Four ranks appear present | Scheduler record and rank map |
-| 09:03 | Baseline fixture run | Both rails are balanced | Schema v1 derived output |
+| 09:03 | Baseline fixture run | Both rails are balanced | Schema v2 derived output |
 | 09:08 | Synthetic regression reported | Rank 3 looks slow | Runtime timeline, not root cause |
 | 09:12 | Rail fault replayed | Rail-b load becomes disproportionate | Fixture path and queue model |
 | 09:16 | Storage fault replayed | Similar degraded status appears | Storage evidence differs |
@@ -81,10 +81,10 @@ symptom alone is insufficient.
 
 The negative control changes only the review metadata. Its derived path digest
 and status remain unchanged. An independent link fault changes path
-availability and status. The retained bundle has setup, baseline-readback,
+availability and health state. The retained bundle has setup, baseline-readback,
 fault, assertion, repair-readback, rollback, and cleanup files with SHA-256
 manifest entries. **Observed lab result:** these facts are bounded by runner
-`1.0.0` and schema `ai-fabric-fixture/v1`.
+`2.0.0` and schema `ai-fabric-fixture/v2`.
 
 ## Competing hypotheses
 
@@ -161,7 +161,8 @@ valuable than a superficially precise percentage from an explanatory model.
 
 Rollback replays the known baseline scenario and verifies the same normalized
 derived observation, rather than retrying the job and calling that rollback.
-The retained manifest is immutable and the phase files are hash-checked. The
+The retained bundle is write-once and hash-manifested; verification detects
+changed phase content while the verifier and manifest are trustworthy. The
 temporary workspace is removed by the runner. A human reviewing an artifact
 must remove only an artifact bundle they own below `observed/`; unrelated paths
 are outside the fixture contract.
@@ -239,7 +240,7 @@ collective and Ethernet/RDMA terminology must be checked against the selected
 runtime, NIC, switch, driver, firmware, and release documentation; [NCCL
 documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html)
 is one named example, not a universal contract. **Observed lab result:** the
-timeline and statuses are from schema `ai-fabric-fixture/v1`, runner `1.0.0`,
+timeline and statuses are from schema `ai-fabric-fixture/v2`, runner `2.0.0`,
 and the scenario files named above. **Engineering inference:** the competing
 hypotheses, ownership split, and rollout gates require target-environment
 measurements. See the [book evidence ledger](../FACT-INFERENCE-LEDGER.md).

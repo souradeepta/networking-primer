@@ -59,8 +59,11 @@ The [AI-era data-center topic](../book/topics/40-ai-data-center-networking.md)
 uses a portable protocol foundation and release-qualified vendor terminology.
 **Fact:** IP and ECN references are standards-backed. **Vendor terminology:**
 NCCL, RoCE, RDMA, InfiniBand, rail, topology-aware collective, and lossless
-Ethernet claims require the named implementation and release. **Observed lab
-result:** only applies to the local `ai-fabric-fixture/v1` runner and its
+Ethernet claims require the named implementation and release. The entries below
+are explicitly unpinned terminology references until a learner records the
+runtime, driver, firmware, hardware generation, topology, documentation
+revision/date, and authorized test evidence. **Observed lab result:** only
+applies to the local `ai-fabric-fixture/v2` runner and its
 scenario/artifact. **Engineering inference:** capacity, ownership, migration,
 cost, and failure-domain choices must be validated against the target workload
 and topology.
@@ -68,10 +71,10 @@ and topology.
 | Area | Primary evidence | Verification boundary |
 | --- | --- | --- |
 | IP and congestion signaling | [RFC 791](https://www.rfc-editor.org/rfc/rfc791), [RFC 3168](https://www.rfc-editor.org/rfc/rfc3168), [RFC 8200](https://www.rfc-editor.org/rfc/rfc8200) | Check the deployed path, encapsulation, MTU, ECN support, and route policy; RFC text does not prove hardware queue behavior. |
-| Collective runtime terminology | [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html) | Pin runtime, driver, firmware, accelerator, topology, and algorithm selection; verify with an authorized target-specific test. |
-| Ethernet/RoCE terminology | [NVIDIA RoCE material](https://www.nvidia.com/en-us/networking/ethernet/roce/) | Pin NIC and switch generations, QoS/congestion policy, software release, and management surface; do not transfer behavior across vendors. |
-| InfiniBand terminology | [InfiniBand Trade Association](https://www.infinibandta.org/) | Verify architecture, addressing, routing, partitioning, counters, and release-specific operations against the target fabric. |
-| Safe local practice | [AI fabric fixture README](../book/topics/fixtures/ai-data-center/README.md) | Standard-library-only, deterministic, offline, one allowlisted fault, immutable hashes, cleanup proof, and no physical-performance claim. |
+| Collective runtime terminology | [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html) | **Unpinned; checked 2026-09-07.** Record runtime/driver/firmware/accelerator/topology and documentation revision/date; re-verify on any runtime, driver, firmware, hardware, topology, provider, or workload-mix change. |
+| Ethernet/RoCE terminology | [NVIDIA RoCE material](https://www.nvidia.com/en-us/networking/ethernet/roce/) | **Unpinned; checked 2026-09-07.** Record NIC/switch generation, QoS/congestion policy, software release, and management surface; re-verify on any boundary change. |
+| InfiniBand terminology | [InfiniBand Trade Association](https://www.infinibandta.org/) | **Unpinned; checked 2026-09-07.** Record architecture, addressing, routing, partitioning, counters, release revision/date, and authorized evidence; re-verify on any boundary change. |
+| Safe local practice | [AI fabric fixture README](../book/topics/fixtures/ai-data-center/README.md) | Standard-library-only, deterministic, offline, schema-v2, one allowlisted fault, write-once hash manifest, cleanup proof, and no physical-performance claim. |
 
 ## CCNA-to-Staff book expansion
 

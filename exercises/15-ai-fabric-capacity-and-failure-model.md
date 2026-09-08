@@ -22,6 +22,8 @@ Use only the standard-library fixture:
 python3 ../book/topics/fixtures/ai-data-center/runner.py --scenario baseline
 python3 ../book/topics/fixtures/ai-data-center/runner.py --scenario baseline --fault rail_imbalance
 python3 ../book/topics/fixtures/ai-data-center/runner.py --scenario baseline --fault storage_saturation
+python3 ../book/topics/fixtures/ai-data-center/runner.py --scenario inference
+python3 ../book/topics/fixtures/ai-data-center/runner.py --scenario inference --fault prefill_saturation
 python3 ../book/topics/fixtures/ai-data-center/test_runner.py
 ```
 
@@ -70,10 +72,12 @@ Submit one review record containing:
 
 The baseline should show two balanced modeled rails, available paths, clear
 qualitative queues, high evidence confidence, and a completed workload. The
-`rail_imbalance` scenario should change the derived rail load and direct signal;
-the `storage_saturation` scenario may show a similar degraded workload status
-but a different storage signal. That distinction is the important answer: a
-shared symptom does not collapse ownership or prove a fabric fault.
+`rail_imbalance` scenario should change the derived rail load and selected
+link utilization through state derivation; the `storage_saturation` scenario
+may show a similar degraded health state but a different storage signal. The
+result also reports objective/deadline state separately from evidence
+confidence. That distinction is the important answer: a shared symptom does
+not collapse ownership or prove a fabric fault.
 
 For the capacity worksheet, use the topic's synthetic example or state your
 own values. With `400 Gb/s` installed, guardrail `0.70`, two jobs at `80
@@ -100,11 +104,14 @@ data integrity, authority, or the declared objective is uncertain.
 
 ## SDE2 extension
 
-Add an inference workload to the scenario. Define a tail-latency objective,
-batching assumption, model-weight path, and a degraded mode that sheds or
-queues work. Compare a training collective's synchronization sensitivity with
-an inference cohort's dependency sensitivity. Explain which evidence can be
-shared and which labels must remain workload-specific.
+Use the executable `--scenario inference` branch. It defines requests,
+batching, arrival rate, gateway/prefill/decode/model-cache stages, and a p99
+objective. Compare `--fault prefill_saturation` and a fabric fault such as
+`link_unavailable`: both can affect tail behavior, but the blocker and owner
+evidence differ. A model-cache-unavailable input is a second non-network
+competing fault. Explain which evidence can be shared and which labels must
+remain workload-specific; inference output is a deterministic teaching
+calculation, not an LLM latency predictor.
 
 ## Staff extension
 

@@ -186,6 +186,28 @@ stateDiagram-v2
 Conceptual state model: each transition has an authority and evidence source;
 fabric reachability alone does not authorize a job to start.
 
+### Transition authority and missing-evidence behavior
+
+These are role boundaries for design review, not real organizations or product
+controls. The authority column says who may attest the transition; the evidence
+column says the minimum record needed before that role does so.
+
+| Transition | Authoritative owner | Minimum evidence | Missing or contradictory evidence |
+| --- | --- | --- | --- |
+| `SUBMITTED -> ADMITTED` | ML platform/scheduler | quota, identity, policy, and request record | Fail closed or queue; do not infer admission from a network path |
+| `ADMITTED -> PLACED` | ML platform/scheduler | rank/request placement, capacity, and failure-domain map | Queue; reject ambiguous placement |
+| `PLACED -> CONNECTING` | Runtime/job controller | membership epoch, host/rail map, and control dependency readback | Fail closed; do not start partial membership |
+| `CONNECTING -> RUNNING` | Runtime/job controller with network/platform evidence | usable selected paths, dependency state, and workload admission gate | Block or shed; preserve the failed readback |
+| `CONNECTING -> BLOCKED` | Runtime/job controller | explicit dependency, path, identity, or policy failure | Fail closed and name the unresolved dependency |
+| `RUNNING -> DEGRADED` | Service owner with platform evidence | objective impact plus independent fabric, storage, or stage signal | Keep serving only if the objective gate permits; otherwise shed/queue |
+| `DEGRADED -> RUNNING` | Service owner | repair readback, objective recovery, and evidence correlation | Remain degraded; do not treat a retry as repair |
+| `RUNNING -> DRAINING` | Service owner / scheduler | stop, checkpoint, or capacity decision with owner approval | Queue or continue within the declared gate; do not drain on a lone counter |
+| `DRAINING -> COMPLETED` | Runtime/job controller | durable output/checkpoint and final objective evidence | Keep draining or fail closed if durability is uncertain |
+| `RUNNING -> FAILED` or `RUNNING -> CANCELLED` | Service owner / scheduler | declared stop condition or owner cancellation record | Preserve state and escalate; never invent a failure reason |
+
+The fixture models these as evidence boundaries only. It does not implement a
+scheduler, admission controller, runtime, or production state machine.
+
 ## Capacity and cost model
 
 Use variables rather than universal ratios or prices. Let installed rail
@@ -208,6 +230,22 @@ communication_lower_bound_seconds = payload_bytes / effective_bytes_per_second *
                                    = 0.006 seconds
 ```
 
+The following one-variable-at-a-time table is a synthetic sensitivity exercise,
+not a procurement recommendation. Units are `Gb/s`; the installed value is
+`400 Gb/s`, required workload is `128 Gb/s`, and the nominal failed member is
+`100 Gb/s`.
+
+| Assumption changed | Synthetic input | Usable bandwidth | Failure-safe bandwidth | Headroom classification |
+| --- | --- | ---: | ---: | --- |
+| Utilization guardrail | `0.60` | `240` | `140` | `1.094x`, narrow |
+| Concurrent jobs | `3` (same `80`, `0.80`) | `280` | `180` | `0.938x`, insufficient |
+| Workload overlap | `1.00` (two jobs) | `280` | `180` | `1.125x`, constrained |
+| Largest failed rail/member | `200` | `280` | `80` | `0.625x`, insufficient |
+
+These values are arithmetic teaching inputs. Placement, ECMP, software, host
+limits, framing, synchronized phases, and the target release must be measured
+before a real capacity decision.
+
 The lower bound excludes software, serialization, PCIe/NIC behavior, queueing,
 protocol headers, topology imbalance, synchronization, and storage. It is not
 a measured step time. If placement sends 1.7 times the traffic to rail-a,
@@ -225,12 +263,12 @@ The fixture baseline models four ranks, two rails, two leaves, two spines, and
 separate storage/control services. The all-reduce phase offers `60 Gb/s` per
 rail and the checkpoint phase adds `10 Gb/s` per rail. A baseline run therefore
 reports `70 Gb/s` on each modeled rail and a clear qualitative queue state.
-Injecting `rail_imbalance` changes only local scenario inputs, raises rail-b
-offered load, and derives a degraded workload status. Injecting
-`storage_saturation` can produce a similar degraded status, but its direct
-signal points to storage capacity rather than rail queue state. This is a
-teaching observation from schema `ai-fabric-fixture/v1`, runner `1.0.0`, not a
-hardware result.
+Injecting `rail_imbalance` changes only local state inputs, selected-link load,
+and the derived health/objective fields. Injecting `storage_saturation` can
+produce a similar degraded health state, but its independent signal points to
+storage capacity rather than rail queue state. This is an **Observed lab
+result** only for schema `ai-fabric-fixture/v2`, runner `2.0.0`, and the named
+scenario, not a hardware result.
 
 The practical comparison is intentionally asymmetric: first ask which
 timestamped evidence differs, then decide which owner can run the next bounded
@@ -330,6 +368,7 @@ Run the [AI fabric fixture README](fixtures/ai-data-center/README.md), then:
 ```bash
 python3 book/topics/fixtures/ai-data-center/runner.py --scenario baseline
 python3 book/topics/fixtures/ai-data-center/runner.py --scenario baseline --fault rail_imbalance
+python3 book/topics/fixtures/ai-data-center/runner.py --scenario inference --fault prefill_saturation
 python3 book/topics/fixtures/ai-data-center/test_runner.py
 ```
 
@@ -419,14 +458,20 @@ statement. Retain an artifact only below the fixture's `observed/` directory.
 **Vendor terminology:** [NVIDIA NCCL documentation](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/overview.html),
 [NVIDIA RoCE material](https://www.nvidia.com/en-us/networking/ethernet/roce/), and
 [InfiniBand Trade Association material](https://www.infinibandta.org/) are
-release- and implementation-specific references, not proof of portability.
-Verify the selected NIC, switch, driver, firmware, runtime, and topology before
-using any product claim. **Engineering inference:** capacity, failure-domain,
-ownership, and rollout choices require workload measurements and local risk
-tolerance. **Observed lab result:** only outputs from
-[fixture schema v1](fixtures/ai-data-center/README.md) with the named scenario
-and retained artifact are observations; they do not describe physical fabric
-behavior. See the [fact/inference ledger](../FACT-INFERENCE-LEDGER.md).
+currently **unpinned terminology references**. As of `2026-09-07`, no product
+or runtime release is asserted here. Before relying on a term, record the
+runtime, driver, firmware, accelerator, NIC/switch generation, topology,
+documentation revision/date, and authorized test evidence. Re-verify when any
+of those or the provider or workload mix changes. **Engineering inference:**
+capacity, failure-domain, ownership, and rollout choices require workload
+measurements and local risk tolerance. **Observed lab result:** only outputs
+from [fixture schema v2](fixtures/ai-data-center/README.md), runner `2.0.0`,
+the named scenario, and a retained artifact are observations; they do not
+describe physical fabric behavior. Schema `ai-fabric-fixture/v1` is rejected
+by the v2 runner rather than silently interpreted. The bare baseline CLI keeps
+a legacy presentation envelope only for the repository's existing gate; its
+`fixture_schema` and all retained evidence remain v2. See the [fact/inference
+ledger](../FACT-INFERENCE-LEDGER.md).
 
 The material intentionally omits production commands, threshold values,
 configuration changes, privileged captures, and hardware performance claims.
