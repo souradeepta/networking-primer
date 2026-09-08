@@ -16,6 +16,13 @@ and MTU terminology.
 - **Roles:** SDE2, Staff
 - **Expected artifact:** A protocol rollout decision record with evidence, cost/risk budget, and rollback gate.
 
+## How to use the related topics
+
+This topic is the comparative overview: use it to choose protocol evidence and
+frame a rollout decision. For frame-level HTTP/2 behavior, continue to the
+[HTTP/2 deep dive](22-http2-deep-dive.md); for QUIC packet behavior and HTTP/3,
+continue to the [HTTP/3 and QUIC deep dive](23-http3-quic-deep-dive.md).
+
 ## Mental model
 
 HTTP/2 keeps HTTP semantics but carries requests and responses as binary

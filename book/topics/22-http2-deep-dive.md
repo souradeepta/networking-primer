@@ -16,6 +16,14 @@ comfortable reading a request trace and a status code.
 - **Roles:** SDE2, Staff
 - **Expected artifact:** A proxy protocol decision record with stream evidence, owners, cost/risk trade-offs, and rollback gate.
 
+## Relationship to the overview
+
+The [HTTP/2, HTTP/3, and QUIC overview](17-http2-http3-quic.md) compares the
+protocol choices and rollout evidence. This topic stays focused on HTTP/2
+frames, stream state, flow control, and proxy behavior; use the
+[HTTP/3 and QUIC deep dive](23-http3-quic-deep-dive.md) for QUIC-specific
+transport mechanics.
+
 ## Mental model
 
 HTTP/2 keeps HTTP semantics while replacing textual messages with binary

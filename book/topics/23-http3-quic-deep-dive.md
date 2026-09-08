@@ -15,6 +15,13 @@ Know UDP, TCP, TLS 1.3 concepts, HTTP/2 streams, DNS, and firewall flow logs.
 Role labels: SDE2 (protocol diagnosis); Staff (multi-owner rollout and risk).
 Expected interview artifact: a path-by-path rollout and rollback evidence table.
 
+## Relationship to the overview
+
+The [HTTP/2, HTTP/3, and QUIC overview](17-http2-http3-quic.md) provides the
+comparative decision frame. This topic focuses on QUIC packets, connection IDs,
+loss recovery, migration, and HTTP/3; use the [HTTP/2 deep dive](22-http2-deep-dive.md)
+for TCP stream and HPACK mechanics.
+
 ## Mental model
 
 QUIC is a reliable, congestion-controlled encrypted transport carried in UDP.
