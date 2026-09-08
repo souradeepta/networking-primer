@@ -8,6 +8,15 @@ It is educational interview material, not a production runbook. Use simulators,
 virtual appliances, reserved addresses, fictional credentials, and disposable
 cloud accounts. Vendor commands and provider schemas vary by release.
 
+## Role and evidence contract
+
+SDE2 labs require an evidence-backed path trace, implementation artifact, and
+safe repair. Staff labs additionally require ownership boundaries across
+vendors and teams, migration/adoption sequencing, cost and blast-radius
+analysis, and an irreversible-failure stop condition. Mark observed results,
+vendor behavior, and engineering inference separately; pin appliance,
+controller, and provider versions and retain rollback evidence.
+
 ## B. Ordered path
 
 1. [Topology and lab contracts](01-topology-and-lab-contracts.md)

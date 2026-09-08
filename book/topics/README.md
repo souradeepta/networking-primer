@@ -33,6 +33,7 @@ sequence when studying the whole collection.
 | Protocol and systems deep dives | 22–27 |
 | F5 implementation and automation | 28–33 |
 | Distributed systems and cloud design | 34–37 |
+| Modern DNS, IPv6, and edge defense | 38–39 |
 
 1. [VIPs and virtual servers](01-vips-and-virtual-servers.md)
 2. [Certificates, SNI, and termination](02-certificates-sni-and-termination.md)
@@ -71,6 +72,8 @@ sequence when studying the whole collection.
 35. [Retries, deadlines, and backpressure](35-retries-deadlines-and-backpressure.md)
 36. [Replication, failover, and fencing](36-replication-failover-and-fencing.md)
 37. [Cloud networking primitives](37-cloud-networking-primitives.md)
+38. [Modern DNS and IPv6 migration](38-modern-dns-and-ipv6.md)
+39. [Edge abuse defense](39-edge-abuse-defense.md)
 Each topic has objectives, a worked example, a failure section, an operational
 checklist, a diagram, and explained questions and answers. Addresses and names
 are reserved or local: `198.51.100.0/24`, `203.0.113.0/24`, `2001:db8::/32`,

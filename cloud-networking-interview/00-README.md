@@ -4,6 +4,15 @@
 
 This standalone track prepares engineers for SDE2 and Staff-level cloud-networking interviews using portable mechanisms first and AWS/GCP terminology second. It is a learning curriculum, not an operational runbook. Provider names are comparison points, not claims of equivalent behavior.
 
+## C. Role and evidence contract
+
+SDE2 work should produce a packet-path diagnosis with evidence and a safe
+rollback. Staff work must additionally name provider, platform, security, and
+application owners; sequence migration and adoption; quantify cost and blast
+radius; and define an irreversible-failure stop condition. Label provider
+claims as facts, vendor terminology, or engineering inferences, and verify
+release, region, quota, and controller behavior before relying on them.
+
 ## B. Recommended sequence
 
 1. [Cloud network foundations](01-cloud-network-foundations.md)

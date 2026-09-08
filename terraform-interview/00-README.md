@@ -4,6 +4,15 @@
 
 This standalone track prepares SDE2 and Staff candidates to explain how Terraform models, plans, owns, tests, and safely changes networking infrastructure across AWS, Google Cloud, and F5 BIG-IP. It is an educational learning track, not a production runbook. Provider names and versions are examples; verify current behavior before using any command.
 
+## C. Role and evidence contract
+
+SDE2 candidates should produce a reviewed plan, drift diagnosis, and bounded
+rollback. Staff candidates must also define state and provider ownership,
+sequence migration and adoption, quantify cost and blast radius, and stop when
+an irreversible state or authority conflict is possible. Label protocol facts,
+vendor terminology, and engineering inferences separately; pin Terraform,
+provider, and device versions before treating a plan as evidence.
+
 ## B. Ordered learning path
 
 1. [Terraform core and execution model](01-terraform-core-and-execution-model.md)
