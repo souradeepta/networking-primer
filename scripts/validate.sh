@@ -595,6 +595,22 @@ PY
 
 python3 - <<'PY'
 from pathlib import Path
+
+tracks = {
+    'cloud-networking-interview/00-README.md': ('SDE2', 'Staff', 'ownership', 'cost', 'rollback'),
+    'terraform-interview/00-README.md': ('SDE2', 'Staff', 'state', 'provider', 'rollback'),
+    'platform-integration-labs/00-README.md': ('SDE2', 'Staff', 'ownership', 'cost', 'rollback'),
+}
+for filename, markers in tracks.items():
+    text = Path(filename).read_text(encoding='utf-8').lower()
+    missing = [marker for marker in markers if marker.lower() not in text]
+    if missing:
+        raise SystemExit(f'{filename}: missing role/evidence contract markers: {missing}')
+print(f'Broader track contract checks passed: {len(tracks)} indexes.')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
 import re
 
 root = Path('cloud-networking-interview')
