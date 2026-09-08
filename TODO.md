@@ -29,7 +29,8 @@
       controlled network-testing exercises with interviewer follow-ups.
 - [x] Add Terra-reviewed interview rubric, simulations, whiteboard drills,
       system-design exercises, and a measurable study plan.
-- [ ] Continue expanding every practice item to Terra's maximum per-item
-      contract (350+ word simulations and 600+ word designs); this pass adds
-      five detailed transcripts, a worked whiteboard drill, a worked design,
-      and marker-aware validators.
+- [x] Complete Terra book-material remediation, Staff coverage, modern DNS/IPv6,
+      edge-abuse-defense, broader-track contracts, and validator hardening.
+- [ ] Optional: expand every practice item to Terra's maximum per-item contract
+      (350+ word simulations and 600+ word designs) when a distinct learning
+      objective and review owner are available.

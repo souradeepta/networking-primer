@@ -1,14 +1,13 @@
 # Project memory
 
-## Current state
+## Current state — 2026-09-07
 
-- Local repository implementation, including hands-on labs, link validation,
-  nineteen case studies, and the edition-5 platform expansion, is complete
-  locally but not yet committed.
+- The public `main` branch is current and clean. The latest pushed commit is
+  `767ba6c Validate broader track contracts`.
 - The content target is SDE1/SDE2 networking, focused on F5 LTM and GTM
   (BIG-IP DNS).
 - Public GitHub remote: https://github.com/souradeepta/networking-primer
-- The book contains 17 chapters and 27 focused topic references. New coverage
+- The book contains 17 chapters and 39 focused topic references. New coverage
   includes cloud networking/Kubernetes ingress, BGP/anycast/multi-region,
   WAF/API security/zero trust, observability/SLOs, network testing/chaos, and
   capacity/performance engineering. `docs/10-platform-networking.md` bridges
@@ -17,12 +16,15 @@
   trade-offs, diagnostics, examples, and caveats across the book, topics,
   case studies, and quick-start interview bank. The edition-6 validator
   enforces minimum answer word counts and heading integrity.
-- Next handoff: run the final checks, commit, and push the public branch.
+- Phase 0–4 review remediation is complete: correctness fixes, evidence
+  governance, explicit answer boundaries, Staff coverage, role contracts,
+  local anchors, and Mermaid theme validation are implemented.
+- Use `LEARNING_PATH.md` for the current study sequence and `HANDOFF.md` for
+  repository ownership and verification context.
 
-- New focused topics cover HTTP/2/HTTP/3/QUIC, VXLAN overlays, firewall policy,
-  service discovery/configuration, and NTP/time synchronization. Edition 7
-  requires these topics to include diagrams, tables, exercises, six detailed
-  Q&A items, and at least 1,200 words each.
+- Focused topics now also cover modern DNS/IPv6 migration and edge abuse
+  defense. Their index and evidence-ledger rows are validated with the rest of
+  the maintained topic inventory.
 - Granular platform references 22–27 split HTTP transports and add NAT/
   conntrack, CDN edge caching, gRPC/WebSockets/RPC, and network automation.
   Edition 8 records their focused-reference contract and 600-word validator

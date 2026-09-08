@@ -102,6 +102,7 @@ that track.
 | Book fact/inference map | [Book ledger](../book/FACT-INFERENCE-LEDGER.md) |
 | Curriculum gaps and roadmap | [Curriculum improvement spec](interview-curriculum-improvement-spec.md) |
 | Terra review findings and remediation | [Book material review plan](book-material-review-plan.md) |
+| Book material remediation handoff | [Book material review handoff](book-material-review-handoff.md) |
 | Formatting rules | [Markdown style guide](markdown-style-guide.md) |
 | Safety, privacy, warranty, and generated content | [Repository disclosures](../DISCLOSURES.md) |
 | Repository contract | [SPEC](../SPEC.md) and [AGENTS guidance](../AGENTS.md) |
