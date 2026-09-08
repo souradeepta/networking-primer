@@ -11,6 +11,12 @@ what a script observed from what it inferred.
 Know Python basics, REST and SSH concepts, Git review, DNS, load balancing, and
 the difference between desired and observed state.
 
+## Interview scope
+
+Role labels: SDE2 (validation and idempotency); Staff (ownership, approvals, and
+recovery). Expected interview artifact: a reviewed desired-state diff with an
+evidence-backed rollback plan.
+
 ## Mental model
 
 Automation is a controlled transformation from desired state to observed
@@ -76,6 +82,10 @@ member order, report additions and removals, and reject duplicate addresses.
 Add tests for no-op rerun, malformed input, and partial verification. Extend
 the exercise with a DNS TTL invariant and a dry-run report. Do not connect to
 a live device or install packages.
+
+**[Staff | ownership]** Design adoption of the planner across network, DNS, and
+application teams. Define the source of truth, approval boundary, migration
+sequence, and the stop condition when a timed-out write may have committed.
 
 ## Questions and answers
 

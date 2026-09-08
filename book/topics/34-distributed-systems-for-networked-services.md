@@ -21,6 +21,14 @@ configuration](20-service-discovery-configuration.md), [proxy architecture
 and boundaries](08-proxy-architecture-and-boundaries.md), and [capacity and
 SLO engineering](16-capacity-performance-and-slo-engineering.md).
 
+## Interview scope
+
+- SDE2: trace data-plane behavior against control-plane and state evidence.
+- Staff: define ownership, consistency, migration, and failure authority across
+  regions and teams.
+- Expected interview artifact: a state-owner map with failure timeline,
+  capacity assumptions, and rollback decisions.
+
 ## Mental model
 
 Fact: a distributed service has more than a packet path. It has a data plane

@@ -10,6 +10,12 @@ also design transactions, bounded retries, pagination, tests, mocks, version
 guards, audit evidence, and rollback. Names use `.invalid` and no credential or
 external service is required.
 
+## Interview scope
+
+- SDE2: build version-aware, idempotent SDK operations with bounded retries and tests.
+- Staff: govern API ownership, adoption, auditability, and blast-radius economics.
+- Expected artifact: automation design with preconditions, evidence, rollback, and rollout stages.
+
 ## Mental model
 
 Fact: the SDK is a client-side object model over BIG-IP management APIs. A
@@ -139,6 +145,12 @@ unknown outcomes.
 7. Classify errors; bound retries and reconcile every uncertain write by reading.
 8. Mock success, pagination, auth, not-found, conflict, timeout, and malformed responses.
 9. Record redacted audit evidence and test rollback against a disposable target.
+
+## Staff follow-up
+
+**Staff exercise:** Roll out an SDK change across mixed BIG-IP releases. Assign
+owners, use capability detection and a canary, estimate request and support
+cost, and define the write or timeout condition that requires an immediate halt.
 
 ## Questions and answers
 

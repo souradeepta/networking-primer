@@ -10,6 +10,12 @@ or failed members.
 
 Know TCP, HTTP, pools, monitors, SNAT, and virtual-server terminology.
 
+## Interview scope
+
+Role labels: SDE2 (selection and capacity diagnosis); Staff (traffic migration
+and stakeholder coordination). Expected interview artifact: a per-member load
+model with drain, rollback, and capacity thresholds.
+
 ## Mental model
 
 LTM selects an eligible pool member according to configured method, priority,
@@ -76,6 +82,10 @@ Create a spreadsheet or Python fixture with three members, two priority groups,
 five clients, persistence records, and finite SNAT ports. Simulate drain,
 expiry, slow ramp, and allocation failure. Explain which observation separates
 a selection problem from backend saturation.
+
+**[Staff | migration]** Move traffic to a new pool while preserving selected
+sessions. Coordinate application, network, and support owners; sequence slow ramp,
+drain, persistence handling, and rollback before SNAT or member capacity fails.
 
 ## Questions and answers
 

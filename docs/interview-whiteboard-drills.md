@@ -35,6 +35,7 @@ warm-standby database. The client uses a recursive resolver, so TTL is a bound,
 not an instant switch.
 
 ```mermaid
+%%{init: {"theme":"base", "themeVariables":{"primaryTextColor":"#111111","lineColor":"#222222"}}}%%
 flowchart LR
   C[Client] --> R[Recursive resolver]
   R --> G[GTM wide IP]

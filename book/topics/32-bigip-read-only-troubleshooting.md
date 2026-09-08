@@ -17,6 +17,12 @@ application. A status code is an observation, not a root cause. BIG-IP
 management reads, counters, logs, and packet captures answer different
 questions; correlate their timestamps and redact identifiers.
 
+## Interview scope
+
+Role labels: SDE2 (read-only evidence correlation); Staff (incident ownership
+and irreversible-failure handling). Expected interview artifact: a symptom
+matrix with falsifying evidence and an approved escalation boundary.
+
 ## Diagram
 
 ```mermaid
@@ -72,6 +78,11 @@ as a first diagnostic step.
 Build a symptom matrix from JSON fixtures for VIP-down, pool-red, TLS-alert,
 SNAT-exhausted, and origin-500 cases. For each fixture produce the next safe
 read-only query and the evidence that would disprove the leading hypothesis.
+
+**[Staff | incident]** Lead a cross-team incident where failover is proposed as
+the quickest fix. Assign evidence owners, sequence read-only checks and a bounded
+canary, and state the explicit threshold at which an irreversible action is
+approved or rejected.
 
 ## Questions and answers
 

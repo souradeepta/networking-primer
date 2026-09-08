@@ -18,6 +18,12 @@ profile. You should be comfortable with `dig`, `curl`, `ss`, `openssl s_client`,
 and reading a small Python program. A local lab is enough; the examples use
 reserved documentation addresses and `example.invalid` names.
 
+## Interview scope
+
+- SDE2: turn symptoms into bounded hypotheses using metrics, logs, traces, flows, and packets.
+- Staff: align signal ownership, SLO adoption, migration sequencing, and collection cost.
+- Expected artifact: SLO and evidence plan with owners, privacy limits, and stop conditions.
+
 ## Mental model
 
 Observability is the ability to ask a new question about a system using the
@@ -185,6 +191,13 @@ all traffic to one pool member.
    approved; prefer headers, counters, and synthetic requests first.
 7. Tie remediation to the error budget and verify that the SLO improves after
    the change; state rollback before changing traffic.
+
+## Staff follow-up
+
+**Staff exercise:** Define an end-to-end SLO while migrating observability
+vendors. Assign signal owners, phase synthetic checks and trace adoption, price
+retention and packet capture, and identify the irreversible data-loss point that
+requires a migration pause.
 
 ## Questions and answers
 

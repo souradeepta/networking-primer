@@ -10,6 +10,12 @@ source-address behavior matter.
 
 Know IPv4, TCP five-tuples, routing, and basic virtual-server concepts.
 
+## Interview scope
+
+Role labels: SDE2 (tuple and state diagnosis); Staff (capacity, ownership, and
+failure sequencing). Expected interview artifact: a translation-state table with
+capacity assumptions and a reversible change plan.
+
 ## Mental model
 
 Network Address Translation rewrites packet addresses or ports at a boundary.
@@ -69,6 +75,10 @@ Draw three tuples for a lab VIP: client-side, translated server-side, and
 return-side. Use `ss -tn` on your own endpoints and compare observations with a
 documented NAT table. Vary an idle timeout in a disposable test and explain
 which state expires first.
+
+**[Staff | capacity]** Plan a SNAT-address expansion with network, security, and
+application owners. Sequence capacity validation, identity review, canarying,
+and rollback; state what existing connections cannot safely be recovered.
 
 ## Questions and answers
 

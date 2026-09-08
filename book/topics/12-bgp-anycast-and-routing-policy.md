@@ -19,6 +19,11 @@ handshakes, DNS TTLs, and the difference between an F5 virtual server and a
 pool member. Be comfortable reading `ip route`, `dig`, and a route-monitoring
 output. The examples use documentation prefixes and fictional ASNs.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A route-policy ownership map and staged migration/rollback timeline.
+
 ## Mental model
 
 BGP is a path-vector control protocol. A speaker advertises a prefix and
@@ -177,6 +182,10 @@ allowlisted command, not a blind `StrictHostKeyChecking=no` shortcut.
    approvals, audit logs, and a tested withdrawal/restore procedure.
 7. Validate convergence from multiple vantage points and watch for flapping
    after every authorized change.
+
+## Staff exercise
+
+**[Staff | migration]** Design a two-site anycast rollout: name the application and network owners, sequence health-gated advertisements and withdrawal, estimate propagation risk, and define the irreversible-failure stop condition.
 
 ## Questions and answers
 

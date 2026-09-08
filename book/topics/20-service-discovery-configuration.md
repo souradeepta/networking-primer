@@ -10,6 +10,11 @@ semantics, and roll configuration out with validation and rollback.
 Know DNS caching, TCP lifecycle, HTTP clients, and distributed-systems failure
 modes.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A discovery/configuration consistency map with freshness bounds, owners, and rollback plan.
+
 ## Mental model
 
 Service discovery maps a logical service name to reachable instances, usually
@@ -76,6 +81,10 @@ local resolver stub in memory that returns only instances whose lease has not
 expired. Add a test showing that an old client may retain a cached address and
 must handle connection refusal. Keep values non-sensitive and do not connect
 to a live registry.
+
+## Staff exercise
+
+**[Staff | migration]** Move a service from static configuration to registry discovery: assign authority and consumer owners, sequence dual-read and canary phases, budget stale-cache and registry cost, and define the fence for unsafe endpoint data.
 
 ## Questions and answers
 

@@ -9,6 +9,12 @@ in an incident timeline. You will practice distinguishing an authoritative
 answer from a client’s cached answer. All names and addresses are fictional or
 reserved for documentation.
 
+## Interview scope
+
+- SDE2: distinguish authoritative DNS decisions from resolver and client caches.
+- Staff: coordinate steering ownership, migration sequencing, cost, and adoption.
+- Expected artifact: DNS cutover timeline showing authority, TTL, evidence, and rollback.
+
 ## Mental model
 
 Fact: a Wide IP represents an application name and service, and its pools hold
@@ -106,6 +112,12 @@ queries, never a production cache flush without owner approval.
 5. Estimate cache convergence and connection reuse before claiming failover.
 6. Snapshot policy and weights before a change; define rollback and validation.
 7. Communicate the expected stale-answer window to incident stakeholders.
+
+## Staff follow-up
+
+**Staff exercise:** Shift a regional service while resolver caches remain active.
+Name owners, sequence monitor validation and weighted steering, estimate query
+and capacity cost, and define when rollback cannot restore cached answers.
 
 ## Questions and answers
 

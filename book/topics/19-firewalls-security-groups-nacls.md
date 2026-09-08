@@ -10,6 +10,11 @@ firewalls. Build complete flow tuples and least-privilege policy reviews.
 Know TCP setup, ephemeral ports, IP routing, CIDR, NAT, and transport versus
 application errors.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A least-privilege flow matrix with policy owners, migration gates, and emergency rollback criteria.
+
 ## Mental model
 
 A firewall evaluates traffic against policy and may be stateful, tracking
@@ -75,6 +80,10 @@ read-only rule listing and `nc -vz` only against your own listener. Explain why
 a TCP timeout, a reset, and an application 403 are different evidence. Finish
 by proposing the narrowest temporary test rule and its expiry, without applying
 it to a real system.
+
+## Staff exercise
+
+**[Staff | operations]** Replace a broad emergency allow with least-privilege rules: identify application, platform, and security owners, stage logging and shadow policy, estimate outage risk, and define the fail-closed versus fail-open decision for policy-controller loss.
 
 ## Questions and answers
 

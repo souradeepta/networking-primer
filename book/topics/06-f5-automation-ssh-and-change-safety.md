@@ -9,6 +9,12 @@ writes, and build a preflight, diff, validation, and rollback sequence. The
 examples use a fictional device name and local placeholder credentials only;
 they do not contain secrets and should not be pointed at production.
 
+## Interview scope
+
+- SDE2: implement bounded, idempotent reads and writes with pre-state and verification.
+- Staff: establish change ownership, adoption controls, cost limits, and rollback gates.
+- Expected artifact: change plan containing diff, authorization, validation, and abort criteria.
+
 ## Mental model
 
 Fact: an automation client is a program that authenticates to a management
@@ -122,6 +128,12 @@ or serialize changes per device/service, record correlation IDs, and make
 5. Apply one narrow change with timeout and correlation ID.
 6. Validate state, monitors, representative lab traffic, logs, and HA status.
 7. Record evidence; if uncertain, stop and use the approved rollback path.
+
+## Staff follow-up
+
+**Staff exercise:** Design a bulk policy change across two BIG-IP versions. Assign
+owners, stage a dry run and canary, bound API and blast-radius cost, and define
+the irreversible point after which rollback requires restoration from evidence.
 
 ## Questions and answers
 

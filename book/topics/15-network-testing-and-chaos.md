@@ -17,6 +17,11 @@ VIP/pool terminology. Read the local demos and run them only against local or
 explicitly authorized targets. Production experiments require a separate
 change record, owner, and incident communications path.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A bounded experiment plan with hypothesis, owner, stop condition, and evidence checklist.
+
 ## Mental model
 
 A test asks whether a known contract holds under a specified input. Chaos is a
@@ -148,6 +153,10 @@ captures, tokens, and test data even when the target is non-production.
    collateral impact.
 6. Turn the result into a regression, monitor improvement, runbook update, or
    explicit accepted risk.
+
+## Staff exercise
+
+**[Staff | operations]** Plan a regional VIP and DNS failure experiment: identify every stakeholder and owner, sequence probes before blast-radius expansion, estimate stale-cache and recovery cost, and define the immediate abort condition for an irreversible data or routing mistake.
 
 ## Questions and answers
 

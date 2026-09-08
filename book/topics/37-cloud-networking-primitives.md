@@ -21,6 +21,15 @@ overlays](18-vxlan-network-overlays.md), [Kubernetes ingress and service
 mesh](13-kubernetes-ingress-and-service-mesh.md), and [capacity and SLO
 engineering](16-capacity-performance-and-slo-engineering.md).
 
+## Interview scope
+
+- SDE2: trace routes, policy, NAT, and return traffic in a provider-neutral
+  workload path.
+- Staff: set ownership and migration boundaries across provider, platform,
+  security, and application teams while controlling cost and blast radius.
+- Expected interview artifact: a cloud network decision record with packet
+  path, cost model, rollout, and stop conditions.
+
 ## Mental model
 
 Fact: a cloud virtual network is a composition of address spaces, route

@@ -9,6 +9,12 @@ budgets, protocol boundaries, and observability signals. All service names and
 addresses are fictional; `app.lab.example` and `203.0.113.0/24` are examples,
 not endpoints to contact.
 
+## Interview scope
+
+- SDE2: trace protocol, TLS, header, timeout, retry, and observability boundaries.
+- Staff: choose gateway ownership and migration sequencing while managing adoption risk.
+- Expected artifact: boundary contract with trust owners, budgets, signals, and rollback.
+
 ## Mental model
 
 Fact: an L4 proxy makes decisions using transport information such as IP,
@@ -122,6 +128,13 @@ upstream-observed latency so a boundary is diagnosable.
 6. Sanitize forwarding headers and preserve bounded correlation and trace fields.
 7. Monitor handshakes, status codes, queueing, retries, pool health, and hop latency.
 8. Test slow, reset, certificate, malformed-header, and dependency-failure cases.
+
+## Staff follow-up
+
+**Staff exercise:** Migrate a retrying gateway to sidecars without duplicating
+POST side effects. Assign platform and service owners, sequence opt-in cohorts,
+estimate operational cost, and define the non-reversible failure that blocks
+further rollout.
 
 ## Questions and answers
 

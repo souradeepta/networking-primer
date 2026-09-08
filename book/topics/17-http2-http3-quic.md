@@ -11,6 +11,11 @@ fallback failures.
 Know DNS, TCP setup, TLS certificates, HTTP methods, and basic latency, loss,
 and MTU terminology.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A protocol rollout decision record with evidence, cost/risk budget, and rollback gate.
+
 ## Mental model
 
 HTTP/2 keeps HTTP semantics but carries requests and responses as binary
@@ -78,6 +83,10 @@ built with QUIC support. Treat failures as evidence about support, middleboxes,
 or certificates, not proof that an origin is unavailable. Capture the URL,
 ALPN result, status code, and timing in a lab note. Do not put credentials in
 the command line or test a real target without authorization.
+
+## Staff exercise
+
+**[Staff | migration]** Roll out HTTP/3 beside HTTP/2: assign client, edge, and origin ownership, sequence opt-in and fallback tests, estimate UDP telemetry and handshake cost, and define the signal that triggers immediate disablement.
 
 ## Questions and answers
 

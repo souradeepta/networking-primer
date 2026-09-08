@@ -10,6 +10,11 @@ and fallback issues across a CDN, F5 boundary, or origin.
 
 Know UDP, TCP, TLS 1.3 concepts, HTTP/2 streams, DNS, and firewall flow logs.
 
+## Interview scope
+
+Role labels: SDE2 (protocol diagnosis); Staff (multi-owner rollout and risk).
+Expected interview artifact: a path-by-path rollout and rollback evidence table.
+
 ## Mental model
 
 QUIC is a reliable, congestion-controlled encrypted transport carried in UDP.
@@ -73,6 +78,10 @@ endpoint. Record ALPN, status, response bytes, and timing. Use a packet capture
 only on your own interface to identify outer UDP and inner protocol evidence.
 Write a failure hypothesis for each missing signal and state what observation
 would falsify it.
+
+**[Staff | migration]** Sequence an HTTP/3 rollout across DNS, CDN, F5, and
+origin owners. Name the canary population, fallback objective, rollback trigger,
+and the irreversible evidence loss or client incompatibility you would prevent.
 
 ## Questions and answers
 

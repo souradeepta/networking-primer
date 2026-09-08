@@ -46,6 +46,7 @@ interview assumptions and must be replaced by measured traffic.
 ### Architecture and request sequence
 
 ```mermaid
+%%{init: {"theme":"base", "themeVariables":{"primaryTextColor":"#111111","lineColor":"#222222"}}}%%
 flowchart LR
   U[Clients] --> D[Recursive DNS]
   D --> G[GTM Wide IP]

@@ -9,6 +9,11 @@ clock from monotonic duration measurement; and diagnose time-related symptoms.
 
 Know UDP, TLS validity intervals, and basic observability concepts.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A time-dependency map with source ownership, uncertainty budget, and safe recovery procedure.
+
 ## Mental model
 
 The Network Time Protocol (NTP) lets a client estimate clock offset and delay
@@ -74,6 +79,10 @@ state. Compare application duration measurements made with a monotonic API to
 wall-clock timestamps. Simulate a stale source in a design worksheet, then
 define alert thresholds and an escalation path. Never change system time or
 point production hosts at an unapproved server for this exercise.
+
+## Staff exercise
+
+**[Staff | operations]** Design a time-source migration: assign platform and application owners, sequence secondary-source validation before cutover, estimate drift and certificate/lease risk, and define the stop condition before any clock step.
 
 ## Questions and answers
 

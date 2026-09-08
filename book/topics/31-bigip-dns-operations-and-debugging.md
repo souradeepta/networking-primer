@@ -10,6 +10,12 @@ behavior, topology, DNSSEC, TTL, Wide IPs, pools, and virtual servers.
 Know DNS recursion, authoritative answers, UDP/TCP DNS, TTL, health checks,
 and basic GTM terminology.
 
+## Interview scope
+
+Role labels: SDE2 (DNS evidence and debugging); Staff (failover sequencing,
+ownership, and adoption). Expected interview artifact: an authoritative-to-LDNS
+decision trace with TTL and rollback assumptions.
+
 ## Mental model
 
 BIG-IP DNS, historically GTM, answers DNS queries and selects records or Wide
@@ -75,6 +81,11 @@ Use reserved names in a local DNS fixture. Query an authoritative listener and
 a recursive resolver, record TTL and answer order, then mark one fictional
 member unhealthy. Explain why cached answers remain and how DNSSEC failure
 would differ from monitor failure.
+
+**[Staff | failover]** Plan a Wide IP failover with DNS, application, and
+support owners. Sequence health validation, TTL expectations, resolver-aware
+canarying, and rollback; identify cached answers and signing failures that cannot
+be immediately reversed.
 
 ## Questions and answers
 

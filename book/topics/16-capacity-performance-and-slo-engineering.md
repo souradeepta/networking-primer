@@ -17,6 +17,11 @@ VIPs/pools/SNAT, and basic probability or arithmetic. You should be able to
 read latency percentiles and use a shell command or Python script to generate
 small, authorized lab traffic.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A capacity model with measured assumptions, ownership, cost envelope, and forecasted rollback trigger.
+
 ## Mental model
 
 Capacity is not one number. A path can be limited by link bandwidth, packets
@@ -184,6 +189,10 @@ or fail over; a silent timeout is usually the least controllable outcome.
    hysteresis, approvals, and a rollback path for traffic changes.
 7. Review the forecast after releases, certificate policy changes, DDI growth,
    and every incident that changes the traffic model.
+
+## Staff exercise
+
+**[Staff | trade-off]** Plan capacity for a regional failover: identify the shared bottleneck and accountable owners, sequence load tests and headroom checks, price the extra capacity, and define the SLO or saturation threshold that stops traffic expansion.
 
 ## Questions and answers
 

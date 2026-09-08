@@ -10,6 +10,12 @@ observability and correctness.
 
 Know HTTP caching headers, DNS, TLS, reverse proxies, and basic SLO language.
 
+## Interview scope
+
+Role labels: SDE2 (cache correctness and debugging); Staff (migration,
+stakeholder adoption, and risk). Expected interview artifact: a cache-key matrix
+and rollout decision record.
+
 ## Mental model
 
 A CDN is a distributed proxy that may serve a representation from an edge
@@ -71,6 +77,10 @@ Use a local HTTP server and proxy, adding `Cache-Control` and `ETag` headers.
 Request an object twice, inspect `Age` or cache-status, modify the origin, and
 compare revalidation with a versioned URL. Write down which evidence proves an
 edge hit rather than an origin response.
+
+**[Staff | adoption]** Propose immutable URLs and purge ownership to product,
+security, and origin teams. Sequence a canary, stale-content guardrail, and
+rollback, accounting for cached private data that cannot be recalled.
 
 ## Questions and answers
 

@@ -10,6 +10,12 @@ second TLS conversation and why a load balancer cannot infer application
 ownership merely from a successful handshake. Examples use fictional names and
 reserved addresses, with commands intended for observation in a lab.
 
+## Interview scope
+
+- SDE2: diagnose certificate, SNI, trust-chain, and protocol failures per hop.
+- Staff: plan certificate-ownership and termination migrations with adoption safeguards.
+- Expected artifact: hop-by-hop TLS boundary table with owners, risks, and rollback.
+
 ## Mental model
 
 Fact: TLS authenticates a peer using a certificate chain and negotiated names,
@@ -117,6 +123,12 @@ boundary; an arbitrary client-supplied identity header is not authentication.
 5. Check clock synchronization and recent certificate/profile changes.
 6. Stage rotation with a known-good rollback artifact and owner approval.
 7. Validate from representative clients, then remove temporary diagnostics.
+
+## Staff follow-up
+
+**Staff exercise:** Move TLS termination to a new gateway. Assign certificate and
+application owners, sequence dual-serving and client validation, estimate
+compatibility risk, and define the stop condition for a failed mTLS migration.
 
 ## Questions and answers
 

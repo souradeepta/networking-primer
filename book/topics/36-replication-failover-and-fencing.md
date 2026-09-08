@@ -19,6 +19,14 @@ discovery](20-service-discovery-configuration.md), and [NTP and time
 synchronization](21-ntp-time-synchronization.md). Also review [retries,
 deadlines, and backpressure](35-retries-deadlines-and-backpressure.md).
 
+## Interview scope
+
+- SDE2: distinguish traffic movement, replica health, and write authority.
+- Staff: assign failover ownership and sequence fencing, migration, recovery,
+  and stakeholder communication under uncertain evidence.
+- Expected interview artifact: a failover state machine with RPO/RTO,
+  fencing, cost, and rollback checkpoints.
+
 ## Mental model
 
 Fact: a failover has at least three separate decisions: where clients send

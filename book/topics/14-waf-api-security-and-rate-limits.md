@@ -17,6 +17,11 @@ TCP connections, and F5 virtual servers and profiles. Read-only examples use
 fictional domains and reserved IPs. A WAF policy is security-sensitive: this
 is a learning design guide, not permission to deploy a rule against a service.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A policy decision record with owners, cost/risk budget, rollout gates, and expiry.
+
 ## Mental model
 
 A WAF evaluates application-layer requests, often after TLS termination and
@@ -154,6 +159,10 @@ authorize every API operation; map identity to policy and rotate trust roots.
    latency, certificate expiry, and policy distribution across HA members.
 7. Test failover, parser differences, HTTP/2 multiplexing, retries, and
    certificate/trust rotation in a non-production environment.
+
+## Staff exercise
+
+**[Staff | trade-off]** Introduce a stricter API rate limit during a growth event: assign security and service owners, stage observation before enforcement, estimate false-positive and latency cost, and specify the fail-safe response if the limiter or policy store is unavailable.
 
 ## Questions and answers
 

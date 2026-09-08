@@ -1,6 +1,6 @@
 # 15. Cloud Networking and Kubernetes Ingress
 
-Cloud networking is still networking. A managed control plane, an overlay
+**Fact:** Cloud networking is still networking. A managed control plane, an overlay
 network, or a service of type `LoadBalancer` changes who operates a component,
 but it does not remove the need to reason about addresses, routes, stateful
 connections, DNS, certificates, or failure domains. This chapter connects the
@@ -8,7 +8,11 @@ traditional enterprise path of client, F5, and application servers to a cloud
 path containing a virtual network, a Kubernetes cluster, and an ingress
 controller.
 
-The examples use the fictional `harbor.example` domain and documentation
+**Vendor terminology:** `Service`, `Ingress`, `Gateway`, and CNI are Kubernetes
+or ecosystem terms whose supported fields and data-plane behavior depend on
+the cluster, controller, and plugin versions.
+
+**Engineering inference:** The examples use the fictional `harbor.example` domain and documentation
 addresses. Provider names are illustrative. Exact names, limits, and behavior
 vary by cloud and Kubernetes distribution, so verify a claim against the
 provider and controller documentation before applying it.
@@ -39,7 +43,7 @@ read-only unless explicitly marked as a lab mutation.
 
 ## Mental model
 
-A cloud network has at least three views:
+**Engineering inference:** A cloud network has at least three views:
 
 1. The **underlay** is the provider-managed physical or virtual fabric. It
    delivers packets between virtual network interfaces and regions.
@@ -55,7 +59,7 @@ endpoints while the cloud load balancer health check uses the wrong port. A DNS
 record may point at a valid public VIP while a private resolver returns a stale
 private address. Good diagnosis asks which view produced each observation.
 
-In Kubernetes, a `Service` is a stable logical destination for a changing set
+**Fact:** In Kubernetes, a `Service` is a stable logical destination for a changing set
 of endpoints. A `ClusterIP` is normally reachable inside the cluster. A
 `NodePort` exposes a port on nodes. A `LoadBalancer` asks an integration to
 provision or associate an external load balancer. An ingress resource describes
@@ -65,7 +69,7 @@ integration, or an F5 Container Ingress Services-style control-plane adapter
 that programs BIG-IP objects. Gateway API provides a more expressive,
 role-oriented set of resources, but the same data-plane questions remain.
 
-`NetworkPolicy` is an API for declaring ingress and egress isolation; its
+**Fact:** `NetworkPolicy` is an API for declaring ingress and egress isolation; its
 enforcement is CNI-dependent. The Kubernetes API object alone does not guarantee
 that packets are filtered, and supported fields, host-network behavior, and
 external traffic handling vary by the selected CNI and its version. Policy is
@@ -74,9 +78,9 @@ an ingress allow at the destination. A default-deny policy is not complete until
 required egress is restored deliberately. In particular, default-deny egress
 can block cluster DNS (usually access to CoreDNS/kube-dns on UDP and sometimes
 TCP port 53), so allow the cluster's actual DNS path and verify it from the
-workload. [Fact: Kubernetes defines NetworkPolicy semantics while a network
-plugin implements enforcement.] [Inference: Treat CNI capability, DNS rules,
-and default-deny exceptions as deployment evidence, not assumptions from YAML.]
+workload. **Fact:** Kubernetes defines NetworkPolicy semantics while a network
+plugin implements enforcement. **Engineering inference:** Treat CNI capability, DNS rules,
+and default-deny exceptions as deployment evidence, not assumptions from YAML.
 
 | Layer | Typical object | Key question | F5 or DDI relationship |
 | --- | --- | --- | --- |
@@ -87,7 +91,7 @@ and default-deny exceptions as deployment evidence, not assumptions from YAML.]
 | Pod | Pod IP and port | Is the process listening and ready? | Pool member analogue |
 | Policy | SG, ACL, NetworkPolicy, WAF | Which identity and flow are permitted? | Firewall/WAF/iRule policy |
 
-The most important cloud-specific distinction is **security group versus
+**Fact:** The most important cloud-specific distinction is **security group versus
 route**. A route determines where a packet is sent; a security group or ACL
 determines whether it is allowed. A route that exists does not imply a packet
 will pass. Conversely, an allow rule cannot fix a missing route. For return
@@ -131,7 +135,7 @@ flowchart LR
     DDI -. service discovery .-> Svc
 ```
 
-At the first hop, the client performs DNS resolution. Record existence,
+**Fact:** At the first hop, the client performs DNS resolution. Record existence,
 resolver choice, and TTL are separate facts. The client then establishes a
 TCP connection to `198.51.100.80:443`, followed by a TLS handshake containing
 the requested server name. The edge chooses a certificate and WAF policy from
@@ -140,7 +144,7 @@ connection to the ingress listener. It can preserve the original client
 identity in a controlled header, but that header is trustworthy only if the
 next hop accepts it from the edge and strips untrusted copies from clients.
 
-The ingress controller matches host and path. It chooses a Kubernetes service,
+**Engineering inference:** The ingress controller matches host and path. It chooses a Kubernetes service,
 which chooses ready endpoints. Depending on the CNI and service mode, the
 source address observed by a pod may be the original client, the ingress
 controller, a node, or a translated address. Never infer the exact tuple from
@@ -165,7 +169,7 @@ curl --resolve api.harbor.example:443:198.51.100.80 \
   https://api.harbor.example/healthz
 ```
 
-The `curl --resolve` command tests the selected VIP while retaining the host
+**Fact:** The `curl --resolve` command tests the selected VIP while retaining the host
 name for TLS SNI and HTTP routing. It does not prove that every public resolver
 has the same answer. For a local lab, substitute a reserved address or a
 container network and avoid a production target.
@@ -197,7 +201,7 @@ routes = [
 print(route_for("api.harbor.example", "/v2/orders", routes))
 ```
 
-The real controller remains the source of truth for precedence rules, but a
+**Engineering inference:** The real controller remains the source of truth for precedence rules, but a
 pure model is valuable in CI: it can reject duplicate host/path intentions,
 missing certificates, or a route that points to a nonexistent service before
 the controller changes a live listener.

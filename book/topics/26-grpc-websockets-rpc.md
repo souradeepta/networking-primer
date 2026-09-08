@@ -10,6 +10,12 @@ deadlines, identity, and graceful shutdown semantics.
 
 Know HTTP, HTTP/2 streams, TLS, DNS, load balancing, and serialization basics.
 
+## Interview scope
+
+Role labels: SDE2 (protocol and deadline debugging); Staff (API migration,
+ownership, and adoption). Expected interview artifact: a stream-lifecycle and
+drain plan with method compatibility decisions.
+
 ## Mental model
 
 RPC gives a typed interface to a remote call; gRPC commonly uses Protocol
@@ -73,6 +79,10 @@ mock transport to inject deadline expiry, member drain, and reconnect. Record
 which failures are transport, proxy, serialization, or application status.
 Document how an F5 monitor should test readiness without opening a streaming
 connection.
+
+**[Staff | migration]** Migrate a long-lived WebSocket client population to a
+streaming RPC path. Assign proxy, service, and client ownership; sequence
+compatibility, drain, and fallback, and identify writes that cannot be replayed.
 
 ## Questions and answers
 

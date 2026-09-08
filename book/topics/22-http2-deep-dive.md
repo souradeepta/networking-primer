@@ -11,6 +11,11 @@ without confusing transport, protocol, and application evidence.
 Know HTTP/1.1, TLS, TCP, DNS, and basic proxy terminology. Readers should be
 comfortable reading a request trace and a status code.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A proxy protocol decision record with stream evidence, owners, cost/risk trade-offs, and rollback gate.
+
 ## Mental model
 
 HTTP/2 keeps HTTP semantics while replacing textual messages with binary
@@ -75,6 +80,10 @@ Use a lab endpoint and `curl --http2 -I` to record negotiated behavior. Build a
 small table of stream, status, bytes, and elapsed time. Repeat through a local
 reverse proxy and identify where HTTP/2 becomes HTTP/1.1. Compare a normal
 response with a deliberately bounded header or timeout in your own lab.
+
+## Staff exercise
+
+**[Staff | trade-off]** Change a proxy from HTTP/1.1 upstream to HTTP/2: assign edge and origin owners, sequence protocol and load canaries, estimate stream/flow-control risk and connection cost, and define the signal that forces rollback.
 
 ## Questions and answers
 

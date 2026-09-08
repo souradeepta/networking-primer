@@ -24,6 +24,12 @@ The labs need either a diagram-only exercise or an isolated BIG-IP VE/lab
 environment supplied by an instructor. Do not paste credentials, private keys,
 or tenant addresses into commands or tickets.
 
+## Interview scope
+
+- SDE2: trace LTM objects and validate each traffic leg with safe lab evidence.
+- Staff: own the lab-to-production boundary, migration sequence, and adoption guardrails.
+- Expected artifact: implementation worksheet with topology, evidence, risks, and rollback.
+
 ## Mental model
 
 LTM is the local, per-device traffic-management service on the BIG-IP platform.
@@ -240,6 +246,13 @@ evidence, not a checklist of automatic causes.
 5. Change one reversible variable in an approved lab or change window.
 6. Verify response, logs, metrics, persistence, and return routing.
 7. Document rollback, observed facts, and inferences separately.
+
+## Staff follow-up
+
+**Staff exercise:** Turn the labs into a team migration from direct service
+access to a VIP. Assign owners, require a staged canary and peer sign-off,
+estimate license and support cost, and defer any irreversible change until
+rollback evidence is complete.
 
 ## Questions and answers
 

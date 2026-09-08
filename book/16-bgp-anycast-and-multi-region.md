@@ -1,6 +1,6 @@
 # 16. BGP, Anycast, and Multi-Region Traffic Engineering
 
-Multi-region availability is often described as “send users to the nearest
+**Engineering inference:** Multi-region availability is often described as “send users to the nearest
 healthy site.” That sentence hides several different systems. DNS can select
 an address. BGP can advertise an address from multiple locations. A global
 load balancer can proxy the request. An application can retry or redirect. Each
@@ -34,14 +34,14 @@ network operators and should not be experimented with on an unapproved router.
 
 ## Mental model
 
-BGP is a path-vector control protocol. A speaker tells a neighbor that it can
+**Fact:** BGP is a path-vector control protocol. A speaker tells a neighbor that it can
 reach a prefix and includes path attributes such as AS path. The neighbor
 selects a best path according to implementation policy and installs an eligible
 route. Routers then forward packets using the resulting next hop. A BGP route
 is not a health check and an installed route is not proof that an application
 will answer.
 
-**Anycast** gives the same IP address to multiple sites and advertises the
+**Fact:** **Anycast** gives the same IP address to multiple sites and advertises the
 address from each site. Internet routing generally sends a client toward one
 of those advertisements according to routing policy and topology. “Nearest”
 means best according to routing decisions, not necessarily lowest latency or
@@ -49,7 +49,7 @@ geographic distance. Once a TCP connection chooses a site, it normally remains
 there until the connection ends; a later route change does not migrate the
 connection safely.
 
-**DNS steering** returns different addresses to different resolvers or clients.
+**Fact:** **DNS steering** returns different addresses to different resolvers or clients.
 It is easy to express region, geography, weights, and service state, but cached
 answers remain in use until TTL and resolver behavior permit a change. **A
 global proxy** terminates the client connection at a stable edge and chooses a
@@ -63,7 +63,7 @@ but introduces a global data-plane dependency and cost.
 | Global proxy | Edge data plane | Request or connection time | Client sees edge | Edge capacity and dependency |
 | Application redirect | Application | Per response | Client follows new URL | Client behavior and extra hop |
 
-F5 GTM/BIG-IP DNS commonly participates in the DNS-steering row: a Wide IP
+**Vendor terminology:** F5 GTM/BIG-IP DNS commonly participates in the DNS-steering row: a Wide IP
 maps a name to pools of virtual servers, and monitors influence eligible
 answers. F5 LTM owns the regional VIP and pool behavior. Anycast may front
 multiple LTM sites, but it should not be assumed that GTM health automatically
@@ -80,13 +80,13 @@ east. A GTM Wide IP returns one of these addresses using health and topology.
 The organization also considers advertising a shared anycast VIP
 `198.51.100.40/32` from both sites.
 
-The DNS design is straightforward: if the west LTM virtual server and its
+**Engineering inference:** The DNS design is straightforward: if the west LTM virtual server and its
 critical pool are down, GTM stops returning the west address. But TTL means a
 client or recursive resolver may continue using it. For short-lived APIs, the
 application can retry another address; for long-lived connections, the client
 needs reconnect logic.
 
-The anycast design removes some DNS-cache delay. A site advertises the /32 only
+**Engineering inference:** The anycast design removes some DNS-cache delay. A site advertises the /32 only
 when the local edge, LTM listener, critical pool, and required dependencies are
 ready. If west withdraws, new flows should converge toward east. However,
 withdrawal propagation is not instantaneous, existing sessions can reset, and
@@ -130,7 +130,7 @@ route inspection should record prefix, next hop, AS path, local preference,
 MED, communities, age, and origin. Compare the control-plane result with a
 real TCP/TLS request and LTM pool state.
 
-A health-gated advertisement should have explicit stages. First, a local probe
+**Engineering inference:** A health-gated advertisement should have explicit stages. First, a local probe
 checks the listener and a synthetic transaction. Second, a controller verifies
 that the probe is fresh and that the site is inside its change window. Third,
 the route agent advertises or withdraws the prefix. Fourth, an observer checks
@@ -164,16 +164,16 @@ west = Site("west", True, True, True, True)
 print(f"advertise {west.name}: {should_advertise(west)}")
 ```
 
-The model is intentionally conservative. A production implementation would
+**Engineering inference:** The model is intentionally conservative. A production implementation would
 also enforce prefix length, origin authorization, peer allow-lists, maximum
 prefixes, rate limits, dampening policy, and an operator-approved rollback.
-RPKI origin validation can reduce accidental acceptance of an unauthorized
+**Fact:** RPKI origin validation can reduce accidental acceptance of an unauthorized
 origin, but it does not prove application health or protect every routing
 mistake.
 
 ## When this breaks
 
-The most dangerous multi-region failure is a **black hole**: a route exists,
+**Engineering inference:** The most dangerous multi-region failure is a **black hole**: a route exists,
 so packets are attracted to a site, but the service is not listening or return
 traffic is discarded. A related error is a **route leak**, where a prefix is
 announced to peers that should never receive it. A **more-specific route** can

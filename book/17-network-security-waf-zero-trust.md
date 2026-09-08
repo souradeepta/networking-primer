@@ -1,6 +1,6 @@
 # 17. Network Security, WAF, and Zero Trust
 
-Network security is a set of boundaries and decisions, not a single firewall
+**Engineering inference:** Network security is a set of boundaries and decisions, not a single firewall
 box. A request can cross a cloud security group, network firewall, F5 virtual
 server, WAF policy, TLS endpoint, service mesh, and application authorization
 layer before it reaches data. Each layer observes different identity and
@@ -9,7 +9,7 @@ are named explicitly instead of treating “the network” as one hop.
 
 This chapter explains perimeter controls, segmentation, reverse proxies, web
 application firewalls, zero-trust principles, SSH, encryption, certificates,
-TLS, and mTLS. Product names such as F5 BIG-IP Advanced WAF/ASM are used as
+TLS, and mTLS. **Vendor terminology:** Product names such as F5 BIG-IP Advanced WAF/ASM are used as
 vendor terminology, not as a claim that one product implements every security
 control. Policy examples are fictional and should be reviewed before use.
 
@@ -37,7 +37,7 @@ and the difference between encryption and authorization.
 
 ## Mental model
 
-Use four questions for every hop:
+**Engineering inference:** Use four questions for every hop:
 
 1. **Can packets reach the listener?** Routes, ACLs, firewalls, security
    groups, and NetworkPolicies answer this.
@@ -51,7 +51,7 @@ Use four questions for every hop:
 4. **Is this action allowed?** WAF rules, identity, authorization, rate
    limits, and application policy answer this.
 
-Encryption protects data in transit from observers who do not hold the keys; it
+**Fact:** Encryption protects data in transit from observers who do not hold the keys; it
 does not make an authorized request safe. A certificate binds a public key to
 an identity under a CA trust model; it does not itself grant application
 permissions. A WAF can detect suspicious HTTP shape, but it cannot replace
@@ -69,7 +69,7 @@ identity, device/workload context, policy, and request.
 | IAM/application auth | Token, claims, role, resource | Authorization and accountability | Network path safety |
 | DDI/IPAM | Name, address, ownership | Inventory and change traceability | Runtime packet permission |
 
-The best design treats each control as a signal and limits trust crossing the
+**Engineering inference:** The best design treats each control as a signal and limits trust crossing the
 boundary. For example, an edge F5 can terminate public TLS and pass a
 carefully controlled identity header to an internal service, but the service
 must accept that header only from an authenticated, restricted F5 source. For
@@ -80,7 +80,7 @@ client-supplied copies of security headers before adding canonical values.
 
 ### Public API with WAF and end-to-end workload identity
 
-Harbor exposes `payments.harbor.example` through a public F5 LTM VIP. The
+**Engineering inference:** Harbor exposes `payments.harbor.example` through a public F5 LTM VIP. The
 client connection uses TLS with SNI. An F5 WAF policy applies size limits,
 method rules, rate controls, and narrowly tuned signatures. LTM then opens a
 new TLS connection to an internal API gateway. The gateway verifies the F5
@@ -115,7 +115,7 @@ flowchart LR
     DDI -. trust bundle owner .-> Gateway
 ```
 
-There are two distinct TLS sessions. The first terminates at the edge and
+**Fact:** There are two distinct TLS sessions. The first terminates at the edge and
 proves the public hostname to the client; only after that termination can the
 WAF inspect the decrypted, canonical HTTP request. If the WAF allows it, the
 edge starts the second session to prove an authorized edge identity to the
@@ -179,7 +179,7 @@ rate limits, canonicalization, body-size limits, and safe fail behavior.
 
 ## WAF and proxy boundaries
 
-A reverse proxy normalizes connections and can apply routing, TLS, headers,
+**Fact:** A reverse proxy normalizes connections and can apply routing, TLS, headers,
 timeouts, and pool selection. A WAF inspects application messages and may block,
 alarm, or pass them. Put the WAF where it can see the protocol version and
 canonical request that the application will interpret. Double parsing by two
@@ -187,7 +187,7 @@ proxies can create request-smuggling risk when they disagree about framing or
 headers. Define whether the edge strips hop-by-hop headers, how it handles
 duplicate headers, maximum URI/body size, allowed methods, and decompression.
 
-F5 LTM profiles determine TCP, HTTP, client SSL, server SSL, persistence, and
+**Vendor terminology:** F5 LTM profiles determine TCP, HTTP, client SSL, server SSL, persistence, and
 other proxy behavior. iRules or policies can add powerful custom decisions;
 they also create code paths that need review, testing, rate limits, and a
 rollback. A WAF signature in blocking mode can protect a route and also cause
@@ -195,7 +195,7 @@ false positives for a newly deployed payload. Start with an explicit learning
 or alerting process where appropriate, but do not leave a known critical rule
 in an ineffective mode without an owner and expiry.
 
-Zero trust does not mean “put a WAF on the Internet.” A zero-trust request
+**Engineering inference:** Zero trust does not mean “put a WAF on the Internet.” A zero-trust request
 should carry or obtain an identity, be authorized for a resource and action,
 be evaluated in context, and produce an auditable decision. Network location
 still matters for reducing exposure and blast radius; it is simply not the

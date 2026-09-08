@@ -10,6 +10,12 @@ distinguish a failed monitor from a failed user request. The examples use
 diagnostics. Product defaults vary by release and profile, so treat object names
 as illustrative.
 
+## Interview scope
+
+- SDE2: explain eligibility, selection, monitor evidence, and persistence.
+- Staff: set ownership and migration guardrails for session state and health policy.
+- Expected artifact: failure matrix mapping symptoms to probes, owners, and stop conditions.
+
 ## Mental model
 
 Fact: a monitor periodically sends a probe through a configured path and marks
@@ -114,6 +120,12 @@ the application’s session behavior and user impact are understood.
 5. Measure member distribution with correlation IDs, not anecdotal requests.
 6. Snapshot current configuration before a proposed change.
 7. Set owner-approved validation and rollback criteria.
+
+## Staff follow-up
+
+**Staff exercise:** Move a stateful service from source persistence to cookies.
+Define owners, run a canary with measured session impact and capacity cost, and
+stop before stale mappings or uneven load cause unrecoverable session loss.
 
 ## Questions and answers
 

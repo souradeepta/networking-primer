@@ -57,6 +57,10 @@ for path in chapters:
         raise SystemExit(f"{path}: missing Mermaid diagram")
     if path.name.startswith(("15-", "16-", "17-")) and "| --- |" not in text:
         raise SystemExit(f"{path}: edition-5 chapter needs a Markdown table")
+    if path.name.startswith(("15-", "16-", "17-")):
+        labels = ("Fact:", "Vendor terminology:", "Engineering inference:")
+        if any(label not in text for label in labels):
+            raise SystemExit(f"{path}: advanced chapter needs Fact, Vendor terminology, and Engineering inference labels")
 print(f"Book chapter checks passed: {len(chapters)} chapters.")
 PY
 
@@ -355,6 +359,13 @@ for path in topics:
         raise SystemExit(f"{path}: needs {qa_minimum} numbered Q&A")
     if "```mermaid" not in text or "| --- |" not in text:
         raise SystemExit(f"{path}: needs Mermaid diagram and Markdown table")
+    lowered = text.lower()
+    if "sde2" not in lowered or "staff" not in lowered:
+        raise SystemExit(f"{path}: missing SDE2/Staff role calibration")
+    if not re.search(r"expected.{0,30}artifact", lowered):
+        raise SystemExit(f"{path}: missing expected interview artifact")
+    if "staff exercise" not in lowered and "staff follow-up" not in lowered and "[staff |" not in lowered:
+        raise SystemExit(f"{path}: missing Staff follow-up or exercise")
 print(f"Focused topic checks passed: {len(topics)} topics.")
 PY
 
@@ -558,6 +569,22 @@ for path in sorted(Path('.').rglob('*.md')):
 if failures:
     raise SystemExit('\n'.join(failures))
 print('Markdown heading hierarchy checks passed for all Markdown files.')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+import re
+
+checked = 0
+for path in [*Path('docs').glob('*.md'), *Path('book').rglob('*.md')]:
+    for block in re.findall(r'```mermaid\n(.*?)```', path.read_text(encoding='utf-8'), re.DOTALL):
+        checked += 1
+        if not block.isascii():
+            raise SystemExit(f'{path}: Mermaid content must be ASCII')
+        init = block.splitlines()[0] if block.splitlines() else ''
+        if 'theme' not in init or 'base' not in init or 'primaryTextColor' not in init or '#111111' not in init:
+            raise SystemExit(f'{path}: Mermaid block must configure the light theme and dark text')
+print(f'Mermaid theme checks passed: {checked} diagrams.')
 PY
 
 python3 - <<'PY'

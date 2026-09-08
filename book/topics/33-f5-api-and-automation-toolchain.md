@@ -10,6 +10,12 @@ plans; and reconcile unknown outcomes.
 
 Know JSON, HTTP, TLS, Git review, F5 LTM objects, partitions, and idempotency.
 
+## Interview scope
+
+Role labels: SDE2 (tool and API diagnosis); Staff (source-of-truth migration,
+ownership, and governance). Expected interview artifact: a tool-selection matrix
+and staged adoption plan with rollback gates.
+
 ## Mental model
 
 The SDK maps Python objects to REST resources. Declarative tools submit a
@@ -72,6 +78,11 @@ Using local JSON fixtures, implement a planner that handles `items` plus
 `nextLink`, token expiry, 401/403/404/409, task polling, and an ambiguous
 timeout. Assert that dry-run performs no writes and that logs contain no token
 or private-key material.
+
+**[Staff | adoption]** Consolidate SDK, AS3, Terraform, and tmsh ownership for
+one existing service. Sequence import and drift assessment before writes, define
+stakeholder sign-off, and stop any destructive plan until partition ownership is
+proven.
 
 ## Questions and answers
 

@@ -9,6 +9,12 @@ drift without overwriting evidence. It distinguishes authoritative data from a
 cache, a lease, or a manually entered record. Examples use `192.0.2.0/24`,
 `2001:db8::/64`, and the local name `printer.lab.example`.
 
+## Interview scope
+
+- SDE2: reconcile IPAM, DHCP, and DNS evidence without treating one as universal truth.
+- Staff: establish authoritative ownership, adoption workflow, and safe cleanup gates.
+- Expected artifact: reconciliation decision record with evidence, owners, and reversibility.
+
 ## Mental model
 
 Fact: IPAM records intended ownership and allocation metadata; DHCP leases
@@ -110,6 +116,12 @@ and after state, and defines rollback.
 5. Protect exports and redact identifiers from tickets and examples.
 6. Require owner approval for reconciliation changes and preserve rollback.
 7. Re-query authority and lease state after change; account for cache TTL.
+
+## Staff follow-up
+
+**Staff exercise:** An IPAM record conflicts with an active DNS name and DHCP
+lease. Assign system owners, produce a read-only report and communication plan,
+estimate quarantine versus cleanup cost, and identify the action needing approval.
 
 ## Questions and answers
 

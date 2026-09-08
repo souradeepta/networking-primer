@@ -12,6 +12,15 @@ Use the [documentation index](../../docs/README.md) for the logical order of
 quick-start, interview, infra-engineer, and governance material. Verify
 vendor behavior against the target release before relying on it.
 
+## Role and artifact contract
+
+Every focused topic names its SDE2 and Staff scope, identifies an expected
+interview artifact, and includes a Staff follow-up. SDE2 prompts emphasize
+mechanism, evidence, and safe diagnosis. Staff follow-ups additionally require
+ownership boundaries, migration or adoption sequencing, cost/risk trade-offs,
+and a stop condition for irreversible failure. Treat these labels as study
+calibration, not as a claim that a single prompt measures interview readiness.
+
 ## Suggested order
 
 Use the route map to jump by interview objective, then follow the numbered

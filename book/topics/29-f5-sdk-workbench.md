@@ -12,6 +12,12 @@ review without exposing credentials.
 Know Python, REST, JSON, HTTP status codes, TLS, Git review, and LTM object
 relationships. Use only authorized lab endpoints and fictional names.
 
+## Interview scope
+
+Role labels: SDE2 (API failure handling); Staff (automation ownership and
+migration safety). Expected interview artifact: an idempotent change workflow
+with an ambiguous-outcome decision tree.
+
 ## Mental model
 
 An SDK is a typed convenience layer over an API; it does not make a mutation
@@ -84,6 +90,11 @@ and `task_status`. Make pages return one member at a time. Test token expiry,
 duplicate members, a timeout after accepted mutation, retry backoff, an async
 failure, and a no-op rerun. Add a redacting logger assertion. Do not connect
 the exercise to a live BIG-IP or include a real credential.
+
+**[Staff | migration]** Adopt the SDK for an existing application owned by
+another team. Define discovery and ownership handoff, sequence a read-only
+baseline before writes, and stop safely when an accepted mutation has unknown
+completion state.
 
 ## Questions and answers
 

@@ -11,6 +11,12 @@ read-only evidence for a symptom without assuming that “the VIP is down” is 
 complete diagnosis. Examples use F5 BIG-IP terminology, but the reasoning
 applies to other reverse proxies and load balancers.
 
+## Interview scope
+
+- SDE2: trace a request through the VIP, profiles, SNAT, and pool member.
+- Staff: define ownership boundaries and a safe migration plan for a VIP.
+- Expected artifact: annotated request-path diagram with evidence and rollback points.
+
 ## Mental model
 
 Fact: a virtual server is a listener with an address, service port, and policy
@@ -125,6 +131,12 @@ DNS from listener behavior, but it must be removed after the test.
    return-path assumptions.
 6. Review recent changes and configuration snapshots before proposing a diff.
 7. State rollback, validation, and owner approval for every change.
+
+## Staff follow-up
+
+**Staff exercise:** Move a VIP to a new load-balancer tier without changing its
+public address. Identify owners, sequence shadowing, cutover, observation, and
+rollback, and name the irreversible failure that stops migration.
 
 ## Questions and answers
 

@@ -20,6 +20,14 @@ boundaries](08-proxy-architecture-and-boundaries.md), [gRPC, WebSockets, and
 RPC](26-grpc-websockets-rpc.md), and [capacity and SLO
 engineering](16-capacity-performance-and-slo-engineering.md).
 
+## Interview scope
+
+- SDE2: calculate retry and timeout behavior from request and queue evidence.
+- Staff: set cross-team retry budgets, overload ownership, migration gates, and
+  customer-impact thresholds.
+- Expected interview artifact: a retry-policy decision record with load,
+  cost, safety, and rollback analysis.
+
 ## Mental model
 
 Fact: a timeout is a local observation that a response was not received before

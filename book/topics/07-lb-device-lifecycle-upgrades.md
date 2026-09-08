@@ -9,6 +9,12 @@ that has explicit prechecks, drain behavior, capacity assumptions, and rollback.
 The examples are instructional and use `198.51.100.0/24`, `203.0.113.0/24`,
 and names under `.invalid`. They are not production instructions.
 
+## Interview scope
+
+- SDE2: explain HA roles, drain behavior, capacity assumptions, and upgrade evidence.
+- Staff: coordinate platform, network, application, and incident ownership through migration.
+- Expected artifact: phased upgrade plan with stop conditions, capacity model, and rollback.
+
 ## Mental model
 
 Fact: a load balancer has at least two planes. The data plane accepts client
@@ -131,6 +137,13 @@ dashboard look normal.
 7. Drain and fail over with observers watching client errors, monitors, and capacity.
 8. Validate controlled traffic, logs, routes, certificates, and synchronization.
 9. Restore redundancy, document exceptions, and close only after evidence review.
+
+## Staff follow-up
+
+**Staff exercise:** Upgrade an HA pair with limited spare capacity. Identify
+owners and stakeholder communications, sequence standby, failover, validation,
+and active upgrade, price the capacity risk, and state the failure that makes
+rollback unsafe.
 
 ## Questions and answers
 

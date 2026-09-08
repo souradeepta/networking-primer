@@ -10,6 +10,11 @@ between an overlay and its routed underlay. Diagnose MTU and mapping faults.
 Know Ethernet, VLANs, IP routing, UDP, MAC learning, and basic interface
 commands.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** An overlay migration map showing owners, MTU evidence, blast radius, and rollback points.
+
 ## Mental model
 
 VXLAN carries an Ethernet frame inside UDP so a logical Layer 2 segment can
@@ -77,6 +82,10 @@ that sets “do not fragment” where supported. Record VTEP addresses, VNI,
 endpoint location, and observed MTU. The exercise is complete when you can
 explain whether a failed large packet is an application issue or an overlay
 path issue.
+
+## Staff exercise
+
+**[Staff | migration]** Migrate one tenant from VLAN to VXLAN/EVPN: assign underlay, overlay, and workload owners, sequence VNI and endpoint validation, estimate MTU and device cost, and define the fence if mappings become inconsistent.
 
 ## Questions and answers
 

@@ -16,6 +16,11 @@ Know IP routing, NAT, DNS, HTTP/TLS, containers, and basic F5 LTM concepts.
 You do not need a live cluster for the examples. Read-only `kubectl` output is
 illustrative, and addresses are fictional or from documentation ranges.
 
+## Interview framing
+
+- **Roles:** SDE2, Staff
+- **Expected artifact:** A request-path ownership matrix with rollout gates and rollback signals.
+
 ## Mental model
 
 A Kubernetes Service is a stable virtual destination for a changing set of
@@ -144,6 +149,10 @@ Ingress controller, and mesh policy in the same unobserved window.
    and rollback; never delete on an empty transient inventory.
 7. Test drain, failure, certificate rotation, and controller upgrade behavior
    in a local or staging cluster before production.
+
+## Staff exercise
+
+**[Staff | adoption]** Migrate an external VIP to Gateway API and mesh ingress in phases: assign ownership at each boundary, plan compatibility and canaries, account for proxy cost and retry risk, and define what failure must halt the migration.
 
 ## Questions and answers
 

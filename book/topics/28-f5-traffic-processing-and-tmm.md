@@ -12,6 +12,12 @@ evidence without assuming vendor defaults.
 Know Ethernet, IP routing, TCP, TLS, HTTP, NAT, VLANs, and basic F5 LTM object
 terms. This is a study guide, not a production configuration procedure.
 
+## Interview scope
+
+Role labels: SDE2 (packet-path debugging); Staff (shared-object ownership and
+change risk). Expected interview artifact: a two-leg packet trace plus a
+dependency-aware canary and rollback plan.
+
 ## Mental model
 
 Traffic Management Microkernel (TMM) is the BIG-IP data-plane process that
@@ -90,6 +96,10 @@ terminates, where HTTP becomes visible, and where source identity changes. Use
 read-only show output from a lab or fixture to populate a table of virtual
 server, profile, pool, monitor, route domain, and SNAT. Add three hypotheses
 for a timeout and one observation that would falsify each.
+
+**[Staff | ownership]** A shared profile or iRule is proposed for a migration.
+Sequence dependency discovery, a VIP canary, and rollback with platform and
+application owners; identify which state or evidence cannot be safely restored.
 
 ## Questions and answers
 
